@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-labelledby="t d">
+  <title id="t">The Wingman, an add-on for Godspeed Mission Control</title>
+  <desc id="d">The Wingman's mark, its name, and a practice card with a heart that says: I would like them. Agree or disagree.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1822"/>
+      <stop offset="0.55" stop-color="#241f33"/>
+      <stop offset="1" stop-color="#352a5c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="0.2" r="0.6">
+      <stop offset="0" stop-color="#7b67f0" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#7b67f0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="photo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0a8c4"/>
+      <stop offset="1" stop-color="#e07f6a"/>
+    </linearGradient>
+    <clipPath id="card"><rect x="830" y="52" width="380" height="256" rx="22"/></clipPath>
+  </defs>
+
+  <rect width="1280" height="360" rx="28" fill="url(#bg)"/>
+  <rect width="1280" height="360" rx="28" fill="url(#glow)"/>
+
+  <!-- the mark -->
+  <g transform="translate(78 92) scale(2.6)">
+    <path d="M2 28 13 3l11 25-11-6.5Z" fill="#f4f1fa"/>
+    <path d="M22 31 29.5 14 37 31l-7.5-4.4Z" fill="#8f7ff5"/>
+  </g>
+
+  <g font-family="'Segoe UI', system-ui, -apple-system, 'SF Pro Display', Roboto, 'Helvetica Neue', Arial, sans-serif">
+    <text x="196" y="160" font-size="66" font-weight="700" fill="#f7f5fb" letter-spacing="-1">The Wingman</text>
+    <text x="80" y="222" font-size="27" font-weight="600" fill="#b9aef7">An add-on for Godspeed Mission Control</text>
+    <text x="80" y="268" font-size="21" fill="#cfc9da">It looks through dating profiles for you, learns your taste</text>
+    <text x="80" y="298" font-size="21" fill="#cfc9da">from your answers, and brings you matches with reply ideas.</text>
+
+    <!-- a practice card -->
+    <g clip-path="url(#card)">
+      <rect x="830" y="52" width="380" height="256" fill="#ffffff"/>
+      <rect x="830" y="52" width="128" height="256" fill="url(#photo)"/>
+      <circle cx="872" cy="112" r="34" fill="#ffffff" fill-opacity="0.22"/>
+      <circle cx="928" cy="196" r="46" fill="#ffffff" fill-opacity="0.16"/>
+      <circle cx="862" cy="262" r="24" fill="#ffffff" fill-opacity="0.2"/>
+      <path d="M894 150c-9-13-30-8-30 8 0 14 18 24 30 33 12-9 30-19 30-33 0-16-21-21-30-8Z" fill="#ffffff" fill-opacity="0.85"/>
+    </g>
+    <text x="982" y="96" font-size="15" fill="#625c6e">Practice</text>
+    <text x="982" y="132" font-size="25" font-weight="700" fill="#b3325a">I would like them</text>
+    <rect x="982" y="150" width="200" height="9" rx="4.5" fill="#ebe7f0"/>
+    <rect x="982" y="168" width="168" height="9" rx="4.5" fill="#ebe7f0"/>
+    <rect x="982" y="186" width="184" height="9" rx="4.5" fill="#ebe7f0"/>
+    <rect x="982" y="222" width="100" height="40" rx="20" fill="#5a45c8"/>
+    <text x="1032" y="248" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">Agree</text>
+    <rect x="1092" y="222" width="104" height="40" rx="20" fill="#ffffff" stroke="#dcd6e3" stroke-width="1.5"/>
+    <text x="1144" y="248" font-size="16" font-weight="600" fill="#24212b" text-anchor="middle">Disagree</text>
+    <g fill="#5a45c8">
+      <rect x="982" y="280" width="16" height="6" rx="3"/>
+      <rect x="1002" y="280" width="16" height="6" rx="3"/>
+      <rect x="1022" y="280" width="16" height="6" rx="3"/>
+      <rect x="1042" y="280" width="16" height="6" rx="3"/>
+      <rect x="1062" y="280" width="16" height="6" rx="3"/>
+      <rect x="1082" y="280" width="16" height="6" rx="3"/>
+      <rect x="1102" y="280" width="16" height="6" rx="3"/>
+    </g>
+    <g fill="#dcd6e3">
+      <rect x="1122" y="280" width="16" height="6" rx="3"/>
+      <rect x="1142" y="280" width="16" height="6" rx="3"/>
+      <rect x="1162" y="280" width="16" height="6" rx="3"/>
+    </g>
+  </g>
+</svg>

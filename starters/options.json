@@ -1,0 +1,85 @@
+{
+  "_about": "Choices the onboarding wizard offers, so nobody starts from a blank page. Each choice becomes one plain line in preferences.md. 'sites' limits a choice to some sites (omit = every site). Written by Mission Control from what made a real Wingman judge well; no real person's preferences.",
+  "me": {
+    "question": "Who are you, in a few words?",
+    "hint": "This tells the Wingman who it is picking for. Example: a man in my thirties, a woman in her twenties, a nonbinary person, a trans woman.",
+    "examples": ["a man in my thirties", "a woman in my twenties", "a nonbinary person in my forties", "a trans man in my twenties"]
+  },
+  "looking_for": {
+    "question": "Who are you looking for?",
+    "choices": [
+      { "id": "women", "label": "Women", "line": "women" },
+      { "id": "men", "label": "Men", "line": "men" },
+      { "id": "nonbinary", "label": "Nonbinary people", "line": "nonbinary people" },
+      { "id": "anyone", "label": "Anyone who fits", "line": "anyone who fits, whatever their gender" }
+    ],
+    "multiple": true,
+    "free_text": "Something more specific (for example: women and nonbinary people, or men who are into men)"
+  },
+  "age_range": { "question": "Which ages?", "default": [21, 45] },
+  "where": {
+    "question": "Where should they live?",
+    "choices": [
+      { "id": "near", "label": "My country", "line": "my country" },
+      { "id": "region", "label": "My part of the world", "line": "my part of the world (for example Europe, or North America)" },
+      { "id": "timezone", "label": "Within a few hours of my time zone", "line": "a time zone at most three hours from mine" },
+      { "id": "anywhere", "label": "Anywhere", "line": "anywhere; distance matters less than fit" }
+    ],
+    "free_text": "Name places (for example: Germany, Austria, Switzerland, the Netherlands)"
+  },
+  "green_flags": {
+    "question": "What makes you look twice? Tick what fits; add your own.",
+    "choices": [
+      { "id": "voice", "label": "Uses their voice", "line": "- Someone who talks with their voice, not only in text.", "sites": ["flirtual"] },
+      { "id": "fbt", "label": "Full-body tracking", "line": "- Someone with full-body tracking.", "sites": ["flirtual"] },
+      { "id": "vrchat", "label": "Plays VRChat", "line": "- Someone who plays VRChat.", "sites": ["flirtual"] },
+      { "id": "humour", "label": "Same humour", "line": "- Someone whose bio makes me smile; a sense of humour like mine." },
+      { "id": "playful", "label": "Playful", "line": "- Someone playful, who likes to tease and be teased." },
+      { "id": "kind", "label": "Kind", "line": "- Someone who sounds kind to other people, not only to me." },
+      { "id": "active", "label": "Online often", "line": "- Someone who is online most evenings." },
+      { "id": "interests", "label": "Shared interests", "line": "- Someone who shares at least one of my interests: {free}." }
+    ]
+  },
+  "deal_breakers": {
+    "question": "What is a clear no? Tick what fits; add your own.",
+    "choices": [
+      { "id": "drinking", "label": "Heavy drinking", "line": "- Someone whose evenings seem to be mostly about drinking and parties." },
+      { "id": "smoking", "label": "Smoking", "line": "- A smoker." },
+      { "id": "mute", "label": "Never speaks", "line": "- Someone who never uses their voice (a mute player). Text-only gets old fast.", "sites": ["flirtual"] },
+      { "id": "jealous", "label": "Possessive or jealous", "line": "- Someone who sounds possessive or very jealous. A small red flag nearby, a big one far away." },
+      { "id": "only_friends", "label": "Only wants friends", "line": "- Someone who writes that they only want friends." },
+      { "id": "far", "label": "Too far away", "line": "- Someone so far away that we would never be online at the same time." },
+      { "id": "drama", "label": "Drama", "line": "- A profile full of complaints about exes or about other people." },
+      { "id": "thin", "label": "Empty profile", "line": "- A profile with nothing in it but pictures." },
+      { "id": "pretend", "label": "Not who they say", "line": "- Someone whose profile does not match the gender or age they ticked. Count it as one hint among others, never as the whole story." }
+    ]
+  },
+  "tone": {
+    "question": "How do your messages sound?",
+    "choices": [
+      { "id": "playful", "label": "Warm and playful", "line": "Warm and playful, with a light tease. Short sentences, plain words, never pushy." },
+      { "id": "calm", "label": "Calm and sincere", "line": "Calm and sincere. Friendly questions, no pressure, no pickup lines." },
+      { "id": "witty", "label": "Witty and dry", "line": "Witty, with dry humour. Short lines, a clever callback to something in their profile." },
+      { "id": "direct", "label": "Short and direct", "line": "Short and direct. One line, one question, no small talk." }
+    ],
+    "free_text": "Paste one message you sent and liked (optional). The Wingman copies how it sounds."
+  },
+  "language": {
+    "question": "Which language?",
+    "default_line": "English, unless they write in another language I speak."
+  },
+  "practice_examples": {
+    "_about": "Shown on the training screen: what a useful practice answer looks like.",
+    "good": [
+      { "say": "agree", "why": "The Wingman got it right. Nothing more needed." },
+      { "say": "disagree, they only want friends", "why": "A reason teaches more than a no." },
+      { "say": "disagree, too far away, eight hours difference", "why": "Names the one thing that decided it." },
+      { "say": "like them, the bio is funny and we both build worlds", "why": "A like with a reason is a lesson too." },
+      { "say": "disagree, but only this time", "why": "A one-off: the like or pass happens, the Wingman does not learn from it." }
+    ],
+    "less_useful": [
+      { "say": "no", "why": "The Wingman learns that you passed, but not why." },
+      { "say": "hmm, not sure", "why": "Not an answer yet. Say agree or disagree, then why." }
+    ]
+  }
+}

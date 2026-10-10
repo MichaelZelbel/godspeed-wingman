@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- An excerpt of https://dl.google.com/android/repository/repository2-3.xml, saved on 2026-10-10 for the tests. The package entries are copied unchanged; only the licence texts are shortened and most packages are left out. -->
+<sdk:sdk-repository xmlns:sdk="http://schemas.android.com/sdk/android/repo/repository2/03" xmlns:common="http://schemas.android.com/repository/android/common/02" xmlns:sdk-common="http://schemas.android.com/sdk/android/repo/common/03" xmlns:generic="http://schemas.android.com/repository/android/generic/02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <license id="android-sdk-license" type="text">Terms and Conditions
+
+This is the Android Software Development Kit License Agreement
+
+(Shortened in this saved copy. The full text is in Google's list.)</license>
+  <license id="android-sdk-preview-license" type="text">To get started with the Android SDK Preview, you must agree to the following terms and conditions.
+As described below, please note that this is a preview version of the Android SDK, subject to change, that you use at your own risk.  The Android SDK Preview is not a stable release, and may contain errors and defects that can result in serious damage to your computer systems, devices and data.
+
+
+(Shortened in this saved copy. The full text is in Google's list.)</license>
+  <channel id="channel-0">stable</channel>
+  <channel id="channel-1">beta</channel>
+  <channel id="channel-2">dev</channel>
+  <channel id="channel-3">canary</channel>
+  <remotePackage path="cmdline-tools;23.0">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>23</major>
+      <minor>0</minor>
+    </revision>
+    <display-name>Android SDK Command-line Tools</display-name>
+    <uses-license ref="android-sdk-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>181052239</size>
+          <checksum type="sha1">e025545c62a8e64c7559119566a569fb1dec5f60</checksum>
+          <url>commandlinetools-linux-16111833_latest.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>155582504</size>
+          <checksum type="sha1">112cf9618794a997ff273537d55bee02c22abffe</checksum>
+          <url>commandlinetools-mac_x86_64-16111833_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>155384151</size>
+          <checksum type="sha1">ad03dc49bfacfd52c110b14104ea548b8a07e830</checksum>
+          <url>commandlinetools-mac_arm64-16111833_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>aarch64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>154957218</size>
+          <checksum type="sha1">57d04f2d75eb8e8fffc5000a987e5de4b5a63e9d</checksum>
+          <url>commandlinetools-win-16111833_latest.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="cmdline-tools;22.0">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>22</major>
+      <minor>0</minor>
+    </revision>
+    <display-name>Android SDK Command-line Tools</display-name>
+    <uses-license ref="android-sdk-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>181833628</size>
+          <checksum type="sha1">040d3996a65543d22ec4bf73e4c37aa37a8d4af4</checksum>
+          <url>commandlinetools-linux-15859902_latest.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>156281494</size>
+          <checksum type="sha1">1a79e61677b99cb0ce622792713cbea7ff2dc5de</checksum>
+          <url>commandlinetools-mac_x86_64-15859902_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>156083281</size>
+          <checksum type="sha1">c4e0dbc53f1a4ce04fc2b11d4e2c4675001a95af</checksum>
+          <url>commandlinetools-mac_arm64-15859902_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>aarch64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>155655386</size>
+          <checksum type="sha1">b9862337a13e2809a5159dc3a08d058091bd59f6</checksum>
+          <url>commandlinetools-win-15859902_latest.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="cmdline-tools;19.0-alpha01">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>19</major>
+      <minor>0</minor>
+      <preview>01</preview>
+    </revision>
+    <display-name>Android SDK Command-line Tools</display-name>
+    <uses-license ref="android-sdk-preview-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>164759933</size>
+          <checksum type="sha1">f25edbe00eccf74e940abb8d9872b7120c3942a3</checksum>
+          <url>commandlinetools-linux-12996373_latest.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>143250486</size>
+          <checksum type="sha1">de2df8ad8705f3be6de366c953e4cb3e3a0b9f6c</checksum>
+          <url>commandlinetools-mac-12996373_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>143039915</size>
+          <checksum type="sha1">26805d62669b20af583074f67926e31600e43185</checksum>
+          <url>commandlinetools-win-12996373_latest.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="cmdline-tools;14.0-alpha01">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>14</major>
+      <minor>0</minor>
+      <preview>01</preview>
+    </revision>
+    <display-name>Android SDK Command-line Tools</display-name>
+    <uses-license ref="android-sdk-preview-license"/>
+    <channelRef ref="channel-2"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>160503024</size>
+          <checksum type="sha1">46a5d7efd0db68c737c9f7f3a79aa915363f8ced</checksum>
+          <url>commandlinetools-linux-11391160_latest.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>160503004</size>
+          <checksum type="sha1">2b9006f2755f97f27473a079f973252f012a8301</checksum>
+          <url>commandlinetools-mac-11391160_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>160472813</size>
+          <checksum type="sha1">1e7c4acead6a4aabd9b753ffd98e116d59f7547e</checksum>
+          <url>commandlinetools-win-11391160_latest.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="cmdline-tools;latest">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>23</major>
+      <minor>0</minor>
+    </revision>
+    <display-name>Android SDK Command-line Tools (latest)</display-name>
+    <uses-license ref="android-sdk-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>181052239</size>
+          <checksum type="sha1">e025545c62a8e64c7559119566a569fb1dec5f60</checksum>
+          <url>commandlinetools-linux-16111833_latest.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>155582504</size>
+          <checksum type="sha1">112cf9618794a997ff273537d55bee02c22abffe</checksum>
+          <url>commandlinetools-mac_x86_64-16111833_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>155384151</size>
+          <checksum type="sha1">ad03dc49bfacfd52c110b14104ea548b8a07e830</checksum>
+          <url>commandlinetools-mac_arm64-16111833_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>aarch64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>154957218</size>
+          <checksum type="sha1">57d04f2d75eb8e8fffc5000a987e5de4b5a63e9d</checksum>
+          <url>commandlinetools-win-16111833_latest.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage obsolete="true" path="cmdline-tools;2.0">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>2</major>
+      <minor>0</minor>
+    </revision>
+    <display-name>Android SDK Command-line Tools</display-name>
+    <uses-license ref="android-sdk-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>86521858</size>
+          <checksum type="sha1">14b2114c6eae9e10686a18138d2bb468c46f8e0c</checksum>
+          <url>commandlinetools-linux-6514223_latest.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>86521848</size>
+          <checksum type="sha1">d45816955198c4dfd652584f4c0f1b0e86efb1b7</checksum>
+          <url>commandlinetools-mac-6514223_latest.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>86506760</size>
+          <checksum type="sha1">e11b418c1d2d28589e9194915be2561f1e1e7a95</checksum>
+          <url>commandlinetools-win-6514223_latest.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="platform-tools">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>37</major>
+      <minor>0</minor>
+      <micro>1</micro>
+    </revision>
+    <display-name>Android SDK Platform-Tools</display-name>
+    <uses-license ref="android-sdk-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>9054187</size>
+          <checksum type="sha1">477254aa5f903c15cf51001717bdf347fb6b53e0</checksum>
+          <url>platform-tools_r37.0.1-linux.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>16110554</size>
+          <checksum type="sha1">6ae73f4de6452dc57e62ec02b68eed92a4c21661</checksum>
+          <url>platform-tools_r37.0.1-darwin.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+      </archive>
+      <archive>
+        <complete>
+          <size>8044989</size>
+          <checksum type="sha1">e03e78b1d80b396f1c3358e31251cb31740e1110</checksum>
+          <url>platform-tools_r37.0.1-win.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="emulator">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>37</major>
+      <minor>3</minor>
+      <micro>3</micro>
+    </revision>
+    <display-name>Android Emulator</display-name>
+    <uses-license ref="android-sdk-preview-license"/>
+    <channelRef ref="channel-2"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>353959232</size>
+          <checksum type="sha1">ae4d823db841f6b527fe09115cc9defbfaf24a85</checksum>
+          <url>emulator-linux_x64-16489710.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>493027673</size>
+          <checksum type="sha1">dee7c5ef1eb393f0c76214aad364eaea37ddd615</checksum>
+          <url>emulator-darwin_x64-16489710.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>420070680</size>
+          <checksum type="sha1">bc90f6bcacf23a6a8a4fda40fd0bba37b99d9582</checksum>
+          <url>emulator-darwin_aarch64-16489710.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>aarch64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>459469167</size>
+          <checksum type="sha1">4a0780da28b6e80783baf2505cab21f35b8bee56</checksum>
+          <url>emulator-windows_x64-16489710.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+    </archives>
+  </remotePackage>
+  <remotePackage path="emulator">
+    <type-details xsi:type="generic:genericDetailsType"/>
+    <revision>
+      <major>37</major>
+      <minor>2</minor>
+      <micro>12</micro>
+    </revision>
+    <display-name>Android Emulator</display-name>
+    <uses-license ref="android-sdk-license"/>
+    <channelRef ref="channel-0"/>
+    <archives>
+      <archive>
+        <complete>
+          <size>349654171</size>
+          <checksum type="sha1">cd7362ea55dfb86a418958138dc396e74165dd01</checksum>
+          <url>emulator-linux_x64-16428233.zip</url>
+        </complete>
+        <host-os>linux</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>488731099</size>
+          <checksum type="sha1">0c08fc22f41f2e63976f5503d593f821ff11e30b</checksum>
+          <url>emulator-darwin_x64-16428233.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>416112708</size>
+          <checksum type="sha1">3af4fe44ce82b3d88ae5678a53735f27ad729c15</checksum>
+          <url>emulator-darwin_aarch64-16428233.zip</url>
+        </complete>
+        <host-os>macosx</host-os>
+        <host-arch>aarch64</host-arch>
+      </archive>
+      <archive>
+        <complete>
+          <size>455342868</size>
+          <checksum type="sha1">488ed747e82de7e9bb5247becd1ac043c7e5e85d</checksum>
+          <url>emulator-windows_x64-16428233.zip</url>
+        </complete>
+        <host-os>windows</host-os>
+        <host-arch>x64</host-arch>
+      </archive>
+    </archives>
+  </remotePackage>
+</sdk:sdk-repository>

@@ -1,0 +1,9 @@
+name: godspeed-wingman
+version: "0.5.0"
+description: >-
+  Shows the model the Wingman's open practice question, a watch-list stop, the reply ideas
+  waiting for "send 2" and the Discord names the person was just told about, once per turn,
+  before it reads the message (pre_llm_call). Prints nothing when nothing waits. Installed by
+  `godspeed-wingman setup`.
+author: godspeed-wingman
+kind: standalone

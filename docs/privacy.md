@@ -1,0 +1,108 @@
+# Privacy: what is kept where, for how long, and what leaves
+
+The Wingman handles two kinds of data: yours (what you want, how you write) and other people's
+(the profiles it reads). They live in two different places, on purpose.
+
+## Your words: in your mission control
+
+In `routines/wingman/` in your mission control folder:
+
+- `preferences.md`: who you are looking for, in your words.
+- `watch.md`: the names on your watch list.
+- `settings.json`: your choices (sites, times, where it talks to you, the model, the retention).
+- `sites/<id>/`: site adapters you or your coding helper added, with the record of their terms.
+
+These are plain text, and they are in your mission control's git history like your other files.
+By default (`"sync": "auto"`) a change you make through the Wingman is committed and pushed, so it
+reaches your other machines; `"commit"` commits without pushing, `"off"` leaves git alone.
+
+Keep in mind that the names on your watch list are in that history too.
+
+## Everything about other people: in the private folder
+
+`~/.godspeed/wingman` (Windows: `%USERPROFILE%\.godspeed\wingman`; a Linux server set up as root:
+`/var/lib/godspeed/wingman`; `GODSPEED_WINGMAN_STATE` or `--state` choose another place). It is
+never in git, because git never forgets, and these people did not ask to be remembered.
+
+What is in it:
+
+- `archive/<day>/<site>.<id>/`: every profile the Wingman opened, as the site sent it, as the
+  Wingman read it, the page as the browser showed it, and a picture of it.
+- `screenshots/<day>/`: the same pictures, named by day and name, to look back.
+- `examples.jsonl`: your practice and review answers, each with the profile text the judge read.
+- `decisions.jsonl`: every like, pass, stop and question.
+- `replies.json`: the reply ideas waiting for you.
+- `desk/`: the desk's messages, and the desk's key.
+- `browser/`: the Wingman's own browser profile, with your login on the dating site.
+- `worker.log`: what the worker did. When something goes wrong with a profile, a line can name it.
+- `worker.env`: private settings for the worker (a model key, the bridge token). On Linux and
+  macOS only your account can read it.
+- `state.json`, `requests/`, `heartbeat.json`: what runs and what waits.
+
+The Android emulator, when you set one up, lives in `~/.godspeed/android` with the apps and logins
+in it ([android.md](android.md)).
+
+## How long
+
+**42 days** unless you choose another number (`retention_days`, asked in the setup). Once a day the
+worker deletes everything older than that about other people: the profile folders and their
+pictures, the decisions, the reply ideas, the desk's messages, the lists of who liked you, and the
+Discord names it told you.
+
+Two things stay longer, and you should know them:
+
+- **Your practice answers** are how the Wingman learns, so they stay. After the retention each one
+  loses the person's name and profile id; the text the judge read (their bio, their details) stays
+  with your answer and your reason.
+- **The worker's log** is not cut by date. It starts a new file at 2 MB and keeps the one before.
+
+**The disk guard.** When the disk gets below 8 GB free (`min_free_gb`), the oldest pictures go
+first, never the last seven days and never the profiles themselves.
+
+## What leaves your computer
+
+- **To the model you chose:** each profile's text (never the pictures), your preferences page and
+  your recent answers, to decide; for reply ideas, the profile, their message and your "How I
+  write". Claude Code sends it to Anthropic, Codex to OpenAI, the OpenAI-compatible lane to the
+  address you set. The Wingman runs Claude Code and Codex from an empty folder with their tools
+  switched off, so the model can only answer.
+- **To Telegram, if you chose it:** the Wingman's messages to you, with names, the reason, the
+  picture of the profile and the reply ideas. They stay in your Telegram chat.
+- **To the dating site:** what a person does there, at a person's pace: opening profiles, likes,
+  passes, and the messages you chose.
+- **To the bridge's computer**, when the Wingman runs on a server: the pages open in the Chrome
+  there.
+- **To your Godspeed notebook, if it answers on this computer:** one list, "Wingman: likes and
+  passes", one item per profile liked or passed (date, name, age, gender, place, site, liked or
+  passed, by whom, the profile's address, a Discord name, a link to the picture, and a column for
+  your own comment). The list is hidden from every assistant, so none of them can turn a stranger
+  into a fact or a suggestion. The Wingman never deletes items from it, so it outlives the
+  retention: delete items yourself, delete the whole list in the notebook (the Wingman then stops
+  writing it), or switch it off with `"notebook_collection": false` in the settings.
+
+What never leaves:
+
+- Notifications never show a name, a picture or anything a stranger wrote; they can appear on a
+  lock screen.
+- The desk answers only on this computer (127.0.0.1), only to a browser that holds its key.
+- Nothing about other people goes into your mission control's memory, its notes or git.
+- Nothing goes to the Wingman's author. There is no usage reporting of any kind.
+
+## Strangers' words are data, never instructions
+
+Profiles are written by strangers. Everything a profile says reaches the model fenced off as data
+to judge, and reaches your assistant only cleaned (one short line, no brackets, quotes or code
+marks), so a profile cannot hand your assistant a command.
+
+## Deleting
+
+- **One person:** they disappear by themselves after the retention.
+- **Everything about other people:** `godspeed-wingman uninstall --delete-state`, or delete the
+  private folder while the worker is stopped.
+- **A shorter memory:** lower `retention_days`; the next daily clean-up applies it.
+- **Your own words:** they are your files in `routines/wingman/`; the uninstall leaves them, so
+  delete them yourself if you want them gone.
+
+Chapter 22 of [*Teach It Once*](https://leanpub.com/teachitonce), "Check Where Your Private
+Information Goes", explains why the line between your mission control and the private folder sits
+where it does.

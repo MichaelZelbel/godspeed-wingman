@@ -1,0 +1,24 @@
+name: An idea
+description: Something the Wingman could do better, or should do as well.
+labels: ["idea"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What you would like, and what it would change for you.
+    validations:
+      required: true
+  - type: textarea
+    id: now
+    attributes:
+      label: How it goes today
+      description: What you do now instead, if anything.
+  - type: checkboxes
+    id: promises
+    attributes:
+      label: The Wingman's promises
+      description: The Wingman never sends a message you did not pick, never writes to anyone outside the dating site, and never works on a site whose terms forbid it.
+      options:
+        - label: My idea keeps these promises.
+          required: true

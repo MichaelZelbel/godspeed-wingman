@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="same-origin">
+<title>The Wingman's desk</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style nonce="__NONCE__">
+:root {
+  --bg: #f3f1f6;
+  --surface: #ffffff;
+  --surface-2: #ebe7f0;
+  --ink: #24212b;
+  --muted: #625c6e;
+  --line: #dcd6e3;
+  --accent: #5a45c8;
+  --accent-ink: #ffffff;
+  --accent-soft: #e9e4fb;
+  --like: #b3325a;
+  --like-soft: #fbe5ec;
+  --pass: #4a5667;
+  --pass-soft: #e5e9ef;
+  --ok: #26734f;
+  --ok-soft: #e1f2e8;
+  --warn: #8f4c00;
+  --warn-soft: #fbeedd;
+  --shadow: 0 1px 2px rgba(36, 33, 43, .05), 0 10px 30px rgba(36, 33, 43, .07);
+  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "SF Pro Text", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --display: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "SF Pro Display", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16141b;
+    --surface: #201d27;
+    --surface-2: #292532;
+    --ink: #eeeaf4;
+    --muted: #a59eb3;
+    --line: #363043;
+    --accent: #a596ff;
+    --accent-ink: #16141b;
+    --accent-soft: #2e2852;
+    --like: #f07a9c;
+    --like-soft: #3a2230;
+    --pass: #a9b4c4;
+    --pass-soft: #262c36;
+    --ok: #6fcf9e;
+    --ok-soft: #1c3127;
+    --warn: #f0b469;
+    --warn-soft: #3a2c1a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--font); overflow-wrap: break-word; }
+.pick-body, .result, .hint { overflow-wrap: anywhere; }
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 650; letter-spacing: -0.012em; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.1rem); }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.06rem; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+button { font: inherit; }
+code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: .92em; background: var(--surface-2); padding: 1px 6px; border-radius: 6px; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.small { font-size: .9rem; }
+.stack > * + * { margin-top: 14px; }
+.stack-l > * + * { margin-top: 26px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* ---- buttons and fields ---------------------------------------------------------------------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn.quiet { background: transparent; border-color: transparent; color: var(--accent); padding: 0 10px; }
+.btn.quiet:hover { text-decoration: underline; }
+.btn[disabled] { opacity: .5; cursor: default; filter: none; }
+.btn.small { min-height: 36px; padding: 0 14px; font-size: .92rem; }
+input[type=text], input[type=number], input[type=time], input[type=search], select, textarea {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%;
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+textarea { resize: vertical; line-height: 1.5; }
+.field > label, .field > .label { display: block; font-weight: 600; margin-bottom: 6px; }
+.field .hint { margin-top: 6px; }
+.hint { color: var(--muted); font-size: .92rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; display: inline-flex; }
+.chip input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.chip span { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 500; }
+.chip input:checked + span { background: var(--accent-soft); border-color: var(--accent); }
+.chip input:checked + span::before { content: "\2713"; margin-right: 7px; font-weight: 700; color: var(--accent); }
+.chip input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.chip input:disabled + span { opacity: .5; }
+.picks { display: grid; gap: 10px; }
+.pick { position: relative; display: block; cursor: pointer; }
+.pick input { position: absolute; top: 20px; left: 18px; margin: 0; accent-color: var(--accent); width: 18px; height: 18px; }
+.pick .pick-body { display: block; padding: 16px 18px 16px 50px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.pick .pick-body strong { display: block; font-weight: 650; }
+.pick input:checked + .pick-body { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.pick input:disabled + .pick-body { opacity: .6; cursor: default; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; cursor: pointer; }
+.check input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex: none; }
+.note { padding: 12px 14px; border-radius: 12px; background: var(--surface-2); }
+.note.warn { background: var(--warn-soft); color: var(--ink); }
+.note.ok { background: var(--ok-soft); }
+.result { min-height: 1.5em; font-size: .95rem; }
+.result.ok { color: var(--ok); }
+.result.bad { color: var(--warn); }
+
+/* ---- the shell ------------------------------------------------------------------------------- */
+.shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
+.side { position: sticky; top: 0; height: 100vh; padding: 28px 18px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 30px; }
+.brand { display: flex; gap: 12px; align-items: center; padding: 0 8px; color: var(--ink); text-decoration: none; }
+.brand svg { width: 40px; height: 32px; flex: none; }
+.brand b { display: block; font-family: var(--display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; }
+.brand small { display: block; color: var(--muted); font-size: .78rem; line-height: 1.3; }
+.mark-lead { fill: var(--ink); }
+.mark-wing { fill: var(--accent); }
+.nav { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; color: var(--ink); text-decoration: none; font-weight: 550; }
+.nav a:hover { background: var(--surface-2); }
+.nav a[aria-current=page] { background: var(--surface); box-shadow: var(--shadow); }
+.nav svg { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); }
+.nav a[aria-current=page] svg { color: var(--accent); }
+.nav .badge { margin-left: auto; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: .78rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.side-foot { margin-top: auto; padding: 0 8px; font-size: .86rem; color: var(--muted); }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); margin-right: 8px; vertical-align: middle; }
+.dot.on { background: var(--ok); }
+.dot.off { background: var(--warn); }
+.topbar { display: none; }
+.main { padding: 40px 48px 72px; min-width: 0; }
+.main:focus, #wiz-title:focus { outline: none; }
+.page { max-width: 1120px; }
+.page-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; }
+.page-head p { color: var(--muted); max-width: 62ch; margin-top: 6px; }
+.panel { background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 24px; }
+.banner { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 14px; background: var(--warn-soft); margin-bottom: 20px; }
+.banner.calm { background: var(--accent-soft); }
+
+/* ---- practice -------------------------------------------------------------------------------- */
+.practice { display: grid; grid-template-columns: minmax(260px, 430px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.shot { display: block; border-radius: 18px; background: var(--surface-2); overflow: auto; max-height: calc(100vh - 150px); box-shadow: var(--shadow); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot .none { padding: 48px 24px; text-align: center; color: var(--muted); }
+.call-card { position: sticky; top: 24px; }
+.call-card .where { color: var(--muted); font-size: .95rem; }
+.call-card h2 { font-size: clamp(1.5rem, 1.2rem + 1vw, 1.9rem); margin-top: 4px; }
+.call { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.call .say { font-family: var(--display); font-weight: 700; font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.4rem); letter-spacing: -0.02em; line-height: 1.1; }
+.call.like .say { color: var(--like); }
+.call.pass .say { color: var(--pass); }
+.sure { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: .95rem; }
+.bars { display: inline-flex; gap: 3px; align-items: flex-end; }
+.bars i { display: block; width: 5px; border-radius: 2px; background: var(--line); }
+.bars i:nth-child(1) { height: 8px; }
+.bars i:nth-child(2) { height: 12px; }
+.bars i:nth-child(3) { height: 16px; }
+.bars.l1 i:nth-child(-n+1), .bars.l2 i:nth-child(-n+2), .bars.l3 i:nth-child(-n+3) { background: currentColor; }
+.call.like .bars { color: var(--like); }
+.call.pass .bars { color: var(--pass); }
+.reason { margin-top: 14px; font-size: 1.08rem; line-height: 1.5; max-width: 60ch; }
+.profile-link { display: inline-block; margin-top: 10px; font-size: .95rem; }
+.answer { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+.answer-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.answer-buttons.three { grid-template-columns: 1fr 1fr 1fr; }
+.answer-buttons .btn { min-height: 52px; font-size: 1.05rem; }
+.keys { margin-top: 12px; font-size: .85rem; color: var(--muted); }
+.keys kbd { font: inherit; font-weight: 700; padding: 0 6px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface-2); }
+.lights { display: flex; gap: 6px; margin-top: 10px; }
+.lights span { width: 22px; height: 8px; border-radius: 4px; background: transparent; border: 1.5px solid var(--line); }
+.lights span.yes { background: var(--accent); border-color: var(--accent); }
+.lights span.no { background: repeating-linear-gradient(135deg, var(--line) 0 3px, transparent 3px 6px); border-color: var(--line); }
+.lights span.goal { border-style: dashed; border-color: var(--accent); }
+.progress { margin-top: 24px; }
+.progress p { font-size: .95rem; }
+.waiting-card { padding: 40px 28px; text-align: left; }
+.pulse { display: inline-flex; gap: 6px; margin-bottom: 18px; }
+.pulse i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); opacity: .25; animation: pulse 1.4s infinite ease-in-out; }
+.pulse i:nth-child(2) { animation-delay: .2s; }
+.pulse i:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse { 0%, 100% { opacity: .25; } 40% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .pulse i { animation: none; opacity: .7; } }
+.tips { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; }
+.tips h3 { margin-bottom: 10px; }
+.tips ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.tips li q { display: block; font-weight: 600; quotes: "\201C" "\201D"; }
+.tips li span { display: block; color: var(--muted); font-size: .93rem; }
+.intro { margin-bottom: 22px; }
+.intro .grow { flex: 1; }
+.intro ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 22px; counter-reset: step; }
+.intro li { counter-increment: step; display: flex; gap: 10px; align-items: baseline; font-size: .95rem; }
+.intro li::before { content: counter(step); flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: .78rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; transform: translateY(-1px); }
+.intro strong { display: block; margin-bottom: 8px; }
+
+/* ---- matches, who ---------------------------------------------------------------------------- */
+.cards { display: grid; gap: 18px; }
+.match { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 20px; }
+.thumb { display: block; width: 100%; aspect-ratio: 4 / 5; border-radius: 12px; background: var(--surface-2); overflow: hidden; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.said { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); font-size: 1.02rem; }
+.options { display: grid; gap: 8px; margin-top: 14px; }
+.who-form { display: flex; gap: 10px; max-width: 620px; }
+.who-form input { flex: 1; }
+.hit { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 16px; align-items: start; }
+.hit .thumb { aspect-ratio: 3 / 4; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .82rem; font-weight: 650; background: var(--surface-2); color: var(--ink); }
+.tag.like { background: var(--like-soft); color: var(--like); }
+.tag.pass { background: var(--pass-soft); color: var(--pass); }
+.tag.auto { background: var(--ok-soft); color: var(--ok); }
+.tag.practice { background: var(--accent-soft); color: var(--accent); }
+
+/* ---- preferences, status --------------------------------------------------------------------- */
+.prefs-grid { display: grid; gap: 24px; max-width: 980px; }
+.watch-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+textarea.doc { min-height: 60vh; font-size: .98rem; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.fact .label { color: var(--muted); font-size: .9rem; }
+.fact .value { font-family: var(--display); font-size: 1.2rem; font-weight: 650; margin-top: 2px; }
+.site-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+.site-row:first-child { border-top: 0; padding-top: 0; }
+.site-row .name { font-weight: 650; min-width: 120px; }
+.lines { margin: 0; padding: 14px; border-radius: 12px; background: var(--surface-2); font: .82rem/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: pre-wrap; word-break: break-word; max-height: 360px; overflow: auto; }
+.msg { padding: 12px 0; border-top: 1px solid var(--line); white-space: pre-wrap; word-break: break-word; }
+.msg:first-child { border-top: 0; }
+.msg time { display: block; color: var(--muted); font-size: .85rem; }
+details > summary { cursor: pointer; font-weight: 600; }
+
+/* ---- the setup wizard ------------------------------------------------------------------------ */
+.wizard { min-height: 100vh; display: flex; flex-direction: column; }
+.wiz-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 28px; }
+.wiz-step { color: var(--muted); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.wiz-bar { height: 3px; background: var(--line); }
+.wiz-bar i { display: block; height: 100%; background: var(--accent); transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) { .wiz-bar i { transition: none; } }
+.wiz-body { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 42px 24px 28px; }
+.wiz-body.wide { max-width: 1080px; }
+.wiz-body > h1 { max-width: 30ch; text-wrap: balance; }
+.wiz-lead { margin-top: 12px; color: var(--muted); font-size: 1.08rem; max-width: 62ch; }
+.wiz-content { margin-top: 30px; }
+.wiz-foot { position: sticky; bottom: 0; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-top: 1px solid var(--line); }
+.wiz-foot .inner { max-width: 760px; margin: 0 auto; padding: 14px 24px calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 12px; justify-content: space-between; align-items: center; }
+.wiz-foot.wide .inner { max-width: 1080px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.two-wide { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 28px; align-items: start; }
+.never li, .does li { margin: 6px 0; }
+.never, .does { padding-left: 1.2em; margin: 8px 0 0; }
+ol.panel { padding-left: 2.8em; margin: 0; }
+ol.panel li { padding-left: .3em; }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.examples .btn { border-style: dashed; font-weight: 500; color: var(--muted); }
+.examples .btn:hover { color: var(--ink); }
+.paper { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 22px 26px; max-height: max(320px, calc(100vh - 360px)); overflow: auto; font-size: .97rem; }
+.paper h3 { font-size: 1.15rem; margin: 0 0 10px; }
+.paper h4 { font-size: 1rem; margin: 18px 0 6px; }
+.paper p { margin: 8px 0; }
+.paper ul { margin: 6px 0; padding-left: 1.2em; }
+.paper li { margin: 3px 0; }
+.ages { display: flex; gap: 10px; align-items: center; max-width: 280px; }
+.ages input { text-align: center; }
+.mark-big { width: 72px; height: 58px; margin-bottom: 18px; }
+.locked { max-width: 34rem; margin: 18vh auto; padding: 0 16px; }
+
+/* ---- toast and dialog ------------------------------------------------------------------------ */
+.toast { position: fixed; left: 50%; top: 18px; transform: translateX(-50%); max-width: min(560px, calc(100vw - 32px)); padding: 12px 18px; border-radius: 14px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); font-weight: 500; z-index: 20; }
+.toast:empty { display: none; }
+dialog { border: 0; border-radius: 18px; padding: 26px; max-width: min(520px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(20, 18, 26, .45); }
+dialog .quote { margin: 14px 0 20px; padding: 14px; border-radius: 12px; background: var(--surface-2); white-space: pre-wrap; word-break: break-word; }
+
+/* ---- small screens --------------------------------------------------------------------------- */
+@media (max-width: 980px) {
+  .practice { grid-template-columns: 1fr; }
+  .call-card { position: static; }
+  .shot { max-height: 58vh; }
+  .watch-grid { grid-template-columns: 1fr; }
+  .intro ol { grid-template-columns: 1fr; }
+  .two-wide { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; }
+  .side { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; top: auto; height: auto; padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); border-right: 0; border-top: 1px solid var(--line); background: var(--bg); flex-direction: row; gap: 0; }
+  .side .brand, .side-foot { display: none; }
+  .side nav { width: 100%; }
+  .nav { grid-template-columns: repeat(5, 1fr); gap: 2px; }
+  .nav a { flex-direction: column; gap: 3px; padding: 7px 2px; font-size: .72rem; border-radius: 10px; position: relative; }
+  .nav a[aria-current=page] { box-shadow: none; background: var(--surface); }
+  .nav .badge { position: absolute; top: 2px; right: calc(50% - 22px); margin: 0; min-width: 18px; height: 18px; padding: 0 5px; font-size: .7rem; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0; }
+  .topbar .brand { padding: 0; }
+  .main { padding: 18px 16px 104px; }
+  .panel { padding: 18px; border-radius: 16px; }
+  .tips { grid-template-columns: 1fr; }
+  .two { grid-template-columns: 1fr; }
+  .match { display: block; }
+  .match > .thumb { float: left; width: 72px; margin: 0 14px 10px 0; }
+  .match > .stack > :not(:first-child) { clear: left; }
+  .hit { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; }
+  .shot { max-height: 46vh; }
+  .intro { padding: 12px 14px; }
+  .intro li { font-size: .9rem; }
+  .wiz-top { padding: 14px 16px; }
+  .wiz-body { padding: 26px 16px 20px; }
+  .wiz-foot .inner { padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
+  .answer-buttons.three { grid-template-columns: 1fr; }
+  .keys { display: none; }
+  .who-form { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div id="app" aria-busy="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="confirm" aria-labelledby="confirm-title">
+  <h2 id="confirm-title"></h2>
+  <div class="quote" id="confirm-text"></div>
+  <div class="row">
+    <button class="btn primary" id="confirm-yes" type="button"></button>
+    <button class="btn" id="confirm-no" type="button">Cancel</button>
+  </div>
+</dialog>
+<script nonce="__NONCE__">
+"use strict";
+
+// ---- small helpers ------------------------------------------------------------------------------
+const $ = (sel, root = document) => root.querySelector(sel);
+
+// h("div", { class: "x", text: "y", on: { click } }, children...) builds DOM. Text always goes in
+// as text, never as HTML, because names and words on this page come from strangers.
+function h(tag, props = {}, ...kids) {
+  const el = tag === "svg" || props.svg ? document.createElementNS("http://www.w3.org/2000/svg", tag) : document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v === undefined || v === null || v === false || k === "svg") continue;
+    if (k === "text") el.textContent = v;
+    else if (k === "on") for (const [ev, fn] of Object.entries(v)) el.addEventListener(ev, fn);
+    else if (k === "value") el.value = v;
+    else if (k === "checked") el.checked = !!v;
+    else if (k === "class" && !(el instanceof SVGElement)) el.className = v;
+    else el.setAttribute(k, v === true ? "" : String(v));
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid === null || kid === undefined || kid === false) continue;
+    el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+
+function icon(name) {
+  const paths = {
+    practice: ["M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z", "m8 12.5 2.6 2.6L16.5 9"],
+    matches: ["M20 15a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2Z"],
+    who: ["M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z", "m20 20-4-4"],
+    preferences: ["M4 7h10", "M18 7h2", "M16 5v4", "M4 17h4", "M12 17h8", "M10 15v4"],
+    status: ["M3 12h4l3-7 4 14 3-7h4"],
+  }[name] || [];
+  const svg = h("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
+  for (const d of paths) svg.append(h("path", { svg: true, d }));
+  return svg;
+}
+
+function mark(cls = "") {
+  const svg = h("svg", { viewBox: "0 0 40 32", "aria-hidden": "true", class: cls });
+  svg.append(h("path", { svg: true, class: "mark-lead", d: "M2 28 13 3l11 25-11-6.5Z" }));
+  svg.append(h("path", { svg: true, class: "mark-wing", d: "M22 31 29.5 14 37 31l-7.5-4.4Z" }));
+  return svg;
+}
+
+async function api(path, body) {
+  const opt = body === undefined
+    ? { credentials: "same-origin" }
+    : { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(body) };
+  let r;
+  try { r = await fetch(path, opt); } catch { return { ok: false, offline: true, text: "The desk does not answer. It comes back when the Wingman runs again." }; }
+  let j = null;
+  try { j = await r.json(); } catch { j = null; }
+  if (r.status === 403 && /needs its key/.test(j?.text || "")) { showLocked(); }
+  return j || { ok: false, text: `The desk answered ${r.status}.` };
+}
+
+let toastTimer = null;
+function say(text) {
+  const t = $("#toast");
+  t.textContent = text || "";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.textContent = ""; }, 6000);
+}
+
+function confirmBox(title, text, yes) {
+  const d = $("#confirm");
+  $("#confirm-title").textContent = title;
+  $("#confirm-text").textContent = text;
+  $("#confirm-yes").textContent = yes;
+  return new Promise((resolve) => {
+    const done = (v) => { d.close(); $("#confirm-yes").onclick = null; $("#confirm-no").onclick = null; resolve(v); };
+    $("#confirm-yes").onclick = () => done(true);
+    $("#confirm-no").onclick = () => done(false);
+    d.onclose = () => resolve(false);
+    d.showModal();
+    $("#confirm-no").focus();
+  });
+}
+
+const store = {
+  get(k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch { /* private window */ } },
+  del(k) { try { sessionStorage.removeItem(k); } catch { /* private window */ } },
+};
+
+function day(iso) {
+  if (!iso) return "";
+  try { return new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "long" }); } catch { return iso.slice(0, 10); }
+}
+function when(iso) {
+  if (!iso) return "";
+  try { return new Date(iso).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch { return iso; }
+}
+const SURE = { low: ["Not very sure", 1], medium: ["Fairly sure", 2], high: ["Very sure", 3] };
+
+// A small reading of preferences.md: headings, list items, paragraphs. Text only.
+function paper(text) {
+  const box = h("div", { class: "paper", tabindex: "0", "aria-label": "Preview of your preferences" });
+  let list = null, para = null;
+  for (const line of String(text || "").split("\n")) {
+    if (/^# /.test(line)) { list = para = null; box.append(h("h3", { text: line.slice(2) })); }
+    else if (/^## /.test(line)) { list = para = null; box.append(h("h4", { text: line.slice(3) })); }
+    else if (/^- /.test(line)) { para = null; if (!list) { list = h("ul"); box.append(list); } list.append(h("li", { text: line.slice(2) })); }
+    else if (/^\s+\S/.test(line) && list?.lastChild) list.lastChild.append(` ${line.trim()}`);
+    else if (!line.trim()) { list = para = null; }
+    else if (para) para.append(` ${line}`);
+    else { list = null; para = h("p", { text: line }); box.append(para); }
+  }
+  return box;
+}
+
+// ---- state --------------------------------------------------------------------------------------
+const S = { view: null, page: "practice", key: "", ob: null, wiz: null, inWizard: false, drafts: {}, locked: false, offline: false };
+const PAGES = [
+  ["practice", "Practice"],
+  ["matches", "Matches"],
+  ["who", "Who"],
+  ["preferences", "Preferences"],
+  ["status", "Status"],
+];
+
+function showLocked() {
+  if (S.locked) return;
+  S.locked = true;
+  const app = $("#app");
+  app.replaceChildren(h("main", { class: "locked stack" },
+    mark("mark-big"),
+    h("h1", { text: "This page needs its key" }),
+    h("p", {}, "The Wingman's desk opens only on this computer, with the link that carries its key. Open it with the command ", h("code", { text: "godspeed-wingman desk" }), ", or ask your mission control to open the Wingman's desk."),
+  ));
+  app.removeAttribute("aria-busy");
+}
+
+// ---- the shell ----------------------------------------------------------------------------------
+function shell() {
+  const app = $("#app");
+  const nav = h("ul", { class: "nav" }, PAGES.map(([id, label]) =>
+    h("li", {}, h("a", { href: `#${id}`, id: `nav-${id}`, "aria-current": S.page === id ? "page" : null }, icon(id), h("span", { text: label }), h("span", { class: "badge hidden", id: `badge-${id}` })))));
+  const brand = () => h("a", { class: "brand", href: "#practice" }, mark(), h("span", {}, h("b", { text: "Wingman" }), h("small", { text: "for Godspeed Mission Control" })));
+  app.replaceChildren(
+    h("div", { class: "shell" },
+      h("aside", { class: "side" },
+        brand(),
+        h("nav", { "aria-label": "The desk" }, nav),
+        h("div", { class: "side-foot", id: "side-foot" })),
+      h("div", {},
+        h("div", { class: "topbar" }, brand(), h("span", { class: "small muted", id: "top-state" })),
+        h("main", { class: "main", id: "main", tabindex: "-1" }))));
+  app.removeAttribute("aria-busy");
+  badges();
+}
+
+function badges() {
+  const v = S.view;
+  if (!v) return;
+  const set = (id, n) => { const b = $(`#badge-${id}`); if (!b) return; b.textContent = n ? String(n) : ""; b.classList.toggle("hidden", !n); b.setAttribute("aria-label", n ? `${n} waiting` : ""); };
+  set("practice", v.waiting ? 1 : 0);
+  set("matches", v.replies.length);
+  const foot = $("#side-foot");
+  if (foot) foot.replaceChildren(h("span", { class: `dot ${v.worker.alive ? "on" : "off"}` }), v.worker.alive ? (v.paused ? "Paused" : "The Wingman is running") : "The Wingman is not running");
+  const top = $("#top-state");
+  if (top) top.replaceChildren(h("span", { class: `dot ${v.worker.alive ? "on" : "off"}` }), v.worker.alive ? (v.paused ? "Paused" : "Running") : "Not running");
+}
+
+function setPage(id) {
+  S.page = id;
+  for (const [p] of PAGES) { const a = $(`#nav-${p}`); if (a) a.setAttribute("aria-current", p === id ? "page" : "false"); }
+}
+
+function render() {
+  if (S.locked || !S.view) return;
+  if (!S.view.onboarded || S.page === "setup" || S.inWizard) return wizard();
+  if (!$("#main")) shell();
+  setPage(S.page);
+  S.key = "";
+  renderPage(true);
+}
+
+function renderPage(force = false) {
+  const main = $("#main");
+  if (!main) return;
+  const fn = { practice: practicePage, matches: matchesPage, who: whoPage, preferences: prefsPage, status: statusPage }[S.page] || practicePage;
+  const key = pageKey();
+  if (!force && key === S.key) return;
+  S.key = key;
+  fn(main, force);
+}
+
+// What a page shows; when it changes, the page is drawn again (typed words are kept in S.drafts).
+function pageKey() {
+  const v = S.view;
+  if (S.page === "practice") return JSON.stringify([v.waiting?.kind, v.waiting?.id, !!v.run, v.practiceLeft, v.paused, v.worker.alive, v.sites.map((s) => [s.mode, s.history.join(), s.loggedOutAt]), v.lastError?.at]);
+  if (S.page === "matches") return JSON.stringify(v.replies.map((r) => r.id));
+  if (S.page === "status") return JSON.stringify([v.worker.alive, v.paused, v.run, v.lastRun?.endedAt, v.next.text, v.sites, v.lastError?.at]);
+  return S.page;
+}
+
+// ---- practice -----------------------------------------------------------------------------------
+function lights(site, rule) {
+  const slots = [];
+  for (let i = 0; i < rule.of; i++) {
+    const v = site.history[i];
+    slots.push(h("span", { class: v === true ? "yes" : v === false ? "no" : "" }));
+  }
+  return h("div", { class: "lights", role: "img", "aria-label": `You agreed with ${site.agreed} of my last ${site.of} on ${site.name}` }, slots);
+}
+
+function progressLine(site, rule) {
+  if (site.mode === "auto") return `On ${site.name} I like and pass on my own now. Start a practice round any time to train me again.`;
+  const head = site.of ? `You agreed with ${site.agreed} of my last ${site.of}.` : "No answers yet.";
+  return `${head} At ${rule.agree} of ${rule.of} I start picking on my own${S.view.sites.length > 1 ? ` on ${site.name}` : ""}.`;
+}
+
+function progressBlock() {
+  const v = S.view;
+  return h("div", { class: "progress stack" }, v.sites.map((s) => h("div", {},
+    v.sites.length > 1 ? h("h3", { text: s.name }) : null,
+    lights(s, v.rule),
+    h("p", { class: "muted", text: progressLine(s, v.rule) }))));
+}
+
+function tipsBlock() {
+  const t = S.view.tips;
+  if (!t) return null;
+  const list = (items) => h("ul", {}, (items || []).map((x) => h("li", {}, h("q", { text: x.say }), h("span", { text: x.why }))));
+  return h("section", { class: "tips", "aria-label": "What a useful answer looks like" },
+    h("div", { class: "panel" }, h("h3", { text: "Answers that teach me well" }), list(t.good)),
+    h("div", { class: "panel" }, h("h3", { text: "Answers that teach me less" }), list(t.less_useful)));
+}
+
+function introBlock() {
+  if (!store.get("firstRound")) return null;
+  return h("div", { class: "banner calm intro" }, h("div", { class: "grow" },
+    h("strong", { text: "Your first practice round" }),
+    h("ol", {},
+      h("li", { text: "I show you a profile and say what I would do, and why." }),
+      h("li", { text: "You agree or disagree, and say why in a few words." }),
+      h("li", { text: `Once you agree with ${S.view.rule.agree} of my last ${S.view.rule.of}, I start picking on my own.` }))));
+}
+
+async function answer(decision) {
+  const v = S.view;
+  const w = v.waiting;
+  if (!w) return;
+  const reasonBox = $("#reason");
+  const reason = reasonBox ? reasonBox.value.trim() : "";
+  const exception = !!$("#oneoff")?.checked;
+  for (const b of document.querySelectorAll("[data-answer]")) b.disabled = true;
+  const keys = $(".keys");
+  if (keys) keys.textContent = "Telling the Wingman.";
+  const r = await api("/api/answer", { decision, reason, exception, about: w.id });
+  say(r.text || (r.ok ? "Noted." : "That did not work."));
+  if (r.ok) { delete S.drafts[`reason:${w.id}`]; await refreshNow(); }
+  else for (const b of document.querySelectorAll("[data-answer]")) b.disabled = false;
+}
+
+function practicePage(main) {
+  const v = S.view;
+  const w = v.waiting;
+  const head = h("div", { class: "page-head" }, h("div", {},
+    h("h1", { text: w?.kind === "review" ? "Review" : w?.kind === "watch" ? "Watch list" : "Practice" }),
+    store.get("firstRound") ? null : h("p", { text: w?.kind === "watch" ? "Someone on your watch list came up. Nothing happens until you decide." : "I show you a profile and say what I would do. You agree or disagree, and say why." })));
+  const parts = [head, introBlock()];
+  const loggedOut = v.sites.find((s) => s.loggedOutAt);
+  if (loggedOut) parts.push(h("div", { class: "banner" }, h("div", { class: "stack" },
+    h("p", {}, h("strong", { text: `${loggedOut.name} shows no login in the Wingman's browser. ` }), "Log in there once, then start the round again."),
+    h("div", { class: "row" }, h("button", { class: "btn small", type: "button", on: { click: () => openBrowser(loggedOut.id) } }, "Open the Wingman's browser")))));
+  if (!v.worker.alive) parts.push(h("div", { class: "banner" }, h("p", {}, h("strong", { text: "The Wingman is not running. " }), "Questions come once it runs again. Your answers are kept until then.")));
+
+  if (w) {
+    const pic = w.picture
+      ? h("a", { class: "shot", href: `/api/picture?ref=waiting&k=${encodeURIComponent(w.id)}`, target: "_blank", rel: "noreferrer" },
+        h("img", { src: `/api/picture?ref=waiting&k=${encodeURIComponent(w.id)}`, alt: `The profile of ${w.name}, as ${w.siteName} showed it` }))
+      : h("div", { class: "shot" }, h("p", { class: "none", text: "No picture of this profile was kept." }));
+    const card = h("div", { class: "panel call-card" });
+    const where = w.kind === "review" ? `Review on ${w.siteName}: I decided this on my own` : w.kind === "watch" ? `On your watch list: their ${w.field || "profile"} matches "${w.watchName || ""}"` : `Practice on ${w.siteName}`;
+    card.append(h("p", { class: "where", text: where }), h("h2", { text: w.headline }));
+    if (w.kind !== "watch") {
+      const sure = SURE[w.sure] || [w.sure || "", 0];
+      card.append(h("div", { class: `call ${w.verdict === "like" ? "like" : "pass"}` },
+        h("span", { class: "say", text: w.kind === "review" ? (w.verdict === "like" ? "I liked them" : "I passed") : (w.verdict === "like" ? "I would like them" : "I would pass") }),
+        sure[0] ? h("span", { class: "sure" }, h("span", { class: `bars l${sure[1]}`, "aria-hidden": "true" }, h("i"), h("i"), h("i")), sure[0]) : null));
+      if (w.reason) card.append(h("p", { class: "reason", text: w.reason }));
+    }
+    if (w.url) card.append(h("a", { class: "profile-link", href: w.url, target: "_blank", rel: "noreferrer noopener" }, `Their profile on ${w.siteName}`));
+    const draftKey = `reason:${w.id}`;
+    const ans = h("div", { class: "answer stack" });
+    if (w.kind === "watch") {
+      ans.append(h("div", { class: "answer-buttons three" },
+        h("button", { class: "btn primary", type: "button", "data-answer": "like", on: { click: () => answer("like") } }, "Like"),
+        h("button", { class: "btn", type: "button", "data-answer": "pass", on: { click: () => answer("pass") } }, "Pass"),
+        h("button", { class: "btn", type: "button", "data-answer": "judge", on: { click: () => answer("judge") } }, "You decide")));
+    } else {
+      const box = h("textarea", { id: "reason", rows: "2", placeholder: "For example: they only want friends", value: S.drafts[draftKey] || "", on: {
+        input: (e) => { S.drafts[draftKey] = e.target.value; },
+        keydown: (e) => { if (e.key === "Enter" && !e.shiftKey && S.disagreeing) { e.preventDefault(); S.disagreeing = false; answer("disagree"); } },
+      } });
+      ans.append(
+        h("div", { class: "field" }, h("label", { for: "reason", text: "Why? A few words teach me the most." }), box),
+        h("label", { class: "check" }, h("input", { type: "checkbox", id: "oneoff" }), h("span", {}, "Only this once: do it, but do not learn from it")),
+        h("div", { class: "answer-buttons" },
+          h("button", { class: "btn primary", type: "button", "data-answer": "agree", on: { click: () => answer("agree") } }, "Agree"),
+          h("button", { class: "btn", type: "button", "data-answer": "disagree", on: { click: () => answer("disagree") } }, "Disagree")),
+        h("p", { class: "keys" }, "Keys: ", h("kbd", { text: "A" }), " agrees. ", h("kbd", { text: "D" }), " disagrees: type why, then Enter."));
+    }
+    card.append(ans, progressBlock());
+    parts.push(h("div", { class: "practice" }, pic, card));
+  } else {
+    const practicing = v.run && (v.practiceLeft > 0 || v.sites.some((s) => s.mode === "practice"));
+    if (practicing && v.worker.alive && !v.paused) {
+      parts.push(h("div", { class: "panel waiting-card stack" },
+        h("div", { class: "pulse", "aria-hidden": "true" }, h("i"), h("i"), h("i")),
+        h("h2", { text: "Looking at the next profile" }),
+        h("p", { class: "muted", text: "It takes a moment: I open their page the way a person would, read it, then ask you." }),
+        progressBlock()));
+    } else {
+      const count = h("input", { type: "number", id: "round", min: "1", max: "50", value: String(v.settings.practice_round || 10), "aria-label": "How many profiles" });
+      parts.push(h("div", { class: "panel waiting-card stack" },
+        h("h2", { text: "No question waiting" }),
+        h("p", { class: "muted", text: v.paused ? "The Wingman is paused. Resume it on the status page, or start a practice round, which resumes it." : `The next daily session starts ${v.next.text}. A practice round starts now and asks you about every profile.` }),
+        h("div", { class: "row" },
+          h("button", { class: "btn primary", type: "button", on: { click: async () => { const r = await api("/api/train", { count: Number(count.value) || 10 }); say(r.text); await refreshNow(); } } }, "Start a practice round"),
+          h("span", { class: "row small muted" }, "of", h("span", { class: "ages" }, count), "profiles")),
+        progressBlock()));
+    }
+  }
+  parts.push(tipsBlock());
+  main.replaceChildren(h("div", { class: "page" }, parts));
+}
+
+document.addEventListener("keydown", (e) => {
+  if (S.page !== "practice" || !S.view?.waiting || S.view.waiting.kind === "watch") return;
+  if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "") || $("#confirm").open) return;
+  if (e.key === "a" || e.key === "A") { e.preventDefault(); answer("agree"); }
+  if (e.key === "d" || e.key === "D") {
+    e.preventDefault();
+    const box = $("#reason");
+    if (box?.value.trim()) { answer("disagree"); return; }
+    S.disagreeing = true;
+    if (box) { box.placeholder = "Why do you disagree? Enter sends it."; box.focus(); }
+  }
+});
+
+async function openBrowser(site) {
+  const r = await api("/api/browser/open", { site });
+  say(r.text);
+  return r;
+}
+
+// ---- matches ------------------------------------------------------------------------------------
+function matchesPage(main) {
+  const v = S.view;
+  const head = h("div", { class: "page-head" }, h("div", {},
+    h("h1", { text: "Matches and messages" }),
+    h("p", { text: "Three reply ideas for each, written to sound like you. Nothing is sent until you press Send and say yes." })));
+  if (!v.replies.length) {
+    main.replaceChildren(h("div", { class: "page" }, head, h("div", { class: "panel waiting-card stack" },
+      h("h2", { text: "Nothing waiting" }),
+      h("p", { class: "muted", text: "When someone matches with you or writes to you, their reply ideas land here. I look for new ones every half hour." }),
+      h("div", {}, h("button", { class: "btn", type: "button", on: { click: async () => { const r = await api("/api/do", { what: "inbox" }); say(r.text); } } }, "Look for new ones now")))));
+    return;
+  }
+  const cards = v.replies.map((r) => {
+    const name = `pick-${r.id}`;
+    const own = h("textarea", { rows: "2", id: `own-${r.id}`, placeholder: "Your own words", value: S.drafts[`own:${r.id}`] || "", on: { input: (e) => { S.drafts[`own:${r.id}`] = e.target.value; } } });
+    const opts = h("div", { class: "picks options", role: "radiogroup", "aria-label": `Reply ideas for ${r.name}` }, r.options.map((o, i) =>
+      h("label", { class: "pick" }, h("input", { type: "radio", name, value: String(i + 1), checked: S.drafts[`pick:${r.id}`] === String(i + 1), on: { change: () => { S.drafts[`pick:${r.id}`] = String(i + 1); } } }), h("span", { class: "pick-body", text: o }))));
+    const sendBtn = h("button", { class: "btn primary", type: "button" }, "Send");
+    sendBtn.addEventListener("click", async () => {
+      const words = own.value.trim();
+      const chosen = document.querySelector(`input[name="${name}"]:checked`)?.value;
+      if (!words && !chosen) { say("Pick one of the three, or write your own words."); return; }
+      const text = words || r.options[Number(chosen) - 1];
+      const yes = await confirmBox(`Send this to ${r.name} on ${r.siteName}?`, text, "Send it");
+      if (!yes) return;
+      sendBtn.disabled = true;
+      const res = await api("/api/send", words ? { to: r.id, text: words } : { to: r.id, option: Number(chosen) });
+      say(res.text);
+      if (res.ok && !res.queued) { delete S.drafts[`own:${r.id}`]; delete S.drafts[`pick:${r.id}`]; }
+      sendBtn.disabled = false;
+      await refreshNow();
+    });
+    return h("article", { class: "panel match" },
+      r.picture ? h("a", { class: "thumb", href: `/api/picture?ref=reply:${encodeURIComponent(r.id)}`, target: "_blank", rel: "noreferrer" }, h("img", { src: `/api/picture?ref=reply:${encodeURIComponent(r.id)}`, alt: `${r.name} on ${r.siteName}`, loading: "lazy" })) : h("div", { class: "thumb" }),
+      h("div", { class: "stack" },
+        h("div", {}, h("h2", { text: r.headline }), h("p", { class: "muted small", text: `${r.kind === "opener" ? "A new match, nobody wrote yet" : "They wrote to you"} on ${r.siteName}, ${when(r.created)}` })),
+        r.kind !== "opener" && r.theirMessage ? h("p", { class: "said", text: r.theirMessage }) : null,
+        opts,
+        h("div", { class: "field" }, h("label", { for: `own-${r.id}`, text: "Or your own words" }), own),
+        h("div", { class: "row" }, sendBtn, r.url ? h("a", { href: r.url, target: "_blank", rel: "noreferrer noopener", class: "small" }, `Their profile on ${r.siteName}`) : null)));
+  });
+  main.replaceChildren(h("div", { class: "page" }, head, h("div", { class: "cards" }, cards)));
+}
+
+// ---- who ----------------------------------------------------------------------------------------
+function whoPage(main) {
+  const q = h("input", { type: "search", id: "who-q", placeholder: "A name, another name they use, or a word from their bio", value: S.drafts.who || "", "aria-label": "Search everyone the Wingman kept" });
+  const out = h("div", { class: "cards", "aria-live": "polite" });
+  const search = async (e) => {
+    e?.preventDefault();
+    S.drafts.who = q.value;
+    if (!q.value.trim()) { out.replaceChildren(); return; }
+    const r = await api(`/api/who?q=${encodeURIComponent(q.value.trim())}`);
+    if (!r.hits?.length) { out.replaceChildren(h("p", { class: "muted", text: `Nobody called "${q.value.trim()}" among the profiles kept from the last ${r.retention || ""} days.` })); return; }
+    out.replaceChildren(...r.hits.map((x) => {
+      const o = x.outcome;
+      const did = !o ? "seen" : o.action === "like" ? "liked" : o.action === "pass" ? "passed" : o.action === "stopped" ? "stopped for your watch list" : o.action;
+      const by = o?.by === "you" ? ", your call" : o?.by === "wingman" ? ", my call" : "";
+      const how = x.source === "liked-you" ? "They liked you" : x.source === "match" ? "A match" : x.source === "message" ? "They wrote to you" : "In your queue";
+      return h("article", { class: "panel hit" },
+        x.picture ? h("a", { class: "thumb", href: `/api/picture?ref=${encodeURIComponent(x.ref)}`, target: "_blank", rel: "noreferrer" }, h("img", { src: `/api/picture?ref=${encodeURIComponent(x.ref)}`, alt: `${x.name} on ${x.siteName}`, loading: "lazy" })) : h("div", { class: "thumb" }),
+        h("div", { class: "stack" },
+          h("div", { class: "row" }, h("h2", { text: x.name }), o?.action === "like" || o?.action === "pass" ? h("span", { class: `tag ${o.action}`, text: did + by }) : h("span", { class: "tag", text: did })),
+          h("p", { class: "muted small", text: `${how} on ${x.siteName}, ${day(x.day)}` }),
+          o?.reason ? h("p", { text: o.reason }) : null,
+          x.other.length || x.discord ? h("p", { class: "small", text: [...x.other, x.discord ? `Discord ${x.discord}` : null].filter(Boolean).join(", ") }) : null,
+          x.url ? h("a", { href: x.url, target: "_blank", rel: "noreferrer noopener", class: "small" }, `Their profile on ${x.siteName}`) : null));
+    }));
+  };
+  main.replaceChildren(h("div", { class: "page" },
+    h("div", { class: "page-head" }, h("div", {}, h("h1", { text: "Who was that?" }), h("p", { text: `Everyone I looked at in the last ${S.view.settings.retention_days} days, with the picture of their profile. After that I forget them.` }))),
+    h("form", { class: "who-form", on: { submit: search } }, q, h("button", { class: "btn primary", type: "submit" }, "Search")),
+    h("div", { class: "stack-l" }, h("div"), out)));
+  if (q.value.trim()) search();
+  q.focus();
+}
+
+// ---- preferences --------------------------------------------------------------------------------
+async function prefsPage(main) {
+  main.replaceChildren(h("div", { class: "page" }, h("h1", { text: "Preferences" }), h("p", { class: "muted", text: "Loading." })));
+  const f = await api("/api/files");
+  const prefs = h("textarea", { class: "doc", id: "prefs", value: f.preferences || "", spellcheck: "true" });
+  const watch = h("textarea", { id: "watch", rows: "6", value: (f.names || []).join("\n"), placeholder: "One name per line" });
+  const save = (what) => async () => {
+    const body = what === "preferences" ? { preferences: prefs.value } : { watchNames: watch.value.split("\n") };
+    const r = await api("/api/files", body);
+    say(r.text);
+  };
+  main.replaceChildren(h("div", { class: "page" },
+    h("div", { class: "page-head" }, h("div", {}, h("h1", { text: "Preferences" }), h("p", { text: "What I go by, with your practice answers, whenever I like or pass. Plain sentences work best." }))),
+    h("div", { class: "prefs-grid" },
+      h("section", { class: "panel stack" },
+        h("div", { class: "field" }, h("label", { for: "prefs", text: "Who fits, who does not, how to judge, how you write" }), prefs),
+        h("div", { class: "row" }, h("button", { class: "btn primary", type: "button", on: { click: save("preferences") } }, "Save preferences"), h("span", { class: "hint", text: "routines/wingman/preferences.md in your mission control" }))),
+      h("section", { class: "panel stack" },
+        h("div", { class: "field" }, h("label", { for: "watch", text: "Watch list" }), h("p", { class: "hint", text: "One name per line. When a profile carries one of these names (their name, another name they use, their Discord name, or a word in their bio), I stop and ask you first." }), watch),
+        h("div", { class: "row" }, h("button", { class: "btn primary", type: "button", on: { click: save("watch") } }, "Save watch list"), h("span", { class: "hint", text: "routines/wingman/watch.md" })),
+        h("p", { class: "hint", text: "Both files live in your mission control, so your assistant can read and change them too." })))));
+}
+
+// ---- status -------------------------------------------------------------------------------------
+async function statusPage(main) {
+  const v = S.view;
+  const fact = (label, value, extra) => h("div", { class: "fact" }, h("div", { class: "label", text: label }), h("div", { class: "value", text: value }), extra ? h("div", { class: "hint", text: extra }) : null);
+  const act = (label, what, extra = {}) => h("button", { class: "btn", type: "button", on: { click: async () => { const r = await api("/api/do", { what, ...extra }); say(r.text); await refreshNow(); } } }, label);
+  const lastRun = v.lastRun ? `${v.lastRun.liked} liked, ${v.lastRun.passed} passed, ${v.lastRun.asked} asked` : "none yet";
+  const sites = v.sites.map((s) => h("div", { class: "site-row" },
+    h("span", { class: "name", text: s.name }),
+    h("span", { class: `tag ${s.mode === "auto" ? "auto" : "practice"}`, text: s.mode === "auto" ? "Autopilot" : "Practice" }),
+    h("span", { class: "muted small", text: s.mode === "auto" ? "likes and passes on its own" : `${s.agreed} of the last ${s.of} agreed, autopilot at ${v.rule.agree} of ${v.rule.of}` }),
+    s.problem ? h("span", { class: "small", text: s.problem }) : null,
+    s.kind === "browser" ? h("span", { class: "row" },
+      s.loggedOutAt ? h("span", { class: "tag", text: "Logged out" }) : null,
+      h("button", { class: "btn small", type: "button", on: { click: () => openBrowser(s.id) } }, "Open the Wingman's browser")) : null));
+  const checkOut = h("pre", { class: "lines hidden", id: "check-out" });
+  const runCheck = h("button", { class: "btn", type: "button" }, "Run a check");
+  runCheck.addEventListener("click", async () => {
+    runCheck.disabled = true;
+    checkOut.classList.remove("hidden");
+    checkOut.textContent = "Checking. This opens the Wingman's browser if it is closed.";
+    const r = await api("/api/check", {});
+    checkOut.textContent = (r.lines || [r.text || ""]).join("\n");
+    runCheck.disabled = false;
+  });
+  const logBox = h("pre", { class: "lines", text: "Loading." });
+  const msgs = h("div", {}, h("p", { class: "muted", text: "Loading." }));
+  main.replaceChildren(h("div", { class: "page stack-l" },
+    h("div", { class: "page-head" }, h("div", {}, h("h1", { text: "Status" }), h("p", { text: "How the Wingman is doing, and the switches." }))),
+    h("section", { class: "panel" }, h("div", { class: "facts" },
+      fact("The Wingman", v.worker.alive ? (v.paused ? "Paused" : "Running") : "Not running", v.worker.alive ? null : "It starts when you log in to this computer."),
+      fact("Next daily session", v.next.text.replace(/^./, (c) => c.toUpperCase()), v.settings.timezone),
+      fact(v.run ? "This session" : "Last session", v.run ? `${v.run.liked} liked, ${v.run.passed} passed, ${v.run.asked} asked` : lastRun, v.run ? `since ${when(v.run.startedAt)}` : v.lastRun ? `${when(v.lastRun.startedAt)}: ${v.lastRun.why}` : null),
+      fact("Remembers people for", `${v.settings.retention_days} days`, "then forgets them for good"))),
+    h("section", { class: "panel stack" }, h("h2", { text: "Sites" }), h("div", {}, sites)),
+    h("section", { class: "panel stack" }, h("h2", { text: "Switches" }),
+      h("div", { class: "row" },
+        v.paused ? act("Resume", "resume") : act("Pause everything", "pause"),
+        act("Start a session now", "run"),
+        act("Look for messages now", "inbox"),
+        act("Review 5 of my own decisions", "review", { count: 5 }),
+        runCheck),
+      checkOut,
+      v.lastError ? h("p", { class: "small" }, h("strong", { text: "Last problem: " }), `${v.lastError.text} (${when(v.lastError.at)})`) : null),
+    h("section", { class: "panel stack" }, h("h2", { text: "What I said lately" }), msgs),
+    h("section", { class: "panel stack" }, h("details", {}, h("summary", { text: "The last lines of the log" }), logBox)),
+    h("p", {}, h("a", { href: "#setup" }, "Go through the setup again"))));
+  const [m, l] = await Promise.all([api("/api/messages"), api("/api/log")]);
+  msgs.replaceChildren(...(m.messages?.length ? m.messages.slice(0, 12).map((x) => h("div", { class: "msg" }, h("time", { datetime: x.at, text: when(x.at) }), x.text.replace(/^From your Wingman:\s*/, ""))) : [h("p", { class: "muted", text: "Nothing yet." })]));
+  logBox.textContent = (l.lines || []).join("\n") || "The log is empty.";
+}
+
+// ---- the setup wizard ---------------------------------------------------------------------------
+const STEPS = [
+  { id: "hello", title: "Hello. I am your Wingman.", lead: "I look through the profiles your dating site suggests, learn your taste from your answers, and bring you the matches with three reply ideas. You still do the talking." },
+  { id: "site", title: "Where do you date?", lead: "I work on the sites you switch on here, one after another, every evening." },
+  { id: "you", title: "You, and who you are looking for", lead: "A few quick choices. They go into your preferences page in plain sentences, and you can change every line later." },
+  { id: "starter", title: "Pick a starting point", lead: "Each one fills in a full preferences page with your answers in place, so you never face a blank page.", wide: true, skip: () => keepMine() },
+  { id: "flags", title: "Clear yes and clear no", lead: "Tick what fits and add your own. Each one becomes one line I read before every like or pass.", skip: () => keepMine() },
+  { id: "writing", title: "How you write", lead: "Your reply ideas will sound like you. This is used only for messages, never for picking.", skip: () => keepMine() },
+  { id: "when", title: "When should I look?", lead: "Once a day, at a person's pace: a random pause between profiles, never a burst." },
+  { id: "talk", title: "Where should I talk to you?", lead: "Questions and matches reach you here. Pick as many as you like." },
+  { id: "login", title: "Log in once", lead: "I use a browser of my own, separate from yours, so I never touch your everyday logins. You log in there once and it stays logged in." },
+  { id: "model", title: "Who does the thinking?", lead: "A language model reads each profile next to your preferences and your answers. Pick the one this computer has." },
+  { id: "look", title: "A last look", lead: "This is what I read before every like or pass. Change anything you like.", wide: true },
+  { id: "done", title: "You are set up", lead: "Now we practise, so I learn your taste." },
+];
+
+function keepMine() { return !!(S.ob?.prefs?.exists && S.wiz?.mode === "keep"); }
+function activeSteps() { return STEPS.filter((s) => !s.skip || !s.skip()); }
+
+async function leaveWizard(page) {
+  store.del("wizard");
+  S.ob = null;
+  S.wiz = null;
+  S.inWizard = false;
+  S.page = page;
+  history.replaceState(null, "", `#${page}`);
+  $("#app").replaceChildren();
+  await refreshNow(true);
+}
+
+async function wizard() {
+  S.inWizard = true;
+  if (!S.ob) {
+    $("#app").replaceChildren(h("main", { class: "locked" }, h("p", { class: "muted", text: "Loading the setup." })));
+    S.ob = await api("/api/onboarding");
+    if (!S.ob?.options) { $("#app").replaceChildren(h("main", { class: "locked" }, h("p", { text: S.ob?.text || "The setup could not load." }))); S.ob = null; return; }
+    if (!S.inWizard) return;
+    const saved = store.get("wizard");
+    S.wiz = saved && saved.v === 1 ? saved : { v: 1, step: "hello", ans: S.ob.answers, mode: S.ob.prefs.exists ? "keep" : "starter", text: null, edited: false };
+    if (!S.wiz.ans.talk?.length) S.wiz.ans.talk = ["desk"];
+  }
+  drawStep();
+}
+
+function saveWiz() { store.set("wizard", S.wiz); }
+
+function go(delta) {
+  const list = activeSteps();
+  let i = list.findIndex((s) => s.id === S.wiz.step);
+  if (i < 0) i = 0;
+  const next = list[Math.max(0, Math.min(list.length - 1, i + delta))];
+  S.wiz.step = next.id;
+  saveWiz();
+  drawStep();
+  window.scrollTo(0, 0);
+  $("#wiz-title")?.focus();
+}
+
+function chooseOptions(key) {
+  const sites = S.wiz.ans.sites;
+  return (S.ob.options[key]?.choices || []).filter((c) => !Array.isArray(c.sites) || c.sites.some((s) => sites.includes(s)));
+}
+
+function chips(key, { multiple = true, name = key } = {}) {
+  const a = S.wiz.ans;
+  const list = chooseOptions(key);
+  return h("div", { class: "chips", role: multiple ? "group" : "radiogroup", "aria-label": S.ob.options[key]?.question || key }, list.map((c) => {
+    const on = multiple ? (a[key] || []).includes(c.id) : a[key] === c.id;
+    return h("label", { class: "chip" },
+      h("input", { type: multiple ? "checkbox" : "radio", name, value: c.id, checked: on, on: { change: (e) => {
+        if (multiple) { const set = new Set(a[key] || []); if (e.target.checked) set.add(c.id); else set.delete(c.id); a[key] = [...set]; }
+        else a[key] = c.id;
+        saveWiz();
+        if (key === "green_flags") drawStep();
+      } } }),
+      h("span", { text: c.label }));
+  }));
+}
+
+function field(id, label, input, hint) {
+  return h("div", { class: "field" }, h("label", { for: id, text: label }), hint ? h("p", { class: "hint", text: hint }) : null, input);
+}
+
+function textInput(id, key, { placeholder = "", lines = false, rows = 3, list = false } = {}) {
+  const a = S.wiz.ans;
+  const value = list ? (a[key] || []).join("\n") : a[key] || "";
+  const props = { id, placeholder, value, on: { input: (e) => { a[key] = list ? e.target.value.split("\n") : e.target.value; saveWiz(); } } };
+  return lines ? h("textarea", { ...props, rows: String(rows) }) : h("input", { ...props, type: "text" });
+}
+
+function resultLine(id) { return h("p", { class: "result", id, "aria-live": "polite" }); }
+function showResult(id, r) {
+  const p = $(`#${id}`);
+  if (!p) return;
+  p.textContent = r.text || "";
+  p.className = `result ${r.ok === false || r.loggedIn === false ? "bad" : "ok"}`;
+}
+
+const STEP_BODY = {
+  hello() {
+    return h("div", { class: "stack-l" },
+      h("div", { class: "two" },
+        h("div", { class: "panel" }, h("h3", { text: "What I do" }), h("ul", { class: "does" },
+          h("li", { text: "Every evening I open the profiles your site suggests and read each one the way a friend who knows you would." }),
+          h("li", { text: "Until you agree with 9 of my last 10 picks, every decision waits for your answer." }),
+          h("li", { text: "Matches and messages reach you with three reply ideas. You pick one, or write your own." }),
+          h("li", { text: "I remember who was who for a few weeks, then forget them for good." }))),
+        h("div", { class: "panel" }, h("h3", { text: "What I never do" }), h("ul", { class: "never" },
+          h("li", { text: "Send a message you did not pick or write." }),
+          h("li", { text: "Write to anyone outside the dating site." }),
+          h("li", { text: "Post anything about your dating anywhere." }),
+          h("li", { text: "Put the people I see into your notes, your mission control's memory or git." }),
+          h("li", { text: "Work on a site whose terms forbid bots or automated use." })))),
+      h("p", { class: "muted", text: "The setup takes about ten minutes. You can go back to any page, and change everything later." }),
+      S.ob.onboarded ? null : h("p", {}, h("button", { class: "btn quiet", type: "button", on: { click: async () => { const r = await api("/api/onboarding/skip", {}); say(r.text); await leaveWizard("status"); } } }, "I am set up already, take me to the desk")));
+  },
+  site() {
+    const a = S.wiz.ans;
+    const sites = S.ob.detect.sites;
+    const own = sites.filter((s) => !s.builtin);
+    return h("div", { class: "stack-l" },
+      h("div", { class: "picks", role: "group", "aria-label": "Sites" }, sites.map((s) => h("label", { class: "pick" },
+        h("input", { type: "checkbox", value: s.id, disabled: !s.ok, checked: a.sites.includes(s.id) && s.ok, on: { change: (e) => { const set = new Set(a.sites); if (e.target.checked) set.add(s.id); else set.delete(s.id); a.sites = [...set]; saveWiz(); } } }),
+        h("span", { class: "pick-body" }, h("strong", { text: s.name }), h("span", { class: "hint", text: s.ok ? `${s.builtin ? "Built in" : "Added by you"}${s.about ? `. ${s.about}` : ""}${s.kind === "android" ? ". An Android app (experimental)" : ""}` : s.why }))))),
+      own.length ? null : h("p", { class: "hint", text: "You have not added a site of your own yet." }),
+      h("details", { class: "panel" },
+        h("summary", { text: "Another site?" }),
+        h("div", { class: "stack" },
+          h("p", {}, "Tell your mission control: ", h("q", { text: "Add <the site's name> to my Wingman." }), " Its coding helper follows the recipe that comes with the Wingman."),
+          h("p", { text: "It reads the site's current terms first. If they forbid bots, automation or AI use, it stops and tells you, and the Wingman never works there. Many big dating apps forbid it." }),
+          h("p", { text: "If the terms allow it, it builds a small adapter in your own mission control folder, checks it without liking or passing anyone, and it shows up on this page. A new site starts in practice." }))));
+  },
+  you() {
+    const o = S.ob.options;
+    const a = S.wiz.ans;
+    const parts = [];
+    if (S.ob.prefs.exists) {
+      parts.push(h("div", { class: "panel stack" },
+        h("h3", { text: "You already have a preferences page" }),
+        h("div", { class: "picks", role: "radiogroup", "aria-label": "Your preferences page" },
+          h("label", { class: "pick" }, h("input", { type: "radio", name: "mode", checked: S.wiz.mode === "keep", on: { change: () => { S.wiz.mode = "keep"; saveWiz(); drawStep(); } } }), h("span", { class: "pick-body" }, h("strong", { text: "Keep mine" }), h("span", { class: "hint", text: "Your page stays as it is. You see it once more at the end." }))),
+          h("label", { class: "pick" }, h("input", { type: "radio", name: "mode", checked: S.wiz.mode === "starter", on: { change: () => { S.wiz.mode = "starter"; saveWiz(); drawStep(); } } }), h("span", { class: "pick-body" }, h("strong", { text: "Start from a starter" }), h("span", { class: "hint", text: "A new page from your answers. Your old one is kept in the Wingman's private folder." }))))));
+      if (keepMine()) return h("div", { class: "stack-l" }, parts);
+    }
+    const ex = (o.me.examples || []).map((x) => h("button", { class: "btn small", type: "button", on: { click: () => { a.me = x; $("#me").value = x; saveWiz(); } } }, x));
+    parts.push(
+      field("me", o.me.question, textInput("me", "me", { placeholder: (o.me.examples || [])[0] || "" }), o.me.hint),
+      h("div", { class: "examples" }, h("span", { class: "hint", text: "Or take one:" }), ex),
+      h("div", { class: "field" }, h("span", { class: "label", text: o.looking_for.question }), chips("looking_for")),
+      field("looking-text", "Something more specific (optional)", textInput("looking-text", "looking_for_text", { placeholder: "for example: women and nonbinary people" })),
+      h("div", { class: "field" }, h("span", { class: "label", text: o.age_range.question }),
+        h("div", { class: "ages" },
+          h("input", { type: "number", min: "18", max: "120", value: String(a.age_range[0]), "aria-label": "Youngest", on: { input: (e) => { a.age_range[0] = Number(e.target.value); saveWiz(); } } }),
+          h("span", { text: "to" }),
+          h("input", { type: "number", min: "18", max: "120", value: String(a.age_range[1]), "aria-label": "Oldest", on: { input: (e) => { a.age_range[1] = Number(e.target.value); saveWiz(); } } }))),
+      h("div", { class: "field" }, h("span", { class: "label", text: o.where.question }), chips("where", { multiple: false })),
+      field("where-text", "Or name places (optional)", textInput("where-text", "where_text", { placeholder: "for example: Germany, Austria, Switzerland" })));
+    return h("div", { class: "stack-l" }, parts);
+  },
+  starter() {
+    const a = S.wiz.ans;
+    const preview = h("div", { id: "preview" }, h("p", { class: "muted", text: "Loading the preview." }));
+    const show = async () => {
+      const r = await api("/api/onboarding/preview", { answers: a });
+      preview.replaceChildren(paper(r.text || ""));
+    };
+    const cards = h("div", { class: "picks", role: "radiogroup", "aria-label": "Starters" }, S.ob.starters.map((s) => h("label", { class: "pick" },
+      h("input", { type: "radio", name: "starter", value: s.id, checked: a.starter === s.id, on: { change: () => { a.starter = s.id; S.wiz.edited = false; saveWiz(); show(); } } }),
+      h("span", { class: "pick-body" }, h("strong", { text: s.title }), h("span", { class: "hint", text: s.pitch })))));
+    show();
+    return h("div", { class: "two-wide" }, cards, h("div", { class: "stack" }, h("h3", { text: "Your page, as it would start" }), preview));
+  },
+  flags() {
+    const o = S.ob.options;
+    const a = S.wiz.ans;
+    return h("div", { class: "stack-l" },
+      h("div", { class: "field" }, h("span", { class: "label", text: o.green_flags.question }), chips("green_flags")),
+      (a.green_flags || []).includes("interests") ? field("interests", "Which interests?", textInput("interests", "interests", { placeholder: "for example: building worlds, horror films, dancing" })) : null,
+      field("green-text", "Your own (one per line)", textInput("green-text", "green_text", { lines: true, list: true, rows: 3, placeholder: "Someone who laughs at their own jokes" })),
+      h("div", { class: "field" }, h("span", { class: "label", text: o.deal_breakers.question }), chips("deal_breakers")),
+      field("deal-text", "Your own (one per line)", textInput("deal-text", "deal_text", { lines: true, list: true, rows: 3, placeholder: "Someone who only plays at 4 in the morning" })));
+  },
+  writing() {
+    const o = S.ob.options;
+    const a = S.wiz.ans;
+    return h("div", { class: "stack-l" },
+      h("div", { class: "field" }, h("span", { class: "label", text: o.tone.question }),
+        h("div", { class: "picks", role: "radiogroup", "aria-label": o.tone.question }, chooseOptions("tone").map((c) => h("label", { class: "pick" },
+          h("input", { type: "radio", name: "tone", value: c.id, checked: a.tone === c.id, on: { change: () => { a.tone = c.id; saveWiz(); } } }),
+          h("span", { class: "pick-body" }, h("strong", { text: c.label }), h("span", { class: "hint", text: c.line })))))),
+      field("sample", "A message you sent and liked (optional)", textInput("sample", "sample", { lines: true, rows: 3, placeholder: "Paste it here" }), "I copy how it sounds, never the words."),
+      field("language", o.language.question, textInput("language", "language")));
+  },
+  when() {
+    const a = S.wiz.ans;
+    let zones = [];
+    try { zones = Intl.supportedValuesOf("timeZone"); } catch { zones = []; }
+    const here = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!a.timezone) a.timezone = here || S.ob.detect.timezone;
+    if (!zones.includes(a.timezone)) zones = [a.timezone, ...zones];
+    return h("div", { class: "stack-l" },
+      field("daily", "The time of the daily session", h("input", { type: "time", id: "daily", value: a.daily_start, on: { input: (e) => { a.daily_start = e.target.value; saveWiz(); } } }), "Your computer has to be on then. While we practise, every profile waits for your answer."),
+      field("tz", "Your time zone", h("select", { id: "tz", on: { change: (e) => { a.timezone = e.target.value; saveWiz(); } } }, zones.map((z) => h("option", { value: z, selected: z === a.timezone ? "selected" : null, text: z.replace(/_/g, " ") }))), here ? `This computer says ${here.replace(/_/g, " ")}.` : null),
+      field("keep", "How many days I remember people", h("input", { type: "number", id: "keep", min: "1", max: "3650", value: String(a.retention_days), on: { input: (e) => { a.retention_days = Number(e.target.value); saveWiz(); } } }), "After that I delete everyone I saw: their profile, their picture, your answers about them. Six weeks is a good start."));
+  },
+  talk() {
+    const a = S.wiz.ans;
+    const d = S.ob.detect;
+    const toggle = (ch) => (e) => { const set = new Set(a.talk); if (e.target.checked) set.add(ch); else set.delete(ch); a.talk = [...set]; saveWiz(); };
+    const choice = (ch, title, desc, { disabled = false, extra = null } = {}) => h("label", { class: "pick" },
+      h("input", { type: "checkbox", value: ch, disabled, checked: a.talk.includes(ch) && !disabled, on: { change: toggle(ch) } }),
+      h("span", { class: "pick-body" }, h("strong", { text: title }), h("span", { class: "hint", text: desc }), extra));
+    const testNote = h("span", { class: "row" }, h("button", { class: "btn small", type: "button", on: { click: async (e) => { e.preventDefault(); const r = await api("/api/notify/test", {}); showResult("notify-result", r); } } }, "Show a test notification"));
+    const testTg = h("span", { class: "row" }, h("button", { class: "btn small", type: "button", on: { click: async (e) => { e.preventDefault(); showResult("tg-result", { ok: true, text: "Sending." }); const r = await api("/api/telegram/test", {}); showResult("tg-result", r); } } }, "Send a test message"));
+    const assistant = d.assistant.hermes || d.assistant.claude;
+    return h("div", { class: "stack-l" },
+      h("div", { class: "picks" },
+        choice("desk", "This page, the Wingman's desk", "Questions, matches and reply ideas, with the picture of each profile."),
+        choice("desktop", "Notifications on this computer", d.notifications.ok ? "A short note when a question or a match waits. It never shows a name or a picture, so it is safe on a shared screen." : `Not available here: ${d.notifications.how}.`, { disabled: !d.notifications.ok }),
+        d.telegram.found ? choice("telegram", "Telegram", "Through your assistant's own Telegram bot, on your phone.") : null),
+      d.notifications.ok ? h("div", { class: "stack" }, testNote, resultLine("notify-result")) : null,
+      d.telegram.found ? h("div", { class: "stack" }, testTg, resultLine("tg-result")) : h("p", { class: "hint", text: "Telegram is not set up for your assistant on this computer. When your mission control runs on a server with Telegram, the questions can arrive there." }),
+      h("div", { class: `note ${assistant ? "ok" : ""}` }, h("p", {}, h("strong", { text: "Your mission control's chat: " }), assistant
+        ? `connected (${[d.assistant.hermes ? "Hermes" : null, d.assistant.claude ? "Claude Code" : null].filter(Boolean).join(" and ")}). It sees each open question, so a short "agree" there lands in the right place.`
+        : "not connected on this computer. The setup command connects it when it finds Hermes or Claude Code.")));
+  },
+  login() {
+    const a = S.wiz.ans;
+    const chosen = S.ob.detect.sites.filter((s) => a.sites.includes(s.id) && s.ok);
+    const browserSites = chosen.filter((s) => s.kind === "browser");
+    const parts = [];
+    if (a.browser === "bridge" || !S.ob.detect.desktop) {
+      parts.push(field("bridge", "The address of the browser bridge", textInput("bridge", "bridge", { placeholder: "http://192.168.1.20:3007" }), "This machine has no screen, so the Wingman uses a Chrome Agent Bridge on a computer that has one. You log in there."));
+      if (!S.ob.detect.desktop && a.browser !== "bridge") { a.browser = "bridge"; saveWiz(); }
+    }
+    if (!browserSites.length) parts.push(h("p", { class: "muted", text: "None of your sites needs a browser login here." }));
+    for (const s of browserSites) {
+      const rid = `login-${s.id}`;
+      parts.push(h("div", { class: "panel stack" },
+        h("h3", { text: s.name }),
+        h("div", { class: "row" },
+          h("button", { class: "btn primary", type: "button", on: { click: async () => { showResult(rid, { ok: true, text: "Opening." }); showResult(rid, await openBrowser(s.id)); } } }, "Open the Wingman's browser"),
+          h("button", { class: "btn", type: "button", on: { click: async () => { showResult(rid, { ok: true, text: "Checking." }); showResult(rid, await api("/api/browser/session", { site: s.id })); } } }, "Check my login")),
+        resultLine(rid)));
+    }
+    parts.push(h("p", { class: "hint", text: "You can do this later too: the status page has the same button." }));
+    return h("div", { class: "stack-l" }, parts);
+  },
+  model() {
+    const a = S.wiz.ans;
+    const lanes = S.ob.detect.lanes;
+    const nameBox = h("input", { type: "text", id: "model-name", value: a.model.name || "", placeholder: a.model.lane === "openai" ? "for example: gpt-4.1-mini" : "leave empty for its own default", on: { input: (e) => { a.model.name = e.target.value.trim(); saveWiz(); } } });
+    return h("div", { class: "stack-l" },
+      h("div", { class: "picks", role: "radiogroup", "aria-label": "The model" }, lanes.map((l) => h("label", { class: "pick" },
+        h("input", { type: "radio", name: "lane", value: l.lane, checked: a.model.lane === l.lane, on: { change: () => { a.model = { lane: l.lane, name: l.name }; nameBox.value = l.name; saveWiz(); } } }),
+        h("span", { class: "pick-body" }, h("strong", { text: l.label }), h("span", { class: "hint", text: l.found ? `Found: ${l.where}` : l.lane === "openai" ? `Not set up: ${l.where}. Put the key in the Wingman's private worker.env.` : "Not found on this computer." }))))),
+      field("model-name", "The model's name", nameBox, "Claude Code uses sonnet unless you name another one."),
+      h("div", { class: "stack" },
+        h("button", { class: "btn", type: "button", on: { click: async (e) => { e.target.disabled = true; showResult("model-result", { ok: true, text: "Asking. This makes one small call and can take half a minute." }); showResult("model-result", await api("/api/model/test", a.model)); e.target.disabled = false; } } }, "Test it"),
+        resultLine("model-result")),
+      h("p", { class: "hint", text: "Nothing is sent to the model until the first session, and the test makes one tiny call only when you press it." }));
+  },
+  look() {
+    const a = S.wiz.ans;
+    const box = h("textarea", { class: "doc", id: "final", "aria-label": "Your preferences", on: { input: (e) => { S.wiz.text = e.target.value; S.wiz.edited = true; saveWiz(); } } });
+    const fill = async () => {
+      if (S.wiz.edited && S.wiz.text) { box.value = S.wiz.text; return; }
+      if (keepMine()) { box.value = S.ob.prefs.text; S.wiz.text = box.value; return; }
+      box.value = "Loading.";
+      const r = await api("/api/onboarding/preview", { answers: a });
+      box.value = r.text || "";
+      S.wiz.text = box.value;
+      saveWiz();
+    };
+    fill();
+    return h("div", { class: "prefs-grid" },
+      h("div", { class: "stack" }, box, h("p", { class: "hint", text: keepMine() ? "Your own page. If you change it here, the old text is kept in the Wingman's private folder." : "Saved as routines/wingman/preferences.md in your mission control." })),
+      h("div", { class: "watch-grid" },
+        field("watch-names", "Names to watch (optional)", textInput("watch-names", "watch", { lines: true, list: true, rows: 4, placeholder: "One name per line" }), "When a profile carries one of these names, I stop before liking or passing and ask you."),
+        S.ob.watch?.length ? h("p", { class: "hint", text: `Already on your watch list: ${S.ob.watch.join(", ")}` }) : null));
+  },
+  done() {
+    const rule = S.view?.rule || { agree: 9, of: 10 };
+    return h("div", { class: "stack-l" },
+      h("ol", { class: "panel stack" },
+        h("li", { text: "I show you a profile and say what I would do, and why." }),
+        h("li", { text: "You agree or disagree, and say why in a few words. A reason teaches me more than a no." }),
+        h("li", { text: `Once you agree with ${rule.agree} of my last ${rule.of}, I start picking on my own.` })),
+      h("p", { class: "muted", text: "The first round has ten profiles. Each like or pass happens only after your answer." }));
+  },
+};
+
+async function finishSetup(btn) {
+  btn.disabled = true;
+  const final = $("#final")?.value;
+  const mode = S.ob.prefs.exists ? S.wiz.mode : "starter";
+  const r = await api("/api/onboarding/save", { answers: S.wiz.ans, mode, text: final && final !== "Loading." ? final : null });
+  btn.disabled = false;
+  if (!r.ok) { say(r.text); return; }
+  say(r.text);
+  S.wiz.saved = true;
+  go(1);
+}
+
+async function startFirstRound(btn) {
+  btn.disabled = true;
+  const r = await api("/api/train", { count: 10 });
+  say(r.text);
+  store.set("firstRound", true);
+  await leaveWizard("practice");
+}
+
+function drawStep() {
+  const list = activeSteps();
+  let i = list.findIndex((s) => s.id === S.wiz.step);
+  if (i < 0) { i = 0; S.wiz.step = list[0].id; }
+  const step = list[i];
+  const body = STEP_BODY[step.id]();
+  const back = i > 0 && step.id !== "done" ? h("button", { class: "btn", type: "button", on: { click: () => go(-1) } }, "Back") : h("span");
+  let next;
+  if (step.id === "look") next = h("button", { class: "btn primary", type: "button", on: { click: (e) => finishSetup(e.currentTarget) } }, "Save and finish");
+  else if (step.id === "done") next = h("span", { class: "row" },
+    h("button", { class: "btn quiet", type: "button", on: { click: () => leaveWizard("status") } }, "Not now"),
+    h("button", { class: "btn primary", type: "button", on: { click: (e) => startFirstRound(e.currentTarget) } }, "Start my first practice round"));
+  else next = h("button", { class: "btn primary", type: "button", on: { click: () => {
+    if (step.id === "site" && !S.wiz.ans.sites.length) { say("Switch on at least one site."); return; }
+    if (step.id === "talk" && !S.wiz.ans.talk.length) { say("Pick at least one place where I can reach you."); return; }
+    go(1);
+  } } }, step.id === "hello" ? "Let's set it up" : "Continue");
+  const wide = !!step.wide;
+  $("#app").replaceChildren(h("div", { class: "wizard" },
+    h("header", { class: "wiz-top" },
+      h("span", { class: "brand" }, mark(), h("span", {}, h("b", { text: "Wingman" }), h("small", { text: "Setup" }))),
+      h("span", { class: "row" },
+        h("span", { class: "wiz-step", text: `Step ${i + 1} of ${list.length}` }),
+        S.view?.onboarded && step.id !== "done" ? h("button", { class: "btn quiet small", type: "button", on: { click: () => leaveWizard("status") } }, "Close") : null)),
+    h("div", { class: "wiz-bar", role: "progressbar", "aria-valuemin": "1", "aria-valuemax": String(list.length), "aria-valuenow": String(i + 1), "aria-label": "Setup progress" }, h("i", { id: "wiz-progress" })),
+    h("main", { class: `wiz-body ${wide ? "wide" : ""}` },
+      step.id === "hello" ? mark("mark-big") : null,
+      h("h1", { id: "wiz-title", tabindex: "-1", text: step.title }),
+      h("p", { class: "wiz-lead", text: step.lead }),
+      h("div", { class: "wiz-content" }, body)),
+    h("footer", { class: `wiz-foot ${wide ? "wide" : ""}` }, h("div", { class: "inner" }, back, next))));
+  $("#wiz-progress").style.width = `${Math.round(((i + 1) / list.length) * 100)}%`;
+  $("#app").removeAttribute("aria-busy");
+}
+
+// ---- keeping up to date -------------------------------------------------------------------------
+async function refreshNow(full = false) {
+  const visible = document.visibilityState === "visible";
+  const v = await api(`/api/state${visible ? "?visible=1" : ""}`);
+  if (!v || !v.now) {
+    if (v?.offline && !S.offline) { S.offline = true; say(v.text); }
+    return;
+  }
+  S.offline = false;
+  const first = !S.view;
+  S.view = v;
+  if (S.inWizard && !full) return;
+  if (first || full) { render(); return; }
+  if (!v.onboarded) { $("#app").replaceChildren(); render(); return; }
+  badges();
+  renderPage(false);
+}
+
+function poll() {
+  const visible = document.visibilityState === "visible";
+  refreshNow().finally(() => setTimeout(poll, visible ? 4000 : 15000));
+}
+
+window.addEventListener("hashchange", () => {
+  const id = location.hash.slice(1) || "practice";
+  S.page = PAGES.some(([p]) => p === id) || id === "setup" ? id : "practice";
+  if (S.page !== "practice") store.del("firstRound");
+  if (S.inWizard) return;
+  if (S.page === "setup") $("#app").replaceChildren();
+  render();
+  $("#main")?.focus({ preventScroll: true });
+});
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") refreshNow(); });
+
+S.page = (location.hash.slice(1) || "practice");
+if (!PAGES.some(([p]) => p === S.page) && S.page !== "setup") S.page = "practice";
+poll();
+</script>
+</body>
+</html>

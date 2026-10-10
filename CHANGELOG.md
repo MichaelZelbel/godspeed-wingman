@@ -1,0 +1,33 @@
+# Changelog
+
+## 0.5.0 (2026-10-10)
+
+The first public release. The Wingman is now an add-on that anyone with Godspeed Mission Control
+can add.
+
+- **One line to add it:** `install.ps1` for Windows, `install.sh` for macOS and Linux, and steps for
+  assistants (`INSTALL-FOR-ASSISTANTS.md`). Running the line again is the update.
+- **Runs on your own computer,** no server needed: a scheduled task on Windows, a LaunchAgent on
+  macOS, a systemd user service on a Linux desktop, with its own Chrome or Edge.
+- **The desk:** a page on your computer (`http://127.0.0.1:47860`) for practice, matches and reply
+  ideas, "who was that?", your preferences and the status. Notifications on Windows, macOS and
+  Linux.
+- **The setup questions,** in the browser or the terminal, with four starters so nobody faces a
+  blank preferences page, and a guided first practice round.
+- **Several sites.** Flirtual is the first site adapter, not the only one. Practice and autopilot
+  are per site. Every site records what its terms say about bots and AI, and the Wingman refuses a
+  site whose terms forbid it.
+- **Adding a site:** `godspeed-wingman site list | new | terms | check | use | off | login |
+  network`, a template, and the recipe `wingman-add-site` for a coding helper. `site check` reads
+  only and cannot like, pass or send.
+- **Android (experimental):** an emulator for services that only have an app
+  (`godspeed-wingman android setup`).
+- **Models:** Claude Code, Codex, or any OpenAI-compatible model.
+- **Speaks of everyone neutrally:** the messages, the prompts and the docs assume nothing about who
+  you are or whom you like.
+- **Private by default:** the retention is 42 days; everything about other people stays in a
+  private folder outside git.
+
+## 0.1 to 0.4
+
+A private add-on, used by its author on a server through Telegram, on one site.

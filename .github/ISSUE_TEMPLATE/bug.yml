@@ -1,0 +1,60 @@
+name: Something does not work
+description: The Wingman did something wrong, or did not do what it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for telling us. Please leave out everything about real people: no names, profile
+        links, screenshots of profiles or messages. Invent a name if you need one (Mara, Juno, Sam).
+        A security problem never goes here: see SECURITY.md.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: What the Wingman said
+      description: The output of `godspeed-wingman status` and `godspeed-wingman check`, and any error. Remove names first.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`godspeed-wingman version`"
+      placeholder: "0.5.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where it runs
+      options:
+        - Windows
+        - macOS
+        - Linux desktop
+        - Linux server (with the Chrome Agent Bridge)
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      description: "`node --version`, or the Node the installer named"
+  - type: input
+    id: site
+    attributes:
+      label: Site
+      description: Which dating site, if it is about one.
+      placeholder: Flirtual
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This report holds no real person's name, profile, picture or message.
+          required: true
