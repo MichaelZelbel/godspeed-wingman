@@ -1,8 +1,9 @@
 // `godspeed-wingman site ...`: making a site from the template, recording its terms, refusing to
-// switch on a site whose terms were never read or forbid it, a new site starting in practice even
-// when another runs on autopilot, and the check: offline (the contract, the folder's own tests) and
-// live but read only (a pretend site, an adapter that tries to change something while reading is
-// stopped and reported). Everyone here is invented.
+// switch on a site whose terms were never read, switching on a site whose terms forbid it only by
+// the person's own choice (recorded with the day, shown in site list, status and check), a new site
+// starting in practice even when another runs on autopilot, and the check: offline (the contract,
+// the folder's own tests) and live but read only (a pretend site, an adapter that tries to change
+// something while reading is stopped and reported). Everyone here is invented.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -13,7 +14,8 @@ import { tempMc, setMode, makeWorker, user } from "./helpers.mjs";
 import { newSite, recordTerms, useSite, offSite, siteRows, enabledSites } from "../lib/sites/manage.mjs";
 import { checkSite, siteNetwork, siteLogin, profileProblems } from "../lib/sites/check.mjs";
 import { routinePaths, statePaths } from "../lib/core/paths.mjs";
-import { loadSettings } from "../lib/core/settings.mjs";
+import { loadSettings, wallClock } from "../lib/core/settings.mjs";
+import { listSites } from "../lib/sites/index.mjs";
 import { readState, siteState } from "../lib/core/state.mjs";
 import { every } from "../lib/commands/site.mjs";
 import { flagSpec, loadCommands } from "../lib/commands/index.mjs";
@@ -83,15 +85,73 @@ test("site terms records the check with today's date; a verdict that is not sile
   assert.ok(Object.keys(r.meta).indexOf("terms") === Object.keys(r.meta).indexOf("can") - 1, "terms sits right before can");
 });
 
-test("a site is never switched on before its terms are read, nor when they forbid it", () => {
+const QUESTION = 'The terms of Kind Meet forbid bots, automation or AI use (read on 2026-10-10): "You may not use bots, scripts or other automated means." The site may suspend or close an account that uses a helper like the Wingman; if you want it anyway, that is your choice: godspeed-wingman site use kindmeet --accept-terms-risk';
+const settingsOf = (mc) => JSON.parse(fs.readFileSync(routinePaths(mc).settings, "utf8"));
+
+test("a site is never switched on before its terms are read; terms that forbid it need the person's own choice, recorded with the day", () => {
   const { mc } = tempMc();
   const routine = routinePaths(mc);
   kindMeet(mc, { terms: false });
   assert.throws(() => useSite({ mcDir: mc, routine, id: "kindmeet" }), /^Error: Nobody has checked yet whether the terms of Kind Meet allow a helper like the Wingman, so it cannot be switched on\. Read them and record what they say: godspeed-wingman site terms kindmeet/);
+  assert.throws(() => useSite({ mcDir: mc, routine, id: "kindmeet", acceptRisk: true, day: "2026-10-11" }), /Nobody has checked yet/, "the choice is about terms someone read, never instead of reading them");
   recordTerms({ mcDir: mc, id: "kindmeet", ...TERMS, verdict: "forbidden", quotes: ["You may not use bots, scripts or other automated means."] });
-  assert.throws(() => useSite({ mcDir: mc, routine, id: "kindmeet" }), /The terms of Kind Meet forbid bots, automation or AI use \(read on 2026-10-10\), so the Wingman does not work there\. It cannot be switched on\./);
+  // Without the choice: what the terms say, and how to go ahead. No "cannot".
+  assert.throws(() => useSite({ mcDir: mc, routine, id: "kindmeet" }), (e) => e.message === QUESTION);
   assert.throws(() => useSite({ mcDir: mc, routine, id: "nowhere" }), /knows no site called nowhere/);
   assert.deepEqual(loadSettings(routine.settings).sites, ["flirtual"], "nothing changed");
+  assert.equal(settingsOf(mc).terms_risk_accepted, undefined);
+  // With it: on, and the choice kept with the day.
+  const r = useSite({ mcDir: mc, routine, id: "kindmeet", acceptRisk: true, day: "2026-10-11" });
+  assert.deepEqual([r.changed, r.chosenOn, r.sites], [true, "2026-10-11", ["flirtual", "kindmeet"]]);
+  assert.deepEqual(settingsOf(mc).terms_risk_accepted, { kindmeet: "2026-10-11" });
+  assert.deepEqual(loadSettings(routine.settings).terms_risk_accepted, { kindmeet: "2026-10-11" });
+  const k = listSites({ mcDir: mc }).find((s) => s.id === "kindmeet");
+  assert.deepEqual([k.ok, k.chosenOn], [true, "2026-10-11"]);
+  // Off takes the choice back: switching it on again asks again.
+  const off = offSite({ mcDir: mc, routine, id: "kindmeet" });
+  assert.deepEqual([off.changed, off.forgot, off.sites], [true, true, ["flirtual"]]);
+  assert.deepEqual(settingsOf(mc).terms_risk_accepted, {});
+  assert.throws(() => useSite({ mcDir: mc, routine, id: "kindmeet" }), (e) => e.message === QUESTION);
+});
+
+test("terms that do not forbid it need no choice, and none is recorded for them", () => {
+  const { mc } = tempMc();
+  const routine = routinePaths(mc);
+  kindMeet(mc);
+  const r = useSite({ mcDir: mc, routine, id: "kindmeet", acceptRisk: true, day: "2026-10-11" });
+  assert.deepEqual([r.changed, r.chosenOn], [true, null]);
+  assert.equal(settingsOf(mc).terms_risk_accepted, undefined);
+  assert.equal(listSites({ mcDir: mc }).find((s) => s.id === "kindmeet").chosenOn, null);
+});
+
+test("site use --accept-terms-risk: recorded with today's date, shown in site list, status and check", async () => {
+  const { mc, state } = tempMc({ browser: "bridge", bridge: "http://127.0.0.1:9" });
+  kindMeet(mc, { terms: false });
+  recordTerms({ mcDir: mc, id: "kindmeet", ...TERMS, verdict: "forbidden", quotes: ["You may not use bots, scripts or other automated means."] });
+  const args = ["--godspeed", mc, "--state", state];
+  const no = await cli(["site", "use", "kindmeet", ...args]);
+  assert.equal(no.code, 1);
+  assert.equal(no.err, QUESTION);
+  assert.doesNotMatch(no.err + no.out, /cannot be switched on/);
+  const yes = await cli(["site", "use", "kindmeet", "--accept-terms-risk", ...args]);
+  assert.equal(yes.code, 0, yes.err);
+  const day = wallClock(new Date(), "UTC").day;
+  assert.match(yes.out, new RegExp(`^Kind Meet is switched on, by your choice \\(recorded ${day}\\), although its terms forbid automated use\\. The Wingman works there in the daily session, after Flirtual\\.`));
+  assert.match(yes.out, /It starts in practice/);
+  assert.deepEqual(settingsOf(mc).terms_risk_accepted, { kindmeet: day });
+  const shown = `terms forbid automated use; on by your choice \\(${day}\\)`;
+  const list = await cli(["site", "list", ...args]);
+  assert.match(list.out, new RegExp(`kindmeet +Kind Meet +website +your own +terms forbidden, read 2026-10-10 +ON, practice\\n +${shown}`));
+  const st = await cli(["status", ...args]);
+  assert.match(st.out, new RegExp(`^Kind Meet: ${shown}\\.$`, "m"));
+  const ck = await cli(["check", ...args]);
+  assert.match(ck.out, new RegExp(`^ {2}NOTE site Kind Meet: ${shown}$`, "m"));
+  assert.doesNotMatch(ck.out, /FAIL site Kind Meet/);
+  const sc = await cli(["site", "check", "kindmeet", "--offline", ...args]);
+  assert.match(sc.out, new RegExp(`NOTE ${shown}; read on 2026-10-10 \\(https://kindmeet\\.example/terms\\)`));
+  assert.equal((await cli(["site", "use", "kindmeet", "--accept-terms-risk", ...args])).out, "Kind Meet is already switched on.");
+  const off = await cli(["site", "off", "kindmeet", ...args]);
+  assert.match(off.out, /Your choice to use it although its terms forbid automated use is taken back; switching it on again asks again\./);
 });
 
 test("site use and site off edit only settings.sites; a new site starts in practice while another is on autopilot", async () => {
@@ -122,15 +182,36 @@ test("site use and site off edit only settings.sites; a new site starts in pract
   assert.deepEqual(loadSettings(routine.settings).sites, [], "an empty list is kept empty");
 });
 
-test("site terms forbidden switches the site off at once", async () => {
+const FORBID = ["site", "terms", "kindmeet", "--verdict", "forbidden", "--url", "https://kindmeet.example/terms", "--quote", "You", "may", "not", "use", "bots."];
+
+test("site terms forbidden on a site that is on never switches it off: it pauses there and asks", async () => {
   const { mc, state } = tempMc();
   kindMeet(mc);
   useSite({ mcDir: mc, routine: routinePaths(mc), id: "kindmeet" });
-  const r = await cli(["site", "terms", "kindmeet", "--verdict", "forbidden", "--url", "https://kindmeet.example/terms", "--quote", "You", "may", "not", "use", "bots.", "--godspeed", mc, "--state", state]);
+  const r = await cli([...FORBID, "--godspeed", mc, "--state", state]);
   assert.equal(r.code, 0, r.err);
-  assert.match(r.out, /The Wingman will not work on Kind Meet, so it is switched off\. That is the end of it for this site\./);
-  assert.deepEqual(enabledSites(routinePaths(mc).settings), ["flirtual"]);
+  assert.match(r.out, /Kind Meet is switched on, and its terms now forbid automated use, so the Wingman pauses there until you decide\. Keep it on anyway: godspeed-wingman site use kindmeet --accept-terms-risk\. Switch it off: godspeed-wingman site off kindmeet$/);
+  assert.deepEqual(enabledSites(routinePaths(mc).settings), ["flirtual", "kindmeet"], "not switched off behind the person's back");
+  assert.equal(listSites({ mcDir: mc }).find((s) => s.id === "kindmeet").needsChoice, true, "and not used until they answer");
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(sitesDir(mc), "kindmeet", "site.json"), "utf8")).terms.quotes, ["You may not use bots."]);
+  // Their answer: keep it on.
+  const keep = await cli(["site", "use", "kindmeet", "--accept-terms-risk", "--godspeed", mc, "--state", state]);
+  assert.match(keep.out, /^Kind Meet stays on, by your choice \(recorded \d{4}-\d{2}-\d{2}\), although its terms forbid automated use\.$/);
+  // A later reading that still forbids it keeps their choice and says so.
+  const again = await cli([...FORBID, "--godspeed", mc, "--state", state]);
+  assert.match(again.out, /You chose on \d{4}-\d{2}-\d{2} to use Kind Meet although its terms forbid automated use, so it stays on\. To stop: godspeed-wingman site off kindmeet$/);
+  // Terms that no longer forbid it need no choice any more; a later ban asks again.
+  await cli(["site", "terms", "kindmeet", "--verdict", "silent", "--url", "https://kindmeet.example/terms", "--godspeed", mc, "--state", state]);
+  assert.deepEqual(settingsOf(mc).terms_risk_accepted, {});
+});
+
+test("site terms forbidden on a site that is off says the risk and how to go ahead, and builds on", async () => {
+  const { mc, state } = tempMc();
+  kindMeet(mc, { terms: false });
+  const r = await cli([...FORBID, "--godspeed", mc, "--state", state]);
+  assert.equal(r.code, 0, r.err);
+  assert.match(r.out, /^Recorded for Kind Meet: the terms are forbidden \(read \d{4}-\d{2}-\d{2}\)\.\nThe site may suspend or close an account that uses a helper like the Wingman\. If you want it anyway, that is your choice: build it as usual \(godspeed-wingman site check kindmeet\), then switch it on with godspeed-wingman site use kindmeet --accept-terms-risk$/);
+  assert.doesNotMatch(r.out, /end of it|will not work/);
 });
 
 test("--url and --quote may be given once per page and once per sentence", async () => {
@@ -250,7 +331,7 @@ test("an adapter that changes something while reading is stopped by the guard, a
   assert.match(fails(out)[0], /^FAIL queue\(\) tried to change something: .*The check is read-only, so it refused POST https:\/\/kindmeet\.example\/api\/people\/u_test_002\/like\. A reading method must never like, pass, skip or send\.$/);
 });
 
-test("the live check asks for the login, and never runs for terms that forbid it or were never read", async () => {
+test("the live check asks for the login, never runs for terms that were never read, and runs for terms that forbid it (the person decided to build it)", async () => {
   const { mc, state } = tempMc();
   kindMeet(mc);
   const loggedOut = fakePage({ routes: () => ({ status: 401, body: { error: "login" } }) });
@@ -259,11 +340,20 @@ test("the live check asks for the login, and never runs for terms that forbid it
   await checkSite({ id: "kindmeet", mcDir: mc, settings, paths: statePaths(state), out, deps: { runTests: async () => ({ ran: true, ok: true, summary: "ok" }), browser: async () => loggedOut.driver } });
   assert.deepEqual(fails(out), ["FAIL not logged into Kind Meet: log in once with godspeed-wingman site login kindmeet (the Wingman's own browser opens at https://kindmeet.example)"]);
   recordTerms({ mcDir: mc, id: "kindmeet", ...TERMS, verdict: "forbidden", quotes: ["No bots."] });
-  let asked = 0;
+  const page = kindMeetPage();
   const out2 = quiet();
-  await checkSite({ id: "kindmeet", mcDir: mc, settings, paths: statePaths(state), out: out2, deps: { browser: async () => { asked++; return loggedOut.driver; } } });
-  assert.equal(asked, 0, "no browser was even opened");
-  assert.match(fails(out2)[0], /forbid bots, automation or AI use .* Nothing more is checked, and the Wingman is not built or used there\./);
+  const r2 = await checkSite({ id: "kindmeet", mcDir: mc, settings, paths: statePaths(state), out: out2, deps: { runTests: async () => ({ ran: true, ok: true, summary: "ok" }), browser: async () => page.driver, wait: async () => {} } });
+  assert.equal(r2.failed, 0, out2.lines.join("\n"));
+  assert.ok(out2.lines.includes("NOTE terms: forbidden, read on 2026-10-10 (https://kindmeet.example/terms). The Wingman works there only by your own choice: godspeed-wingman site use kindmeet --accept-terms-risk"), out2.lines.join("\n"));
+  assert.match(out2.lines.at(-1), /^All checks passed\. Switch it on with: godspeed-wingman site use kindmeet --accept-terms-risk \(its terms forbid automated use, so that is your choice\)$/);
+  assert.deepEqual(page.changes, [], "still read only");
+  const { terms, ...noTerms } = JSON.parse(fs.readFileSync(path.join(sitesDir(mc), "kindmeet", "site.json"), "utf8"));
+  fs.writeFileSync(path.join(sitesDir(mc), "kindmeet", "site.json"), JSON.stringify(noTerms));
+  let asked = 0;
+  const out3 = quiet();
+  await checkSite({ id: "kindmeet", mcDir: mc, settings, paths: statePaths(state), out: out3, deps: { runTests: async () => ({ ran: true, ok: true, summary: "ok" }), browser: async () => { asked++; return loggedOut.driver; } } });
+  assert.equal(asked, 0, "no browser is opened for terms nobody read");
+  assert.match(fails(out3)[0], /terms: not checked yet/);
 });
 
 test("an Android adapter that taps Like while reading is stopped before the tap reaches the emulator", async () => {

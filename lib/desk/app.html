@@ -789,6 +789,7 @@ async function statusPage(main) {
     h("span", { class: `tag ${s.mode === "auto" ? "auto" : "practice"}`, text: s.mode === "auto" ? "Autopilot" : "Practice" }),
     h("span", { class: "muted small", text: s.mode === "auto" ? "likes and passes on its own" : `${s.agreed} of the last ${s.of} agreed, autopilot at ${v.rule.agree} of ${v.rule.of}` }),
     s.problem ? h("span", { class: "small", text: s.problem }) : null,
+    s.note ? h("span", { class: "muted small", text: s.note }) : null,
     s.kind === "browser" ? h("span", { class: "row" },
       s.loggedOutAt ? h("span", { class: "tag", text: "Logged out" }) : null,
       h("button", { class: "btn small", type: "button", on: { click: () => openBrowser(s.id) } }, "Open the Wingman's browser")) : null));
@@ -952,7 +953,7 @@ const STEP_BODY = {
           h("li", { text: "Write to anyone outside the dating site." }),
           h("li", { text: "Post anything about your dating anywhere." }),
           h("li", { text: "Put the people I see into your notes, your mission control's memory or git, unless you switch on the notebook list." }),
-          h("li", { text: "Work on a site whose terms forbid bots or automated use." })))),
+          h("li", { text: "Work on a site whose terms forbid bots or automated use, unless you chose that after being told what they say." })))),
       h("p", { class: "muted", text: "The setup takes about ten minutes. You can go back to any page, and change everything later." }),
       S.ob.onboarded ? null : h("p", {}, h("button", { class: "btn quiet", type: "button", on: { click: async () => { const r = await api("/api/onboarding/skip", {}); say(r.text); await leaveWizard("status"); } } }, "I am set up already, take me to the desk")));
   },
@@ -963,14 +964,15 @@ const STEP_BODY = {
     return h("div", { class: "stack-l" },
       h("div", { class: "picks", role: "group", "aria-label": "Sites" }, sites.map((s) => h("label", { class: "pick" },
         h("input", { type: "checkbox", value: s.id, disabled: !s.ok, checked: a.sites.includes(s.id) && s.ok, on: { change: (e) => { const set = new Set(a.sites); if (e.target.checked) set.add(s.id); else set.delete(s.id); a.sites = [...set]; saveWiz(); } } }),
-        h("span", { class: "pick-body" }, h("strong", { text: s.name }), h("span", { class: "hint", text: s.ok ? `${s.builtin ? "Built in" : "Added by you"}${s.about ? `. ${s.about}` : ""}${s.kind === "android" ? ". An Android app (experimental)" : ""}` : s.why }))))),
+        h("span", { class: "pick-body" }, h("strong", { text: s.name }), h("span", { class: "hint", text: s.ok ? `${s.builtin ? "Built in" : "Added by you"}${s.about ? `. ${s.about}` : ""}${s.kind === "android" ? ". An Android app (experimental)" : ""}${s.chosen ? `. Its ${s.chosen}` : ""}` : s.why }))))),
       own.length ? null : h("p", { class: "hint", text: "You have not added a site of your own yet." }),
       h("details", { class: "panel" },
         h("summary", { text: "Another site?" }),
         h("div", { class: "stack" },
           h("p", {}, "Tell your mission control: ", h("q", { text: "Add <the site's name> to my Wingman." }), " Its coding helper follows the recipe that comes with the Wingman."),
-          h("p", { text: "It reads the site's current terms first. If they forbid bots, automation or AI use, it stops and tells you, and the Wingman never works there. Many big dating apps forbid it." }),
-          h("p", { text: "If the terms allow it, it builds a small adapter in your own mission control folder, checks it without liking or passing anyone, and it shows up on this page. A new site starts in practice." }))));
+          h("p", { text: "It reads the site's current terms first and tells you what they say about bots, automation and AI. If they forbid it, it says so plainly, with the risk: the site may suspend or close your account, and some sites notice automated use. Then you decide. Many big dating apps forbid it." }),
+          h("p", { text: "If you go ahead, it builds a small adapter in your own mission control folder, checks it without liking or passing anyone, and it shows up on this page. A new site starts in practice." }),
+          h("p", { class: "muted", text: "The Wingman itself comes only with sites whose terms do not forbid it. Any other site is your choice, built in your own folder." }))));
   },
   you() {
     const o = S.ob.options;
