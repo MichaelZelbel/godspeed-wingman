@@ -64,8 +64,9 @@ main() {
   # 2. The newest release, or main.
   local ref="${GODSPEED_WINGMAN_REF:-}"
   if [ -z "$ref" ]; then
+    # The answer is JSON on one line (or several); take the value of "tag_name" either way.
     ref="$(curl -fsSL -H 'User-Agent: godspeed-wingman-installer' "https://api.github.com/repos/$repo/releases/latest" 2>/dev/null \
-      | sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1 || true)"
+      | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n 1 | sed 's/.*"\([^"]*\)"$/\1/' || true)"
     [ -n "$ref" ] || ref="main"
   fi
 
