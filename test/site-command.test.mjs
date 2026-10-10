@@ -257,7 +257,7 @@ test("the live check asks for the login, and never runs for terms that forbid it
   const out = quiet();
   const settings = loadSettings(routinePaths(mc).settings);
   await checkSite({ id: "kindmeet", mcDir: mc, settings, paths: statePaths(state), out, deps: { runTests: async () => ({ ran: true, ok: true, summary: "ok" }), browser: async () => loggedOut.driver } });
-  assert.deepEqual(fails(out), ["FAIL not logged into Kind Meet: log in once in the Wingman's browser at https://kindmeet.example"]);
+  assert.deepEqual(fails(out), ["FAIL not logged into Kind Meet: log in once with godspeed-wingman site login kindmeet (the Wingman's own browser opens at https://kindmeet.example)"]);
   recordTerms({ mcDir: mc, id: "kindmeet", ...TERMS, verdict: "forbidden", quotes: ["No bots."] });
   let asked = 0;
   const out2 = quiet();
