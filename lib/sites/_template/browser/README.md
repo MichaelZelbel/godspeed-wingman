@@ -11,7 +11,8 @@ it lives in your mission control and is saved in its history like your other fil
 - `adapter.mjs` does the work: it reads who the site suggests, reads one profile, likes or passes,
   reads matches and messages, and sends a message you chose.
 - `adapter.test.mjs` tests the adapter with invented people. Run it with
-  `node --test routines/wingman/sites/__ID__/`.
+  `node --test "routines/wingman/sites/__ID__/*.test.mjs"` from your mission control folder
+  (`site check` runs them too).
 - `.gitignore` keeps anything real out of git. Put notes or recordings of the real site only in
   `private/`, and delete them when you are done.
 
@@ -27,7 +28,8 @@ it lives in your mission control and is saved in its history like your other fil
    `allowed` when they explicitly permit automated or AI help, `silent` when nothing in them is
    against it, `forbidden` when they forbid bots, scripts, automated access or third-party tools.
    **Forbidden means stop:** the Wingman will not work there, and that is the end of it.
-2. **Find the site's own requests.** Log into the site once in the Wingman's browser, then:
+2. **Find the site's own requests.** Log in once: `godspeed-wingman site login __ID__` opens the
+   Wingman's own browser on the site's login page. Then:
 
    ```
    godspeed-wingman site network __ID__ --url https://.../the-suggestions-page

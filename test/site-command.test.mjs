@@ -11,7 +11,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { tempMc, setMode, makeWorker, user } from "./helpers.mjs";
 import { newSite, recordTerms, useSite, offSite, siteRows, enabledSites } from "../lib/sites/manage.mjs";
-import { checkSite, siteNetwork, profileProblems } from "../lib/sites/check.mjs";
+import { checkSite, siteNetwork, siteLogin, profileProblems } from "../lib/sites/check.mjs";
 import { routinePaths, statePaths } from "../lib/core/paths.mjs";
 import { loadSettings } from "../lib/core/settings.mjs";
 import { readState, siteState } from "../lib/core/state.mjs";
@@ -302,6 +302,25 @@ test("site network lists the addresses a page called, only after the terms are r
   assert.deepEqual(out.lines.slice(0, 2), ["1 address(es) called by https://kindmeet.example/discover:", "  fetch          https://kindmeet.example/api/suggestions"]);
   assert.match(out.lines.at(-1), /never copy them into a test/);
   assert.deepEqual(page.visited, ["https://kindmeet.example/discover"]);
+});
+
+test("site login opens the Wingman's browser on the login page, only after the terms are recorded", async () => {
+  const { mc } = tempMc();
+  kindMeet(mc, { terms: false });
+  const page = fakePage();
+  const settings = loadSettings(routinePaths(mc).settings);
+  let out = quiet();
+  assert.equal(await siteLogin({ id: "kindmeet", mcDir: mc, settings, out, deps: { browser: async () => page.driver } }), 1);
+  assert.match(fails(out)[0], /Record what the terms of Kind Meet say first/);
+  assert.deepEqual(page.visited, []);
+  recordTerms({ mcDir: mc, id: "kindmeet", ...TERMS });
+  out = quiet();
+  assert.equal(await siteLogin({ id: "kindmeet", mcDir: mc, settings, out, deps: { browser: async () => page.driver } }), 0);
+  assert.deepEqual(page.visited, ["https://kindmeet.example"]);
+  assert.match(out.lines[0], /^The Wingman's own browser shows https:\/\/kindmeet\.example\. Log in there once/);
+  out = quiet();
+  await siteLogin({ id: "kindmeet", mcDir: mc, settings: { ...settings, browser: "bridge", bridge: "https://bridge.example" }, out, deps: { browser: async () => { throw new Error("no local browser on a server"); } } });
+  assert.match(out.lines[0], /behind the bridge \(https:\/\/bridge\.example\): log into Kind Meet in that browser, on that machine/);
 });
 
 test("what the check expects of a profile", () => {

@@ -22,7 +22,8 @@ Use this only for a service that has no website. A website is simpler and steadi
   opens a profile and scrolls through it, likes or passes, reads matches and messages, and sends a
   message you chose.
 - `adapter.test.mjs` tests it against a pretend app with invented people. Run it with
-  `node --test routines/wingman/sites/__ID__/`.
+  `node --test "routines/wingman/sites/__ID__/*.test.mjs"` from your mission control folder
+  (`site check` runs them too).
 - `.gitignore` keeps anything real out of git. Screen dumps of the real app go only in `private/`,
   and are deleted when you are done.
 
