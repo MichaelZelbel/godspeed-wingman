@@ -126,7 +126,8 @@ test("waitFor reads the screen again until the node is there, and says what it w
 });
 
 test("a missing adb is a plain sentence", async () => {
-  const d = createDriver({ adb: null, env: { PATH: "", GODSPEED_WINGMAN_ANDROID_HOME: path.join(os.tmpdir(), "no-android-here"), LOCALAPPDATA: path.join(os.tmpdir(), "no-local") } });
+  // A home without Android Studio's SDK, whatever the machine running the tests has installed.
+  const d = createDriver({ adb: null, home: path.join(os.tmpdir(), "no-home-here"), env: { PATH: "", GODSPEED_WINGMAN_ANDROID_HOME: path.join(os.tmpdir(), "no-android-here"), LOCALAPPDATA: path.join(os.tmpdir(), "no-local") } });
   await assert.rejects(d.devices(), /adb \(Android's platform-tools\) was not found; run `godspeed-wingman android setup` first/);
 });
 

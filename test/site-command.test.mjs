@@ -308,7 +308,8 @@ test("site login opens the Wingman's browser on the login page, only after the t
   const { mc } = tempMc();
   kindMeet(mc, { terms: false });
   const page = fakePage();
-  const settings = loadSettings(routinePaths(mc).settings);
+  // A computer with a screen, whatever machine the tests run on (a server defaults to the bridge).
+  const settings = { ...loadSettings(routinePaths(mc).settings), browser: "local" };
   let out = quiet();
   assert.equal(await siteLogin({ id: "kindmeet", mcDir: mc, settings, out, deps: { browser: async () => page.driver } }), 1);
   assert.match(fails(out)[0], /Record what the terms of Kind Meet say first/);

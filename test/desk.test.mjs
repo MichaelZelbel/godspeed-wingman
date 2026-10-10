@@ -68,7 +68,8 @@ test("without the key nothing opens: no secret, a wrong secret or a wrong cookie
     assert.match(page.body, /godspeed-wingman desk/, "it says how to open it");
     for (const p of ["/api/state", "/api/who?q=a", "/api/picture?ref=waiting", "/api/files", "/api/onboarding"]) assert.equal((await req(port, { path: p })).status, 403, p);
     assert.equal((await req(port, { path: "/?t=0000" })).status, 403);
-    assert.equal((await req(port, { path: `/?t=${secret.slice(0, -1)}0` })).status, 403);
+    // One character off (never the right one by chance: a key may end in "0" itself).
+    assert.equal((await req(port, { path: `/?t=${secret.slice(0, -1)}${secret.endsWith("0") ? "1" : "0"}` })).status, 403);
     assert.equal((await req(port, { path: "/api/state", headers: { cookie: `${cookieName(port)}=${"a".repeat(64)}` } })).status, 403);
     assert.equal((await req(port, { method: "POST", path: "/api/do", body: { what: "pause" }, headers: { origin: `http://127.0.0.1:${port}`, "content-type": "application/json" } })).status, 403, "a change without the cookie");
   });

@@ -281,7 +281,9 @@ test("the install, after the person's yes: checked download, sdkmanager, the vir
   const config = sdk.readConfig(s.home);
   assert.equal(config.sdk, t.sdkRoot);
   assert.equal(config.avd, "wingman");
-  assert.match(s.text(), /You accepted the Android SDK licence \(android-sdk-license, https:\/\/developer\.android\.com\/studio\/terms\) with --accept-licenses\./);
+  // An ARM system image (an Apple silicon Mac) comes with a second licence of Google's.
+  const licences = sdk.host().arch === "aarch64" ? "android-sdk-license, android-sdk-arm-dbt-license" : "android-sdk-license";
+  assert.ok(s.text().includes(`You accepted the Android SDK licence (${licences}, https://developer.android.com/studio/terms) with --accept-licenses.`), s.text());
   assert.match(s.text(), /Installed\. Start the emulator with: godspeed-wingman android start/);
 });
 

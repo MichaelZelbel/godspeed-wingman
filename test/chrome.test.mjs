@@ -124,5 +124,7 @@ test("the browser is found where Chrome and Edge install themselves", () => {
   const mac = path.join(dir, "home", "Applications", "Microsoft Edge.app", "Contents", "MacOS", "Microsoft Edge");
   fs.mkdirSync(path.dirname(mac), { recursive: true });
   fs.writeFileSync(mac, "");
-  assert.equal(findBrowser({ platform: "darwin", env: {}, home: path.join(dir, "home") }), mac);
+  // /Applications comes before the home folder's; a Mac running the tests may have one there.
+  const system = ["Google Chrome", "Microsoft Edge", "Chromium"].map((n) => path.join("/Applications", `${n}.app`, "Contents", "MacOS", n)).find((f) => fs.existsSync(f));
+  assert.equal(findBrowser({ platform: "darwin", env: {}, home: path.join(dir, "home") }), system || mac);
 });
