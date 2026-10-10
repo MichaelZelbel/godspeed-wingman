@@ -1,0 +1,24 @@
+{
+  "id": "flirtual",
+  "name": "Flirtual",
+  "kind": "browser",
+  "home": "https://flirtu.al",
+  "login_url": "https://flirtu.al/login",
+  "profile_url": "https://flirtu.al/{id}",
+  "about": "Flirtual, a dating site for people who meet in virtual reality",
+  "terms": {
+    "checked_on": "2026-10-10",
+    "urls": ["https://flirtu.al/terms", "https://flirtu.al/guidelines"],
+    "verdict": "silent",
+    "quotes": [
+      "Terms of Service, last updated December 4, 2025: nothing about bots, automation, scripts, scraping or AI.",
+      "Terms: \"use this service in order to damage Flirtual or the Service\" is listed as not allowed.",
+      "Guidelines: \"Misusing Flirtual or attempts to maliciously exploit Flirtual will be investigated.\""
+    ],
+    "note": "The terms say nothing about bots or AI; the guidelines say misuse will be investigated. The Wingman works at a person's pace, from the person's own logged-in browser, and never sends a message the person did not choose."
+  },
+  "can": ["queue", "like", "pass", "skip", "inbox", "send", "picture", "liked-you"],
+  "options": {
+    "queue": "Which queue to read: \"love\" for dating (the default) or \"friend\" for Flirtual's Homie Mode. The setting kind chooses it too."
+  }
+}

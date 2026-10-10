@@ -1,0 +1,6 @@
+node_modules/
+*.tmp
+.DS_Store
+# Anything about real people never belongs here: the state folder lives outside the repository.
+state/
+*.env

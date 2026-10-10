@@ -1,0 +1,16 @@
+{
+  "name": "godspeed-wingman",
+  "version": "0.5.0",
+  "description": "The Wingman, an add-on for Godspeed Mission Control: it reads the profiles a dating site suggests, likes or passes at a person's pace, learns from your practice answers, stops for names you watch, and brings matches and messages with three reply ideas.",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "bin": { "godspeed-wingman": "bin/godspeed-wingman.mjs" },
+  "files": ["bin", "lib", "skill", "hermes", "README.md", "LICENSE"],
+  "engines": { "node": ">=22" },
+  "scripts": { "test": "node --test \"test/*.test.mjs\"" },
+  "keywords": ["godspeed-mission-control", "dating", "ai-assistant", "hermes", "flirtual"],
+  "repository": { "type": "git", "url": "git+https://github.com/MichaelZelbel/godspeed-wingman.git" },
+  "homepage": "https://github.com/MichaelZelbel/godspeed-wingman#readme",
+  "bugs": { "url": "https://github.com/MichaelZelbel/godspeed-wingman/issues" }
+}
