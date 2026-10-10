@@ -1093,7 +1093,36 @@ const STEP_BODY = {
     const a = S.wiz.ans;
     const lanes = S.ob.detect.lanes;
     const nameBox = h("input", { type: "text", id: "model-name", value: a.model.name || "", placeholder: a.model.lane === "openai" ? "for example: gpt-4.1-mini" : "leave empty for its own default", on: { input: (e) => { a.model.name = e.target.value.trim(); saveWiz(); } } });
+    // Neither Claude Code nor Codex here: how to get Codex, and a button that looks again, so a
+    // program installed a minute ago is found without starting the setup over.
+    const help = S.ob.detect.model_help;
+    const lookAgain = async (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      const r = await api("/api/onboarding/detect");
+      btn.disabled = false;
+      if (!r.ok || !r.detect) { say(r.text || "That did not work."); return; }
+      S.ob.detect = r.detect;
+      const chosen = r.detect.lanes.find((l) => l.lane === a.model.lane);
+      const found = r.detect.lanes.find((l) => l.found && l.lane !== "openai");
+      if (found && !chosen?.found) a.model = { lane: found.lane, name: found.name };
+      saveWiz();
+      drawStep();
+      say(found ? `Found: ${found.label}.` : "Not found yet. When the install has finished and you have signed in, press Look again.");
+    };
+    const copyLine = async () => {
+      try { await navigator.clipboard.writeText(help.line); say("Copied. Paste it into a terminal."); }
+      catch { say("Select the line and copy it."); }
+    };
+    const [before, after] = help ? help.text.split("codex login") : ["", ""];
+    const helpPanel = help ? h("div", { class: "note warn stack", id: "model-help" },
+      h("p", {}, before, after !== undefined ? h("code", { text: "codex login" }) : null, after || ""),
+      h("pre", { class: "lines", id: "codex-install", text: help.line }),
+      h("div", { class: "row" },
+        h("button", { class: "btn small", type: "button", on: { click: copyLine } }, "Copy the line"),
+        h("button", { class: "btn primary small", type: "button", id: "look-again", on: { click: lookAgain } }, "Look again"))) : null;
     return h("div", { class: "stack-l" },
+      helpPanel,
       h("div", { class: "picks", role: "radiogroup", "aria-label": "The model" }, lanes.map((l) => h("label", { class: "pick" },
         h("input", { type: "radio", name: "lane", value: l.lane, checked: a.model.lane === l.lane, on: { change: () => { a.model = { lane: l.lane, name: l.name }; nameBox.value = l.name; saveWiz(); } } }),
         h("span", { class: "pick-body" }, h("strong", { text: l.label }), h("span", { class: "hint", text: l.found ? `Found: ${l.where}` : l.lane === "openai" ? `Not set up: ${l.where}. Put the key in the Wingman's private worker.env.` : "Not found on this computer." }))))),

@@ -11,6 +11,7 @@ import { startDesk, cookieName, watchText } from "../lib/desk/server.mjs";
 import { deskSecret, deskUrl, deskUp } from "../lib/desk/secret.mjs";
 import { statePaths } from "../lib/core/paths.mjs";
 import { readJson } from "../lib/core/store.mjs";
+import { PREFERENCES_TEMPLATE } from "../lib/core/preferences.mjs";
 import { tempMc, makeWorker, user } from "./helpers.mjs";
 
 function req(port, { method = "GET", path: p = "/", host = `127.0.0.1:${port}`, headers = {}, body } = {}) {
@@ -254,4 +255,56 @@ test("the desk's address carries the key; the page names the desk command when i
   assert.match(s, /^[0-9a-f]{64}$/);
   assert.equal(deskSecret(paths), s, "made once");
   assert.equal(deskUrl({ desk_port: 47860 }, paths, "practice"), `http://127.0.0.1:47860/?t=${s}#practice`);
+});
+
+test("the wizard on a new install: the installer's blank page is no page of one's own, so the starters come first", async () => {
+  const detect = async () => ({ desktop: true, platform: "win32", sites: [{ id: "flirtual", name: "Flirtual", builtin: true, kind: "browser", ok: true, why: "", login_url: "https://flirtu.al/login" }], lanes: [], telegram: { found: false, file: "" }, assistant: { hermes: false, claude: false }, notifications: { ok: true, how: "x" }, timezone: "UTC" });
+  const t = tempMc({ onboarded: false });
+  const prefs = path.join(t.mc, "routines", "wingman", "preferences.md");
+  fs.writeFileSync(prefs, PREFERENCES_TEMPLATE);
+  await withDesk(async ({ port, secret, state }) => {
+    const cookie = await login(port, secret);
+    let ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.deepEqual(ob.prefs, { exists: false, text: "" }, "the blank page: straight to the starters");
+    const answers = { ...ob.answers, me: "a person in my thirties", looking_for: ["anyone"], starter: "looking-for-a-partner" };
+    const r = await post(port, cookie, "/api/onboarding/save", { answers, mode: "starter" });
+    assert.equal(r.json.prefs, "written");
+    assert.equal(r.json.backup, null, "no copy of a blank page");
+    assert.match(r.json.text, /Your preferences are written\./);
+    assert.match(fs.readFileSync(prefs, "utf8"), /I am a person in my thirties, and I am looking for anyone who fits/);
+    assert.ok(!fs.readdirSync(statePaths(state).desk).some((n) => n.startsWith("preferences-before-")));
+    ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.equal(ob.prefs.exists, true, "now it is a page of their own");
+    fs.writeFileSync(prefs, PREFERENCES_TEMPLATE.replace("## Who fits\n", "## Who fits\n\n- Someone kind.\n"));
+    ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.equal(ob.prefs.exists, true, "one real line is enough to offer keeping it");
+    assert.match(ob.prefs.text, /- Someone kind\./);
+  }, { ...t, deps: { detect } });
+});
+
+test("the model question on the desk: how to get Codex when neither program is found, and Look again finds it", async () => {
+  const lanes = (codex) => [
+    { lane: "claude", label: "Claude Code", found: false, where: "", name: "sonnet" },
+    { lane: "codex", label: "Codex", found: codex, where: codex ? "C:/x/codex.exe" : "", name: "" },
+    { lane: "openai", label: "An OpenAI-compatible service", found: false, where: "no key in OPENAI_API_KEY", name: "" },
+  ];
+  let codex = false;
+  const detect = async () => ({ desktop: true, platform: "win32", sites: [], lanes: lanes(codex), telegram: { found: false, file: "" }, assistant: { hermes: false, claude: false }, notifications: { ok: true, how: "x" }, timezone: "UTC" });
+  await withDesk(async ({ port, secret }) => {
+    const cookie = await login(port, secret);
+    const ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.match(ob.detect.model_help.text, /^Neither Codex nor Claude Code is on this computer yet\..*Then press Look again\.$/);
+    assert.equal(ob.detect.model_help.line, 'powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"', "the line for the system the desk runs on");
+    let d = (await req(port, { path: "/api/onboarding/detect", headers: { cookie } })).json;
+    assert.equal(d.ok, true);
+    assert.ok(d.detect.model_help, "still nothing found");
+    codex = true;
+    d = (await req(port, { path: "/api/onboarding/detect", headers: { cookie } })).json;
+    assert.equal(d.detect.model_help, null, "Codex installed: no more help");
+    assert.equal(d.detect.lanes.find((l) => l.lane === "codex").found, true);
+    assert.equal((await req(port, { path: "/api/onboarding/detect" })).status, 403, "only with the desk's key");
+  }, { deps: { detect } });
+  const page = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "lib", "desk", "app.html"), "utf8");
+  assert.match(page, /const help = S\.ob\.detect\.model_help;/, "the page shows the help only when the desk sends it");
+  assert.match(page, /api\("\/api\/onboarding\/detect"\)/, "and Look again asks the desk to look again");
 });

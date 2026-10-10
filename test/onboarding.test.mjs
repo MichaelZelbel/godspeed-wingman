@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
-import { questions, loadOptions, listStarters, parseStarter, startingAnswers, cleanAnswers, renderPreferences, settingsFrom, apply, fills, notebookAnswers, WELCOME } from "../lib/onboarding/index.mjs";
+import { questions, loadOptions, listStarters, parseStarter, startingAnswers, cleanAnswers, renderPreferences, settingsFrom, apply, fills, notebookAnswers, modelHelp, CODEX_INSTALL, WELCOME } from "../lib/onboarding/index.mjs";
 import { defaults, normalizeSettings } from "../lib/core/settings.mjs";
 import { readWatch } from "../lib/core/watch.mjs";
 import { tempMc, makeWorker, user, settingsFile } from "./helpers.mjs";
@@ -270,4 +270,18 @@ test("a deal-breaker the starter already says is not added a second time", () =>
   const known = new Set(options.deal_breakers.choices.map((c) => c.id));
   for (const s of starters) for (const id of s.covers) assert.ok(known.has(id), `${s.id} covers a deal-breaker that exists: ${id}`);
   assert.deepEqual(parseStarter("---\nid: x\ncovers: a, b\n---\nbody").covers, ["a", "b"]);
+});
+
+test("the model question when neither Claude Code nor Codex is here: how to get Codex, for this system", () => {
+  const lanes = (claude, codex, openai = false) => [{ lane: "claude", found: claude }, { lane: "codex", found: codex }, { lane: "openai", found: openai }];
+  assert.equal(modelHelp({ lanes: lanes(true, false), platform: "win32" }), null, "Claude Code is enough");
+  assert.equal(modelHelp({ lanes: lanes(false, true), platform: "linux" }), null, "Codex is enough");
+  const win = modelHelp({ lanes: lanes(false, false), platform: "win32" });
+  assert.equal(win.line, 'powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"');
+  assert.match(win.text, /^Neither Codex nor Claude Code is on this computer yet\. To think with your ChatGPT account \(any plan works; the free one has a small allowance\), install Codex, OpenAI's assistant program: open a terminal, paste the line below, then type codex login and choose Sign in with ChatGPT\. Then press Look again\.$/);
+  for (const platform of ["darwin", "linux"]) assert.equal(modelHelp({ lanes: lanes(false, false), platform }).line, "curl -fsSL https://chatgpt.com/codex/install.sh | sh");
+  assert.ok(modelHelp({ lanes: lanes(false, false, true), platform: "linux" }), "a key for an OpenAI-compatible service does not hide it");
+  assert.match(modelHelp({ lanes: lanes(false, false), platform: "linux", terminal: true }).text, /Then press Enter to look again\.$/);
+  assert.equal(CODEX_INSTALL.win32, win.line);
+  assert.doesNotMatch(win.text, /[\u2013\u2014]/, "no dashes");
 });

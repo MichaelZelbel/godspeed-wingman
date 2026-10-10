@@ -10,6 +10,7 @@ import { terminalWizard, afterSetup, pickNumbers, lineReader } from "../lib/onbo
 import { readWatch } from "../lib/core/watch.mjs";
 import { statePaths } from "../lib/core/paths.mjs";
 import { tempMc, settingsFile } from "./helpers.mjs";
+import { PREFERENCES_TEMPLATE } from "../lib/core/preferences.mjs";
 
 const SITES = [{ id: "flirtual", name: "Flirtual", builtin: true, kind: "browser", ok: true, why: "", login_url: "https://flirtu.al/login" }];
 const LANES = [
@@ -164,4 +165,79 @@ test("after setup: a desktop opens the desk at the wizard; no screen and no term
   assert.equal(said, "");
   await quiet(() => afterSetup({ ...flags, wizard: true }, { env: {}, platform: "win32", root: false, home }, { deskUp: async () => true, open: (u) => opened.push(u), interactive: false }));
   assert.equal(opened.length, 2, "--wizard asks again");
+});
+
+test("the terminal wizard on a new install: the installer's blank page is not offered to keep, the starters come first", async () => {
+  const { mc, state } = tempMc({ onboarded: false });
+  const prefsFile = path.join(mc, "routines", "wingman", "preferences.md");
+  fs.writeFileSync(prefsFile, PREFERENCES_TEMPLATE);
+  const io = scripted([
+    "",                        // sites
+    "a person in my thirties", // me
+    "4",                       // anyone who fits
+    "", "", "", "",            // nothing more specific, ages, where, no places
+    "1",                       // looking for a partner
+    "", "", "5", "",           // no green flags, none of their own, only wants friends, none of their own
+    "", "", "",                // tone, no sample, language
+    "", "", "",                // daily, time zone, retention
+    "", "", "", "", "n",       // talk, bridge, model, its name, no test
+    "",                        // no names to watch
+    "y",                       // save
+  ]);
+  const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: detected({ telegram: { found: false, file: "" } }) } });
+  assert.equal(r.done, true, io.text());
+  assert.doesNotMatch(io.text(), /You already have a preferences page/);
+  assert.match(io.text(), /Pick a starting point, so you never face a blank page/);
+  assert.equal(r.result.prefs, "written");
+  assert.equal(r.result.backup, null, "no copy of a blank page");
+  assert.match(io.text(), /Saved\. Your preferences are written\./);
+  const prefs = fs.readFileSync(prefsFile, "utf8");
+  assert.match(prefs, /I am a person in my thirties, and I am looking for anyone who fits, whatever their gender, aged 21 to 45\./);
+  assert.match(prefs, /or who is clearly not looking for someone like me/);
+  assert.equal(prefs.match(/only want friends/g).length, 1, "the tick and the starter say it once together");
+
+  // One real line in that page: now it is theirs, and the wizard asks before touching it.
+  const own = PREFERENCES_TEMPLATE.replace("## Who fits\n", "## Who fits\n\n- Someone kind.\n");
+  fs.writeFileSync(prefsFile, own);
+  const io2 = scripted(["", "k", "", "", "", "1", "", "", "", "n", "", "y"]);
+  const r2 = await terminalWizard({ mcDir: mc, stateDir: state, input: io2.input, output: io2.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: detected({ telegram: { found: false, file: "" } }) } });
+  assert.equal(r2.done, true, io2.text());
+  assert.match(io2.text(), /You already have a preferences page\. Keep it \(k\), or start from a starter \(s\)\? \[k\]/);
+  assert.equal(fs.readFileSync(prefsFile, "utf8"), own, "kept, byte for byte");
+});
+
+test("the terminal wizard without Claude Code or Codex: how to get Codex, and Enter looks again", async () => {
+  const none = LANES.map((l) => ({ ...l, found: false, where: l.lane === "openai" ? l.where : "" }));
+  const withCodex = none.map((l) => (l.lane === "codex" ? { ...l, found: true, where: "/home/sam/.local/bin/codex", name: "" } : l));
+  let looks = 0;
+  const detect = async () => ({ ...(await detected({ telegram: { found: false, file: "" } })()), lanes: looks++ === 0 ? none : looks === 2 ? none : withCodex });
+  const { mc, state } = tempMc({ onboarded: false });
+  // sites, keep my page, daily, time zone, retention, talk, bridge, [Enter: look again, still none], [Enter: look again, Codex], model, name, test, watch, save
+  const io = scripted(["", "k", "", "", "", "1", "", "", "", "", "", "n", "", "y"]);
+  const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect } });
+  assert.equal(r.done, true, io.text());
+  const text = io.text();
+  assert.match(text, /Neither Codex nor Claude Code is on this computer yet\. To think with your ChatGPT account \(any plan works; the free one has a small allowance\), install Codex, OpenAI's assistant program: open a terminal, paste the line below, then type codex login and choose Sign in with ChatGPT\. Then press Enter to look again\./);
+  assert.match(text, /\n {4}curl -fsSL https:\/\/chatgpt\.com\/codex\/install\.sh \| sh\n/, "the line for this system");
+  assert.match(text, /Not found yet\.[\s\S]*Found: Codex\./, "looked twice: nothing, then Codex");
+  assert.equal(looks, 3, "the first look and two more");
+  assert.match(text, /Codex: found \(\/home\/sam\/\.local\/bin\/codex\)/);
+  assert.match(text, /Model \[2\]/, "Claude Code is missing, so Codex is the choice Enter keeps");
+  assert.deepEqual(r.answers.model, { lane: "codex", name: "" });
+
+  // "n" goes on without them; the help is shown once and nothing is looked for again.
+  looks = 0;
+  const io2 = scripted(["", "k", "", "", "", "1", "", "n", "", "", "n", "", "y"]);
+  const r2 = await terminalWizard({ mcDir: mc, stateDir: state, input: io2.input, output: io2.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: async () => { looks++; return { ...(await detected({ telegram: { found: false, file: "" } })()), lanes: none }; } } });
+  assert.equal(r2.done, true, io2.text());
+  assert.equal(looks, 1);
+  assert.equal(io2.text().match(/Neither Codex nor Claude Code/g).length, 1);
+});
+
+test("the terminal wizard with Claude Code or Codex found says nothing about installing", async () => {
+  const { mc, state } = tempMc({ onboarded: false });
+  const io = scripted(["", "k", "", "", "", "1", "", "", "", "n", "", "y"]);
+  const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: detected({ telegram: { found: false, file: "" } }) } });
+  assert.equal(r.done, true, io.text());
+  assert.doesNotMatch(io.text(), /Neither Codex nor Claude Code|chatgpt\.com\/codex/);
 });
