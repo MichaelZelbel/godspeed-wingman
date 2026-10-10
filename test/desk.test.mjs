@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { startDesk, cookieName, watchText } from "../lib/desk/server.mjs";
 import { deskSecret, deskUrl, deskUp } from "../lib/desk/secret.mjs";
 import { statePaths } from "../lib/core/paths.mjs";
@@ -218,6 +219,32 @@ test("the wizard on the desk: the questions, a preview, and saving never replace
     assert.equal(fs.readFileSync(r.json.backup, "utf8"), before, "the old page is kept in the private folder");
     assert.ok(path.resolve(r.json.backup).startsWith(path.resolve(state)));
   }, { deps: { detect } });
+});
+
+test("the wizard on the desk offers the notebook list only when the notebook answers, and saves the choice", async () => {
+  const base = { desktop: true, platform: "win32", sites: [{ id: "flirtual", name: "Flirtual", builtin: true, kind: "browser", ok: true, why: "", login_url: "https://flirtu.al/login" }], lanes: [], telegram: { found: false, file: "" }, assistant: { hermes: false, claude: false }, notifications: { ok: true, how: "x" }, timezone: "UTC" };
+  let found = true;
+  await withDesk(async ({ port, secret, mc }) => {
+    const cookie = await login(port, secret);
+    let ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.equal(ob.detect.notebook.found, true);
+    assert.equal(ob.answers.notebook_collection, false, "unticked on a new install");
+    assert.equal(ob.options.notebook_collection.label, "Also keep a list of every like and pass in my Godspeed notebook (it stays until I delete it)");
+    assert.equal(ob.options.notebook_collection._about, undefined);
+    const file = path.join(mc, "routines", "wingman", "settings.json");
+    await post(port, cookie, "/api/onboarding/save", { answers: { ...ob.answers, notebook_collection: true }, mode: "keep" });
+    assert.equal(readJson(file).notebook_collection, true);
+    ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.equal(ob.answers.notebook_collection, true, "a yes already given shows ticked");
+    await post(port, cookie, "/api/onboarding/save", { answers: { ...ob.answers, notebook_collection: false }, mode: "keep" });
+    assert.equal(readJson(file).notebook_collection, false);
+    found = false;
+    ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
+    assert.equal(ob.detect.notebook.found, false);
+  }, { deps: { detect: async () => ({ ...base, notebook: { found } }) } });
+  const page = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "lib", "desk", "app.html"), "utf8");
+  assert.match(page, /function notebookChoice\(\) \{\n  if \(!S\.ob\.detect\.notebook\?\.found\) return null;/, "the page shows it only when the notebook answers");
+  assert.match(page, /checked: a\.notebook_collection === true/, "and unticked unless the answers say yes");
 });
 
 test("the desk's address carries the key; the page names the desk command when it is locked", () => {

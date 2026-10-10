@@ -5,15 +5,17 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { makeWorker, user, FakeNotebook, setMode, settingsFile } from "./helpers.mjs";
+import { makeWorker, user, FakeNotebook, setMode, settingsFile, result } from "./helpers.mjs";
 import * as requests from "../lib/core/requests.mjs";
 import * as archive from "../lib/core/archive.mjs";
 import * as collection from "../lib/core/collection.mjs";
 import { Notebook } from "../lib/core/notebook.mjs";
 import { loadSettings, DEFAULTS } from "../lib/core/settings.mjs";
-import { appendJsonl } from "../lib/core/store.mjs";
+import { appendJsonl, readJsonl } from "../lib/core/store.mjs";
 import { normalize } from "../lib/sites/flirtual/profile.mjs";
 
+// The list is off unless the settings switch it on, so every test of what it holds switches it on.
+const listWorker = (users, opts = {}) => makeWorker(users, { ...opts, settings: { notebook_collection: true, ...(opts.settings || {}) } });
 const answer = async (w, decision, reason = "") => { requests.submit(w.paths, "answer", { decision, reason }); await w.tick(); };
 // The next tick may write the collection (at most once a minute).
 const later = async (h, ms = 61000) => { h.advance(ms); h.w.update((s) => { s.nextActionAt = 0; }); await h.w.tick(); };
@@ -45,7 +47,7 @@ test("the retention is 42 days unless the settings say otherwise", () => {
 });
 
 test("backfill: every decision already made becomes one item, in the order decided, with its first line", async () => {
-  const h = makeWorker([], { at: "2026-10-10T16:00:00Z", screenshotsUrl: "https://srv.example/wingman" });
+  const h = listWorker([], { at: "2026-10-10T16:00:00Z", screenshotsUrl: "https://srv.example/wingman" });
   await keptBefore(h, [
     { id: "u_test_001", name: "Lena", at: "2026-10-09T12:00:00Z", extra: { country: "de" }, decisions: [{ at: "2026-10-09T12:30:00Z", action: "asked", verdict: "like" }, { at: "2026-10-09T12:39:00Z", action: "like", by: "you" }] },
     { id: "u_test_002", name: "Odile", at: "2026-10-10T12:00:00Z", extra: { country: "fr" }, decisions: [{ at: "2026-10-10T12:42:00Z", action: "pass", by: "wingman" }] },
@@ -85,7 +87,7 @@ test("backfill: every decision already made becomes one item, in the order decid
 });
 
 test("a like or pass reaches the collection; a second decision on the same profile updates its item", async () => {
-  const h = makeWorker([user("a1", "Mara", { country: "de" }), user("b2", "Juno")]);
+  const h = listWorker([user("a1", "Mara", { country: "de" }), user("b2", "Juno")]);
   await h.w.tick();
   await answer(h.w, "agree");
   await later(h);
@@ -100,7 +102,7 @@ test("a like or pass reaches the collection; a second decision on the same profi
 });
 
 test("the person's comment is never overwritten or cleared, not even when they save at the same moment", async () => {
-  const h = makeWorker([user("a1", "Mara"), user("b2", "Juno")]);
+  const h = listWorker([user("a1", "Mara"), user("b2", "Juno")]);
   await h.w.tick();
   await answer(h.w, "agree");
   await later(h);
@@ -135,7 +137,7 @@ test("the person's comment is never overwritten or cleared, not even when they s
 });
 
 test("a review answer shows on the item", async () => {
-  const h = makeWorker([user("a1", "Mara"), user("b2", "Juno")]);
+  const h = listWorker([user("a1", "Mara"), user("b2", "Juno")]);
   setMode(h.w, "auto");
   await h.w.tick();
   await later(h);
@@ -152,7 +154,7 @@ test("a review answer shows on the item", async () => {
 
 test("hostile names reach the collection as plain short text, and links only go where they should", async () => {
   const evil = "<img src=x onerror=alert(1)>[click](javascript:alert(1)) ![](http://t.example/p.png) [[Real Person]] `rm` {x} \"q\" | $HOME";
-  const h = makeWorker([], { at: "2026-10-10T16:00:00Z", screenshotsUrl: "javascript:alert(1)" });
+  const h = listWorker([], { at: "2026-10-10T16:00:00Z", screenshotsUrl: "javascript:alert(1)" });
   await keptBefore(h, [{ id: "../../etc", name: evil, at: "2026-10-10T12:00:00Z", decisions: [{ at: "2026-10-10T12:30:00Z", action: "like", by: "you" }] }]);
   const p = path.join(h.w.paths.archive, "2026-10-10", "flirtual.______etc", "profile.json");
   const prof = JSON.parse(fs.readFileSync(p, "utf8"));
@@ -184,7 +186,7 @@ test("a profile link is the kept one only on the site's own host", () => {
 });
 
 test("columns are left alone once the kept profile is gone; the notebook being away is retried", async () => {
-  const h = makeWorker([user("a1", "Mara", { country: "de" }), user("b2", "Juno")]);
+  const h = listWorker([user("a1", "Mara", { country: "de" }), user("b2", "Juno")]);
   h.nb.down = true;
   await h.w.tick();
   await answer(h.w, "agree");
@@ -203,7 +205,7 @@ test("columns are left alone once the kept profile is gone; the notebook being a
 });
 
 test("screenshots are named by day and name, also the ones kept before, and the open question follows", async () => {
-  const h = makeWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
+  const h = listWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
   h.w.deps.noBrowserPage = false;
   h.w.deps.driver = { goto: async () => {}, evaluate: async () => [], screenshot: async () => Buffer.from("PNG"), content: async () => "<html></html>" };
   await h.w.tick();
@@ -254,7 +256,7 @@ test("the notebook client sends the requests the notebook's screens send", async
 });
 
 test("a collection the person deleted is not made again", async () => {
-  const h = makeWorker([user("a1", "Mara"), user("b2", "Juno")]);
+  const h = listWorker([user("a1", "Mara"), user("b2", "Juno")]);
   await h.w.tick();
   await answer(h.w, "agree");
   await later(h);
@@ -275,6 +277,27 @@ test("the collection can be switched off", async () => {
   await later(h);
   assert.equal(h.nb.calls.length, 0);
   assert.equal(loadSettings(settingsFile(h.mc)).notebook_collection, false);
+});
+
+test("the list is off unless the settings say true: nothing reaches the notebook, and asking for it says how to switch it on", async () => {
+  assert.equal(DEFAULTS.notebook_collection, false);
+  for (const settings of [{}, { notebook_collection: "yes" }, { notebook_collection: 1 }]) {
+    const h = makeWorker([user("a1", "Mara"), user("b2", "Juno")], { settings });
+    assert.equal(loadSettings(settingsFile(h.mc)).notebook_collection, false, JSON.stringify(settings));
+    await h.w.tick();
+    await answer(h.w, "agree");
+    await later(h);
+    await later(h);
+    assert.ok(readJsonl(h.w.paths.decisions).some((d) => d.action === "like" || d.action === "pass"), "a like or pass was made");
+    assert.equal(h.nb.calls.length, 0, `nothing written to the notebook with ${JSON.stringify(settings)}`);
+    assert.equal(h.nb.list().length, 0);
+    const id = requests.submit(h.w.paths, "notebook", {});
+    await h.w.tick();
+    const r = result(h.w, id);
+    assert.equal(r.ok, false);
+    assert.match(r.text, /is off\. Switch it on in the setup questions, or with "notebook_collection": true in the settings\./);
+    assert.equal(h.nb.calls.length, 0, "asking for it does not write it either");
+  }
 });
 
 test("FakeNotebook refuses a stale version like the notebook does", async () => {

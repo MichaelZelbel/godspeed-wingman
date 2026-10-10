@@ -4,11 +4,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import http from "node:http";
 import path from "node:path";
-import { questions, loadOptions, listStarters, parseStarter, startingAnswers, cleanAnswers, renderPreferences, settingsFrom, apply, fills, WELCOME } from "../lib/onboarding/index.mjs";
+import { questions, loadOptions, listStarters, parseStarter, startingAnswers, cleanAnswers, renderPreferences, settingsFrom, apply, fills, notebookAnswers, WELCOME } from "../lib/onboarding/index.mjs";
 import { defaults, normalizeSettings } from "../lib/core/settings.mjs";
 import { readWatch } from "../lib/core/watch.mjs";
 import { tempMc, makeWorker, user, settingsFile } from "./helpers.mjs";
+import { statePaths } from "../lib/core/paths.mjs";
 
 const options = loadOptions();
 const starters = listStarters();
@@ -119,6 +121,59 @@ test("the settings the answers make, as the worker reads them", () => {
   assert.equal(normalizeSettings({ onboarded: false }).onboarded, false, "a new install waits for the questions");
   assert.equal(normalizeSettings({}).onboarded, true, "a file without it counts as done");
   assert.equal(normalizeSettings({ onboarded: "soon" }).onboarded, true);
+});
+
+test("the notebook list is one opt-in: unticked unless the settings say yes, written only as a yes or a no", () => {
+  const q = questions({ sites: ["flirtual"], options });
+  assert.equal(q.notebook_collection.label, "Also keep a list of every like and pass in my Godspeed notebook (it stays until I delete it)");
+  assert.match(q.notebook_collection.hint, /not deleted after the days you chose/);
+  assert.equal(startingAnswers(defaults()).notebook_collection, false, "unticked on a new install");
+  assert.equal(startingAnswers({ ...defaults(), notebook_collection: true }).notebook_collection, true, "a yes already given stays ticked");
+  const now = new Date("2026-10-10T12:00:00Z");
+  assert.equal(settingsFrom(cleanAnswers({ notebook_collection: true }, { options }), { now }).notebook_collection, true);
+  assert.equal(settingsFrom(cleanAnswers({ notebook_collection: false }, { options }), { now }).notebook_collection, false);
+  for (const v of [undefined, "true", 1, null]) assert.ok(!("notebook_collection" in settingsFrom(cleanAnswers({ notebook_collection: v }, { options }), { now })), `${v}: not an answer, the setting stays as it is`);
+});
+
+test("apply writes the notebook choice; a run without the choice leaves it as it was", async () => {
+  const { mc, state } = tempMc();
+  const read = () => JSON.parse(fs.readFileSync(settingsFile(mc), "utf8"));
+  const answers = { sites: ["flirtual"], talk: ["desk"] };
+  const sys = { env: {}, platform: "win32", root: false };
+  await apply({ mcDir: mc, stateDir: state, answers: { ...answers, notebook_collection: true }, sys });
+  assert.equal(read().notebook_collection, true);
+  await apply({ mcDir: mc, stateDir: state, answers, sys });
+  assert.equal(read().notebook_collection, true, "not asked: left alone");
+  await apply({ mcDir: mc, stateDir: state, answers: { ...answers, notebook_collection: false }, sys });
+  assert.equal(read().notebook_collection, false);
+});
+
+test("whether the notebook answers: at the address in the worker's private file, with a short wait, never an error", async () => {
+  const seen = [];
+  let status = 200;
+  const server = http.createServer((req, res) => {
+    let body = "";
+    req.on("data", (d) => { body += d; });
+    req.on("end", () => {
+      seen.push({ method: req.method, url: req.url, body: JSON.parse(body || "{}") });
+      res.writeHead(status, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(status === 200 ? { data: [] } : { error: "no" }));
+    });
+  });
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const { state } = tempMc();
+  try {
+    fs.writeFileSync(statePaths(state).workerEnv, `GODSPEED_WINGMAN_NOTEBOOK=${base}\n`);
+    assert.equal(await notebookAnswers({ env: {}, stateDir: state }), true);
+    assert.deepEqual(seen[0], { method: "POST", url: "/api/query", body: { table: "collections", operation: "select", filters: [["eq", "source_app", "godspeed-wingman"]] } }, "one read, nothing written");
+    assert.equal(await notebookAnswers({ env: { GODSPEED_WINGMAN_NOTEBOOK: base } }), true, "the environment's address");
+    status = 500;
+    assert.equal(await notebookAnswers({ env: { GODSPEED_WINGMAN_NOTEBOOK: base } }), false, "an error is not an answer");
+  } finally { await new Promise((r) => server.close(r)); }
+  assert.equal(await notebookAnswers({ env: { GODSPEED_WINGMAN_NOTEBOOK: base } }), false, "nobody there");
+  assert.equal(await notebookAnswers({ notebook: { answers: async () => true } }), true);
+  assert.equal(await notebookAnswers({ notebook: { answers: async () => { throw new Error("x"); } } }), false);
 });
 
 test("apply: a new install gets the starter page; an existing page is never replaced without the person saying so", async () => {

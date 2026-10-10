@@ -88,6 +88,20 @@ test("pacing, practice and the rest keep their checks", () => {
   assert.deepEqual(norm({ practice_until: { agree: 4, of: 5 } }, desktop).practice_until, { agree: 4, of: 5 });
 });
 
+test("the notebook list of likes and passes is off unless the file says true", () => {
+  assert.equal(defaults(desktop).notebook_collection, false, "off on a desktop");
+  assert.equal(defaults(server).notebook_collection, false, "off on a server");
+  assert.equal(norm({}, desktop).notebook_collection, false, "a file without it: off");
+  assert.equal(norm({ notebook_collection: true }, desktop).notebook_collection, true, "an explicit true: on");
+  for (const v of [false, null, "true", "yes", 1, {}, []]) assert.equal(norm({ notebook_collection: v }, desktop).notebook_collection, false, JSON.stringify(v));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-nb-"));
+  const f = path.join(dir, "settings.json");
+  fs.writeFileSync(f, JSON.stringify({ retention_days: 30 }));
+  assert.equal(loadSettings(f, desktop).notebook_collection, false);
+  fs.writeFileSync(f, JSON.stringify({ notebook_collection: true }));
+  assert.equal(loadSettings(f, desktop).notebook_collection, true);
+});
+
 test("a broken settings file is read as the defaults", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-bad-"));
   const f = path.join(dir, "settings.json");

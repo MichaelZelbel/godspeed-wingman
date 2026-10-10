@@ -919,6 +919,17 @@ function textInput(id, key, { placeholder = "", lines = false, rows = 3, list = 
   return lines ? h("textarea", { ...props, rows: String(rows) }) : h("input", { ...props, type: "text" });
 }
 
+// The list of likes and passes in the Godspeed notebook: one opt-in, offered only when the notebook
+// answers on this computer, unticked unless the settings already say yes.
+function notebookChoice() {
+  if (!S.ob.detect.notebook?.found) return null;
+  const a = S.wiz.ans;
+  const nc = S.ob.options.notebook_collection || {};
+  return h("div", { class: "picks" }, h("label", { class: "pick" },
+    h("input", { type: "checkbox", id: "notebook-list", checked: a.notebook_collection === true, on: { change: (e) => { a.notebook_collection = e.target.checked; saveWiz(); } } }),
+    h("span", { class: "pick-body" }, h("strong", { text: nc.label || "Also keep a list of every like and pass in my Godspeed notebook (it stays until I delete it)" }), nc.hint ? h("span", { class: "hint", text: nc.hint }) : null)));
+}
+
 function resultLine(id) { return h("p", { class: "result", id, "aria-live": "polite" }); }
 function showResult(id, r) {
   const p = $(`#${id}`);
@@ -940,7 +951,7 @@ const STEP_BODY = {
           h("li", { text: "Send a message you did not pick or write." }),
           h("li", { text: "Write to anyone outside the dating site." }),
           h("li", { text: "Post anything about your dating anywhere." }),
-          h("li", { text: "Put the people I see into your notes, your mission control's memory or git." }),
+          h("li", { text: "Put the people I see into your notes, your mission control's memory or git, unless you switch on the notebook list." }),
           h("li", { text: "Work on a site whose terms forbid bots or automated use." })))),
       h("p", { class: "muted", text: "The setup takes about ten minutes. You can go back to any page, and change everything later." }),
       S.ob.onboarded ? null : h("p", {}, h("button", { class: "btn quiet", type: "button", on: { click: async () => { const r = await api("/api/onboarding/skip", {}); say(r.text); await leaveWizard("status"); } } }, "I am set up already, take me to the desk")));
@@ -1032,7 +1043,8 @@ const STEP_BODY = {
     return h("div", { class: "stack-l" },
       field("daily", "The time of the daily session", h("input", { type: "time", id: "daily", value: a.daily_start, on: { input: (e) => { a.daily_start = e.target.value; saveWiz(); } } }), "Your computer has to be on then. While we practise, every profile waits for your answer."),
       field("tz", "Your time zone", h("select", { id: "tz", on: { change: (e) => { a.timezone = e.target.value; saveWiz(); } } }, zones.map((z) => h("option", { value: z, selected: z === a.timezone ? "selected" : null, text: z.replace(/_/g, " ") }))), here ? `This computer says ${here.replace(/_/g, " ")}.` : null),
-      field("keep", "How many days I remember people", h("input", { type: "number", id: "keep", min: "1", max: "3650", value: String(a.retention_days), on: { input: (e) => { a.retention_days = Number(e.target.value); saveWiz(); } } }), "After that I delete everyone I saw: their profile, their picture, your answers about them. Six weeks is a good start."));
+      field("keep", "How many days I remember people", h("input", { type: "number", id: "keep", min: "1", max: "3650", value: String(a.retention_days), on: { input: (e) => { a.retention_days = Number(e.target.value); saveWiz(); } } }), "After that I delete everyone I saw: their profile, their picture, your answers about them. Six weeks is a good start."),
+      notebookChoice());
   },
   talk() {
     const a = S.wiz.ans;

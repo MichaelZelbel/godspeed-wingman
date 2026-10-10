@@ -68,6 +68,11 @@
     "question": "Which language?",
     "default_line": "English, unless they write in another language I speak."
   },
+  "notebook_collection": {
+    "_about": "Offered only when the Godspeed notebook answers on this computer. Off unless the person ticks it.",
+    "label": "Also keep a list of every like and pass in my Godspeed notebook (it stays until I delete it)",
+    "hint": "One item for each profile liked or passed: their name, age, place, the site and the decision, hidden from your assistants. Unlike everything else the Wingman keeps about other people, this list is not deleted after the days you chose."
+  },
   "practice_examples": {
     "_about": "Shown on the training screen: what a useful practice answer looks like.",
     "good": [

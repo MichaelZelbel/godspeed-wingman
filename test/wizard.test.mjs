@@ -110,6 +110,26 @@ test("without Telegram there is no welcome; an existing page is kept unless the 
   assert.match(no.text(), /Nothing was saved/);
 });
 
+test("the notebook list is offered only when the notebook answers, unticked unless the person says yes", async () => {
+  const run = async (lines, over) => {
+    const { mc, state } = tempMc({ onboarded: false });
+    const io = scripted(lines);
+    const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: detected({ telegram: { found: false, file: "" }, ...over }) } });
+    assert.equal(r.done, true, io.text());
+    return { text: io.text(), set: JSON.parse(fs.readFileSync(settingsFile(mc), "utf8")) };
+  };
+  // sites, keep my page, daily, time zone, retention, [the list], talk, bridge, model, name, test, watch, save
+  let r = await run(["", "k", "", "", "", "y", "1", "", "", "", "n", "", "y"], { notebook: { found: true } });
+  assert.match(r.text, /Also keep a list of every like and pass in my Godspeed notebook \(it stays until I delete it\)\? \(y\/n\) \[n\]/, "offered, no by default");
+  assert.match(r.text, /not deleted after the days you chose/);
+  assert.equal(r.set.notebook_collection, true);
+  r = await run(["", "k", "", "", "", "", "1", "", "", "", "n", "", "y"], { notebook: { found: true } });
+  assert.equal(r.set.notebook_collection, false, "Enter keeps it off");
+  r = await run(["", "k", "", "", "", "1", "", "", "", "n", "", "y"], { notebook: { found: false } });
+  assert.doesNotMatch(r.text, /Godspeed notebook/, "not offered where the notebook does not answer");
+  assert.notEqual(r.set.notebook_collection, true);
+});
+
 test("the model test runs only when asked, and makes one call", async () => {
   const { mc, state } = tempMc({ onboarded: false });
   const calls = [];
