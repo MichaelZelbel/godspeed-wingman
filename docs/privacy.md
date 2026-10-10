@@ -49,12 +49,14 @@ worker deletes everything older than that about other people: the profile folder
 pictures, the decisions, the reply ideas, the desk's messages, the lists of who liked you, and the
 Discord names it told you.
 
-Two things stay longer, and you should know them:
+Two things stay longer, and a third one only if you switch it on:
 
 - **Your practice answers** are how the Wingman learns, so they stay. After the retention each one
   loses the person's name and profile id; the text the judge read (their bio, their details) stays
   with your answer and your reason.
 - **The worker's log** is not cut by date. It starts a new file at 2 MB and keeps the one before.
+- **The notebook list of likes and passes**, only if you switch it on (see below). It is not
+  deleted with the retention. It stays until you delete it.
 
 **The disk guard.** When the disk gets below 8 GB free (`min_free_gb`), the oldest pictures go
 first, never the last seven days and never the profiles themselves.
@@ -72,20 +74,24 @@ first, never the last seven days and never the profiles themselves.
   passes, and the messages you chose.
 - **To the bridge's computer**, when the Wingman runs on a server: the pages open in the Chrome
   there.
-- **To your Godspeed notebook, if it answers on this computer:** one list, "Wingman: likes and
-  passes", one item per profile liked or passed (date, name, age, gender, place, site, liked or
-  passed, by whom, the profile's address, a Discord name, a link to the picture, and a column for
-  your own comment). The list is hidden from every assistant, so none of them can turn a stranger
-  into a fact or a suggestion. The Wingman never deletes items from it, so it outlives the
-  retention: delete items yourself, delete the whole list in the notebook (the Wingman then stops
-  writing it), or switch it off with `"notebook_collection": false` in the settings.
+- **To your Godspeed notebook, only if you switch it on:** one list, "Wingman: likes and passes",
+  one item per profile liked or passed (date, name, age, gender, place, site, liked or passed, by
+  whom, the profile's address, a Discord name, a link to the picture, and a column for your own
+  comment). It is off unless you tick it in the setup questions (they offer it only when the
+  notebook answers on this computer) or set `"notebook_collection": true` in the settings. The list
+  is hidden from every assistant, so none of them can turn a stranger into a fact or a suggestion.
+  The Wingman never deletes items from it, so it is not deleted with the retention: delete items
+  yourself, or delete the whole list in the notebook (the Wingman then stops writing it).
+  `"notebook_collection": false` switches it off again; that stops new items, and what the list
+  already holds stays until you delete it.
 
 What never leaves:
 
 - Notifications never show a name, a picture or anything a stranger wrote; they can appear on a
   lock screen.
 - The desk answers only on this computer (127.0.0.1), only to a browser that holds its key.
-- Nothing about other people goes into your mission control's memory, its notes or git.
+- Nothing about other people goes into your mission control's memory, its notes or git, apart
+  from the notebook list above when you switch it on.
 - Nothing goes to the Wingman's author. There is no usage reporting of any kind.
 
 ## Strangers' words are data, never instructions
@@ -100,6 +106,8 @@ marks), so a profile cannot hand your assistant a command.
 - **Everything about other people:** `godspeed-wingman uninstall --delete-state`, or delete the
   private folder while the worker is stopped.
 - **A shorter memory:** lower `retention_days`; the next daily clean-up applies it.
+- **The notebook list, if you switched it on:** the retention does not touch it. Delete its items,
+  or the whole list, in the notebook.
 - **Your own words:** they are your files in `routines/wingman/`; the uninstall leaves them, so
   delete them yourself if you want them gone.
 

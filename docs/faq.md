@@ -72,7 +72,14 @@ Say "pause", or run `godspeed-wingman pause`. Nothing is liked, passed or read u
 
 Ask "who was <name>?". It searches every profile kept (by name, another name, a Discord name or a
 word from their bio) and shows the picture of their profile. After the retention (42 days unless
-you chose otherwise) they are gone.
+you chose otherwise) they are gone, except from the notebook list below if you switched it on.
+
+## Does it put the people it sees into my notebook?
+
+Not unless you switch it on. The list "Wingman: likes and passes" is off. You can tick it in the
+setup questions, which offer it only when your Godspeed notebook answers on this computer, or set
+`"notebook_collection": true` in `routines/wingman/settings.json`. The list is hidden from your
+assistants. It is not deleted after the retention: it stays until you delete it in the notebook.
 
 ## Can other people see the desk?
 

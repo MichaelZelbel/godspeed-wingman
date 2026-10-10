@@ -109,7 +109,10 @@ unless you press one of the test buttons.
 5. **Clear yes and clear no.** Green flags and deal-breakers to tick, and your own.
 6. **How you write.** The tone of your reply ideas, a message you liked (optional), the language.
 7. **When.** The daily session's time, your time zone, how many days it remembers the people it
-   saw (42 unless you choose another number).
+   saw (42 unless you choose another number). When your Godspeed notebook answers on this
+   computer, one more choice: "Also keep a list of every like and pass in my Godspeed notebook (it
+   stays until I delete it)". It is unticked, so the list is off unless you tick it. Unlike
+   everything else about other people, that list is not deleted after the days you chose.
 8. **Where it talks to you.** The desk page, notifications, Telegram when your assistant has a bot.
    Buttons send a test.
 9. **Log in once.** "Open the Wingman's browser" opens the site's login page in the Wingman's own

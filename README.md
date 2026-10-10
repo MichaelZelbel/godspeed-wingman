@@ -57,9 +57,11 @@ It needs Godspeed Mission Control first. If you do not have it yet, start with
 - Never sends a message you did not pick or dictate.
 - Never writes to anyone outside the dating site.
 - Never posts anything about your dating anywhere.
-- Never puts the people it sees into your mission control's memory or into git. (On Godspeed's
-  notebook it keeps one list, "Wingman: likes and passes", hidden from every assistant; you can
-  switch it off. See [privacy](docs/privacy.md).)
+- Never puts the people it sees into your mission control's memory or into git. It can keep one
+  list in your Godspeed notebook, "Wingman: likes and passes", hidden from every assistant, but it
+  is off unless you switch it on in the setup or with `"notebook_collection": true` in the
+  settings. That list is not deleted after the days you chose; it stays until you delete it. See
+  [privacy](docs/privacy.md).
 - Never works on a site whose terms forbid bots or automated use (see [Sites](#sites)).
 
 ## Add it
@@ -183,7 +185,8 @@ godspeed-wingman help              godspeed-wingman uninstall
 - **Everything about other people** (profiles, pictures, your practice answers, reply ideas, the
   log) lives in a private folder outside git (`~/.godspeed/wingman`; on a Linux server set up as
   root, `/var/lib/godspeed/wingman`), because git never forgets. It is deleted after the number of
-  days you chose.
+  days you chose. The one exception is the notebook list of likes and passes: it is off unless you
+  switch it on, and when it is on, it stays until you delete it.
 - **Its browser** is its own browser profile, so it never touches your everyday logins. On a server
   it uses a browser on a computer at home, through the
   [Chrome Agent Bridge](https://github.com/MichaelZelbel/chrome-agent-bridge).
