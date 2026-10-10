@@ -1,5 +1,5 @@
 name: godspeed-wingman
-version: "0.5.1"
+version: "0.5.2"
 description: >-
   Shows the model the Wingman's open practice question, a watch-list stop, the reply ideas
   waiting for "send 2" and the Discord names the person was just told about, once per turn,
