@@ -26,7 +26,7 @@ body:
     attributes:
       label: Version
       description: "`godspeed-wingman version`"
-      placeholder: "0.5.0"
+      placeholder: "0.5.1"
     validations:
       required: true
   - type: dropdown

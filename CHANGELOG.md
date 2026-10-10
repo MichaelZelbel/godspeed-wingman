@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.1 (2026-10-10)
+
+The notebook list of likes and passes is now off unless you switch it on.
+
+- **Why:** the list "Wingman: likes and passes" keeps names, ages and places of strangers with no
+  end date, while everything else about other people is deleted after the days you chose.
+- **Switching it on:** the setup questions offer it as one choice, unticked, only when your
+  Godspeed notebook answers on this computer. Or set `"notebook_collection": true` in
+  `routines/wingman/settings.json`. Only an explicit `true` switches it on.
+- **If you used it before:** an install whose settings do not say `true` stops adding to the list.
+  What the list already holds stays in your notebook until you delete it there.
+
 ## 0.5.0 (2026-10-10)
 
 The first public release. The Wingman is now an add-on that anyone with Godspeed Mission Control

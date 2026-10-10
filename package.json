@@ -1,6 +1,6 @@
 {
   "name": "godspeed-wingman",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "The Wingman, an add-on for Godspeed Mission Control: it looks through dating profiles for you, learns your taste from your answers, and brings you matches with reply ideas. You still do the talking.",
   "keywords": [ "godspeed-mission-control", "godspeed", "personal-ai", "ai-agent", "ai-assistant", "dating", "flirtual", "vrchat", "hermes", "claude-code", "add-on" ],
   "homepage": "https://github.com/MichaelZelbel/godspeed-wingman#readme",
