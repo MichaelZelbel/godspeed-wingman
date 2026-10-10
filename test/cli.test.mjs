@@ -105,6 +105,17 @@ test("every request a command sends is one the worker accepts", async () => {
   for (const t of sent) assert.ok(TYPES.includes(t), `${t} is not accepted`);
 });
 
+test("a second worker stops at once, also under the supervisor, which then stops too", async () => {
+  const { mc, state } = makeWorker([]);
+  fs.writeFileSync(path.join(state, "worker.pid"), `${process.pid}\n`);
+  const direct = await cli(["worker", "--godspeed", mc, "--state", state]);
+  assert.equal(direct.code, 4);
+  assert.match(direct.err, /Another godspeed-wingman worker is running; this one stops/);
+  const supervised = await cli(["worker", "--supervise", "--godspeed", mc, "--state", state]);
+  assert.equal(supervised.code, 4);
+  assert.match(fs.readFileSync(path.join(state, "worker.log"), "utf8"), /supervisor: another worker is running, so this one stops/);
+});
+
 test("the registry finds every command file, and a flag a command declares is known everywhere", async () => {
   const commands = await loadCommands();
   for (const n of ["answer", "exception", "send", "who", "train", "review", "run", "pause", "resume", "inbox", "stop", "notebook", "prefs", "watch", "check", "context", "status", "worker", "setup", "uninstall", "help", "version"]) {
