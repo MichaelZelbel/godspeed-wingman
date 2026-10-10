@@ -11,7 +11,10 @@ This page takes you from nothing to your first practice round. It takes about te
 - **Node.js 22 or newer.** Godspeed brings one, and so does Hermes; the installer finds it. If it
   finds none, it says so and stops.
 - **A model.** The Wingman reads every profile with a language model: Claude Code, Codex, or any
-  OpenAI-compatible model. Your mission control most likely has one of them already.
+  OpenAI-compatible model. Your mission control most likely has one of them already. If it thinks
+  with ChatGPT through Hermes, the Wingman cannot use that directly: install Codex and sign in with
+  your ChatGPT account (any plan works; the free one has a small allowance). The setup shows the
+  one line that installs it when it finds neither Claude Code nor Codex.
 - **On a computer with a screen:** Chrome or Edge (Chromium works too). The Wingman runs its own
   copy with its own profile, apart from your everyday browser.
 - **On a server:** see [server.md](server.md). The browser then sits on a computer at home.
@@ -102,7 +105,9 @@ unless you press one of the test buttons.
 1. **Hello.** What the Wingman does and never does.
 2. **Your site.** The sites it knows, and how to add another one.
 3. **You, and who you are looking for.** A few choices: who you are in a few words, who you are
-   looking for, the ages, where they live.
+   looking for, the ages, where they live. When you already have a preferences page of your own,
+   it asks first whether to keep it; keep it, and steps 4 to 6 are left out. The empty page a new
+   install starts with does not count as yours.
 4. **A starting point.** Four starters: looking for a partner, flirty and playful, friends first,
    just exploring. Each fills in a whole preferences page from your answers, so you never start
    with a blank page. You see the page as it would start.
@@ -118,7 +123,8 @@ unless you press one of the test buttons.
 9. **Log in once.** "Open the Wingman's browser" opens the site's login page in the Wingman's own
    browser. Log in there; it stays logged in. "Check my login" tells you it worked.
 10. **Who does the thinking.** The model lanes this computer has, with a "Test it" button that
-    makes one small call.
+    makes one small call. When neither Claude Code nor Codex is there, it shows the one line that
+    installs Codex; "Look again" finds it once it is installed, without starting over.
 11. **A last look.** Your preferences page as the Wingman will read it, to change as you like, and
     names to watch.
 12. **Done.** "Start my first practice round" starts ten profiles.

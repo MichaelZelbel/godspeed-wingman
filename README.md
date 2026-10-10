@@ -211,6 +211,8 @@ More: [docs/privacy.md](docs/privacy.md), [docs/this-computer.md](docs/this-comp
 [*Teach It Once*](https://leanpub.com/teachitonce) is the manual for Godspeed Mission Control. The
 chapters that matter most for the Wingman:
 
+- **Chapter 41, Let Your Mission Control Be Your Wingman**: this add-on, step by step, and why I let
+  it swipe for me.
 - **Chapter 2, Set Up Godspeed Mission Control**: the install, and Telegram on your phone.
 - **Chapter 9, Teach AI Your Writing Style**: why your reply ideas sound like you.
 - **Chapter 12, Correct AI Without the Argument**: why practice answers with a reason work.
