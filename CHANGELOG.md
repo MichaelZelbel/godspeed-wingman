@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.5.3 (2026-10-11)
+
+You decide about a site whose terms forbid bots. The Wingman tells you what they say and no
+longer decides for you.
+
+- **What changed:** a site whose terms forbid bots, automation or AI use was refused for good. The
+  recipe for adding a site stopped and built nothing, `site use` said the site "cannot be switched
+  on", and a new reading of the terms switched a site off. That overruled you. Now the terms are
+  information: your mission control reads them, quotes what they say about bots and AI, tells you
+  the risk once (the site may suspend or close your account, and some sites notice automated use),
+  and asks once whether to build it anyway. On yes it builds the adapter like any other, with the
+  same rules: it never touches a real person while building, the check reads only, and the site
+  starts in practice. On no, it stops.
+- **Your choice is recorded:** such a site is switched on only with
+  `godspeed-wingman site use <id> --accept-terms-risk`, which writes the date into your
+  `settings.json` (`terms_risk_accepted`). Without it, `site use` says in two sentences what the
+  terms say and the command to go ahead. `site list`, `status` and `check` show the site as "terms
+  forbid automated use; on by your choice (2026-10-11)". `site off` takes the choice back.
+- **When terms change:** if a new reading finds that a site you use now forbids automated use, the
+  Wingman pauses there and tells you once, with the command to keep it on or switch it off. It never
+  switches the site off behind your back. The 180-day reminder to read terms again stays a reminder.
+- **Unclear terms** are no longer counted as forbidden: the sentence is quoted, and you decide.
+- **What ships stays the same:** the Wingman comes only with Flirtual, and this repository accepts
+  adapters only for sites whose terms do not forbid automated or AI use. That is the author's choice
+  about what to hand out, not a limit on you; README, CONTRIBUTING and docs/adding-a-site.md now say
+  so.
+
 ## 0.5.2 (2026-10-10)
 
 A new install now starts the setup from the starters, and the model question helps people who
