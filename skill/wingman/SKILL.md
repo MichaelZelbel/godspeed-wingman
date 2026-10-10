@@ -1,6 +1,6 @@
 ---
 name: wingman
-description: The person's Wingman, their dating-site helper (an add-on for Godspeed Mission Control). Use when they name the Wingman ("wingman", "ask the wingman"); when the [godspeed-wingman] block shows an open practice, review or watch-list question and their message answers it ("agree", "yes", "no, they only want friends", "like", "pass", "you decide"), or says an answer was a one-off exception ("only this time", "as a friend"); when they pick a reply idea ("send 2", "send the first one to Mara", or dictate their own words); when they ask who someone was ("who is Robin?", "someone on Discord says I liked them"); when they want a practice round ("train the wingman", "practice"), a review of autopilot decisions, a session now, a pause or resume; when they state a dating preference ("no smokers either"); when they add or remove a watch-list name; and when they ask how the Wingman is doing.
+description: The person's Wingman, their dating-site helper (an add-on for Godspeed Mission Control). Use when they name the Wingman ("wingman", "ask the wingman"). Use when the [godspeed-wingman] block shows an open question and their message answers it ("agree", "yes", "no, they only want friends", "like", "pass", "you decide"). Use when they say an answer was a one-off ("only this time", "as a friend"). Use when they pick a reply idea ("send 2", "send the first one to Mara") or dictate their own words. Use when they ask who someone was ("who is Robin?", "someone on Discord says I liked them"). Use when they want a practice round ("train the wingman", "practice"), a review of autopilot decisions, a session now, a pause or a resume. Use when they state a dating preference ("no smokers either") or change the watch list. Use when they ask how the Wingman is doing, or want its desk or its setup questions again.
 ---
 
 ## What this is
@@ -88,7 +88,9 @@ fails), not theirs.
 - **The desk** (when the Wingman runs on their own computer): `godspeed-wingman desk` opens the
   Wingman's desk in their browser, with the open question and its picture, the reply ideas, "who
   was that?", their preferences and the status. `godspeed-wingman desk --setup` opens the setup
-  questions again. Starting their first practice round: `godspeed-wingman train`.
+  questions again (on a server without a screen, they answer them in a terminal with
+  `godspeed-wingman setup --wizard`). The answers are theirs: never fill them in for them.
+  Starting their first practice round: `godspeed-wingman train`.
 - **Something broken?** `godspeed-wingman check` shows what fails. A lost login on a dating site is
   the only thing that needs the person (they log in again in the Wingman's browser); everything
   else is yours to repair.

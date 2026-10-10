@@ -1,6 +1,6 @@
 ---
 name: wingman-add-site
-description: Teach the person's Wingman (the dating add-on for Godspeed Mission Control) a new dating site or app, only where the service's terms allow it. Use when the person says "add <site> to my Wingman", "can the Wingman do <app> too", "make the Wingman work on <site>", "the Wingman should also use <service>", or when the work is to build, repair or check a Wingman site adapter. It starts with the service's terms and stops for good when they forbid bots or automated use. This is programming work: hand it to the coding helper with this recipe.
+description: Teach the person's Wingman (the dating add-on for Godspeed Mission Control) a new dating site or app, only where the service's terms allow it. Use when the person says "add <site> to my Wingman" or "can the Wingman do <app> too". Use when they say "make the Wingman work on <site>" or "the Wingman should also use <service>". Use when the work is to build, repair or check a Wingman site adapter. It starts with the service's terms and stops for good when they forbid bots or automated use. This is programming work, so hand it to the coding helper with this recipe.
 ---
 
 ## What this is

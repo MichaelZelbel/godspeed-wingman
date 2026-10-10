@@ -74,6 +74,15 @@ test("context, status and who work without the worker", async () => {
   assert.match(nobody.out, /Nobody called "Zelda"/);
 });
 
+test("status says when the setup questions are still open, because no daily session runs before", async () => {
+  const { mc, state } = makeWorker([], { settings: { onboarded: false } });
+  const st = await cli(["status", "--godspeed", mc, "--state", state]);
+  assert.match(st.out, /The setup questions are not answered yet, so no daily session runs\. Open them with: godspeed-wingman desk --setup/);
+  assert.doesNotMatch(st.out, /No session yet/);
+  const done = makeWorker([]);
+  assert.doesNotMatch((await cli(["status", "--godspeed", done.mc, "--state", done.state])).out, /setup questions/);
+});
+
 test("watch list and preferences are edited in mission control's files", async () => {
   const { mc, state } = makeWorker([]);
   assert.match((await cli(["watch", "add", "Tamsin", "--godspeed", mc, "--state", state])).out, /Tamsin is on the watch list/);
