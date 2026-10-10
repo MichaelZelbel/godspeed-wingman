@@ -27,7 +27,9 @@ it lives in your mission control and is saved in its history like your other fil
 
    `allowed` when they explicitly permit automated or AI help, `silent` when nothing in them is
    against it, `forbidden` when they forbid bots, scripts, automated access or third-party tools.
-   **Forbidden means stop:** the Wingman will not work there, and that is the end of it.
+   **Forbidden is your decision:** the site may suspend or close your account if it notices a
+   helper. Go on only if you want that; the Wingman then switches the site on only with
+   `godspeed-wingman site use __ID__ --accept-terms-risk`, which records your choice with the date.
 2. **Find the site's own requests.** Log in once: `godspeed-wingman site login __ID__` opens the
    Wingman's own browser on the site's login page. Then:
 
@@ -48,8 +50,9 @@ it lives in your mission control and is saved in its history like your other fil
 
    It logs in with your session, reads the queue, one profile and one picture, and cannot like,
    pass, skip or send: those are blocked while it runs.
-6. **Switch it on:** `godspeed-wingman site use __ID__`. It starts in practice: every decision
-   waits for your answer until you agree with 9 of its last 10.
+6. **Switch it on:** `godspeed-wingman site use __ID__` (with `--accept-terms-risk` when its terms
+   forbid automated use and you chose to go ahead). It starts in practice: every decision waits for
+   your answer until you agree with 9 of its last 10.
 
 ## Rules
 

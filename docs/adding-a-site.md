@@ -1,8 +1,8 @@
 # Adding a dating site to the Wingman
 
 Flirtual is the first site the Wingman knows, not the only one. Another site, or an app, can be
-added by your mission control's coding helper, but only where the service's own terms allow a
-helper like the Wingman.
+added by your mission control's coding helper. It tells you first what the service's own terms say
+about a helper like the Wingman, and you decide.
 
 ## In short
 
@@ -12,44 +12,69 @@ Its coding helper follows the recipe that ships with the Wingman (`skills/wingma
 mission control):
 
 1. It reads the site's terms first and quotes what they say about bots, automation and AI.
-   If they forbid it, it stops and tells you, and nothing is built.
+   If they forbid it, it tells you so, with the risk, and asks once whether to build it anyway.
+   Nothing is built unless you say yes.
 2. It builds a small adapter for the site in your own mission control folder, from a template.
 3. It checks the adapter on the live site, reading only: it cannot like, pass, skip or send.
-4. It switches the site on. The new site starts in practice, so the Wingman asks you about every
-   profile there until it knows your taste on that site too.
+4. It switches the site on (a site whose terms forbid automated use only with your recorded
+   choice). The new site starts in practice, so the Wingman asks you about every profile there
+   until it knows your taste on that site too.
 
 You do two things yourself, because they need your accounts: log into the site once in the
 Wingman's browser, and answer the first practice round.
 
-## The terms rule, and why
+## What the terms say, and who decides
 
 Every site has a verdict in its `site.json`, from its terms of service, community guidelines and
-any developer or API policy:
+any developer or API policy. It is a record of what the terms say:
 
 - **allowed**: the terms explicitly permit automated or AI help.
 - **silent**: nothing in them speaks to it.
 - **forbidden**: they prohibit bots, scripts, automated access or third-party tools using the
-  service. One such sentence is enough.
+  service.
 
-The Wingman refuses to load a site whose verdict is forbidden, or whose terms were never checked,
-and it says why in plain words. The recipe tells the coding helper to stop at a forbidden verdict
-and never to suggest a way around it. Many large dating apps forbid automated use. The Wingman does
-not ship them and will not build them for you.
+The verdict is information for you, never a veto over you:
 
-Why so strict: the account is yours, and the rules are the site's. A site that forbids bots can
-close your account, and a helper you have to hide is not a helper. The Wingman should be something
-you could tell the site about.
+- **allowed or silent**: the site is built and switched on as usual.
+- **forbidden**: your mission control tells you which document says it, quotes the sentence, and
+  tells you the risk once: the site may suspend or close your account, and some sites notice
+  automated use. Then it asks whether to build it anyway. On no, it stops. On yes, it builds the
+  adapter like any other, with the same rules: it never touches a real person while building, the
+  check reads only, and the site starts in practice. The Wingman switches such a site on only with
+  your own choice, recorded with the date in your settings:
+  `godspeed-wingman site use <id> --accept-terms-risk`. `site list`, `status` and `check` then show
+  it as "terms forbid automated use; on by your choice (2026-10-11)". `site off <id>` takes the
+  choice back.
+- **never checked**: the site cannot be switched on. Someone has to read the terms first, so that
+  you know what they say.
 
-Terms change. When a verdict is more than 180 days old, `site list` and `site check` remind you to
-read them again. A new verdict of forbidden switches the site off at once.
+Why it works this way: the account is yours, and so is the decision. The rules are the site's, and
+a site that forbids bots can close an account that uses one. Your mission control makes sure you
+know that before you choose, and then it respects your choice.
 
-### Why Flirtual qualifies
+### What ships with the Wingman
+
+The Wingman's own repository ships, and accepts, adapters only for sites whose terms do not forbid
+automated or AI use. That is the author's choice about what to hand out with the book and with
+Godspeed: building a bot for a site whose rules exclude bots, and handing it out with the book or
+with Godspeed, would not be ethical or appropriate. It is not a limit on you. Your own mission control can build an adapter for any
+site you use, in your own folder, after it has told you what that site's rules say.
+
+### Terms change
+
+When a verdict is more than 180 days old, `site list` and `site check` remind you to read the terms
+again. When a new reading finds that the terms of a site you use now forbid automated use, the
+Wingman pauses there and asks you, once: keep it on (`site use <id> --accept-terms-risk`) or switch
+it off (`site off <id>`). It never switches the site off behind your back, and it never goes on
+there without your answer.
+
+### Why Flirtual is built in
 
 Flirtual's terms of service (last updated 4 December 2025, read on 10 October 2026) say nothing
 about bots, automation, scripts, scraping or AI. Its guidelines say: "Misusing Flirtual or attempts
 to maliciously exploit Flirtual will be investigated." The Wingman neither misuses nor exploits
 Flirtual: it uses one account, your own login, a person's pace, and it never sends a message you
-did not choose. So Flirtual's verdict is silent, and the Wingman works there. If Flirtual's terms
+did not choose. So Flirtual's verdict is silent, and it ships with the Wingman. If Flirtual's terms
 change, so does the verdict.
 
 ## What an adapter is
@@ -92,6 +117,7 @@ godspeed-wingman site login <id>                 the Wingman's browser on the si
 godspeed-wingman site network <id> --url <page>  the addresses a page called (reading only)
 godspeed-wingman site check <id> [--offline]     is it ready? (reading only)
 godspeed-wingman site use <id>                   switch it on
+godspeed-wingman site use <id> --accept-terms-risk   switch on a site whose terms forbid automated use, by your choice
 godspeed-wingman site off <id>                   switch it off
 ```
 

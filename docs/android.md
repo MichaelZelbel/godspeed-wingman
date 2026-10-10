@@ -6,8 +6,9 @@ an Android site adapter works the app the way a finger does: it reads the screen
 types.
 
 This is experimental. A website is always simpler and steadier, so the Wingman uses this only for
-a service that has no website. And the terms rule applies as for any site: many app makers forbid
-automated use, and then the Wingman is not built for them (see [adding-a-site.md](adding-a-site.md)).
+a service that has no website. And the terms work as for any site: many app makers forbid
+automated use; your mission control tells you what an app's terms say, and you decide (see
+[adding-a-site.md](adding-a-site.md)).
 
 ## What it needs
 

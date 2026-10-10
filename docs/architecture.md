@@ -78,8 +78,10 @@ reply ideas for each.
 
 A site is a folder with `site.json` (what it is, what its terms say, what the adapter can do) and
 `adapter.mjs`. The registry loads the built-in sites and the ones in your mission control
-(`routines/wingman/sites/<id>/`), and **refuses a site whose terms verdict is missing or
-`forbidden`**, saying why. The whole contract is in
+(`routines/wingman/sites/<id>/`). It **refuses a site whose terms were never read, and uses a
+site whose terms forbid automated use only by the person's own choice**, recorded with the date in
+`settings.json` (`terms_risk_accepted`); without it, it says what the terms say and how to go
+ahead. The whole contract is in
 [lib/sites/contract.md](../lib/sites/contract.md); how to add one is in
 [adding-a-site.md](adding-a-site.md).
 

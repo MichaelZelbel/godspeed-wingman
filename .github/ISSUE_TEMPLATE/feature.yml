@@ -18,7 +18,7 @@ body:
     id: promises
     attributes:
       label: The Wingman's promises
-      description: The Wingman never sends a message you did not pick, never writes to anyone outside the dating site, and never works on a site whose terms forbid it.
+      description: The Wingman never sends a message you did not pick, never writes to anyone outside the dating site, and never works on a site whose terms forbid it unless you chose that after being told what they say.
       options:
         - label: My idea keeps these promises.
           required: true

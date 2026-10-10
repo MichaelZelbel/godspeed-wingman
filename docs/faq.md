@@ -4,15 +4,17 @@
 
 On a site whose terms do not forbid it, yes, and the Wingman behaves like a careful person there:
 your own account, your own login, a person's pace, no message you did not choose. Every site
-records what its terms say about bots, automation and AI, with the sentences quoted. The Wingman
-refuses to run on a site whose terms forbid it, and its recipe for adding sites stops at the terms
-before any code is written. See [adding-a-site.md](adding-a-site.md).
+records what its terms say about bots, automation and AI, with the sentences quoted. When you ask
+for a site whose terms forbid it, your mission control tells you so before any code is written,
+with the risk to your account, and you decide. The Wingman switches such a site on only by your
+recorded choice. See [adding-a-site.md](adding-a-site.md).
 
 ## Does it work with the big dating apps?
 
-Many big dating apps forbid automated use in their terms. For those the answer is no, and the
-Wingman will not build them for you. Ask your mission control "Add <the app> to my Wingman" and it
-reads that app's terms and tells you what they say.
+Many big dating apps forbid automated use in their terms. The Wingman does not ship adapters for
+them; that is its author's choice about what to hand out. Ask your mission control "Add <the app>
+to my Wingman": it reads that app's terms, tells you what they say and what you risk (the app may
+suspend or close your account), and builds it in your own folder if you decide to go ahead.
 
 ## Do I need Godspeed Mission Control?
 

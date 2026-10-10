@@ -1,6 +1,6 @@
 ---
 name: wingman
-description: The person's Wingman, their dating-site helper (an add-on for Godspeed Mission Control). Use when they name the Wingman ("wingman", "ask the wingman"). Use when the [godspeed-wingman] block shows an open question and their message answers it ("agree", "yes", "no, they only want friends", "like", "pass", "you decide"). Use when they say an answer was a one-off ("only this time", "as a friend"). Use when they pick a reply idea ("send 2", "send the first one to Mara") or dictate their own words. Use when they ask who someone was ("who is Robin?", "someone on Discord says I liked them"). Use when they want a practice round ("train the wingman", "practice"), a review of autopilot decisions, a session now, a pause or a resume. Use when they state a dating preference ("no smokers either") or change the watch list. Use when they ask how the Wingman is doing, or want its desk or its setup questions again.
+description: The person's Wingman, their dating-site helper (an add-on for Godspeed Mission Control). Use when they name the Wingman ("wingman", "ask the wingman"). Use when the [godspeed-wingman] block shows an open question and their message answers it ("agree", "yes", "no, they only want friends", "like", "pass", "you decide"). Use when they say an answer was a one-off ("only this time", "as a friend"). Use when they pick a reply idea ("send 2", "send the first one to Mara") or dictate their own words. Use when they ask who someone was ("who is Robin?", "someone on Discord says I liked them"). Use when they want a practice round ("train the wingman", "practice"), a review of autopilot decisions, a session now, a pause or a resume. Use when they state a dating preference ("no smokers either") or change the watch list. Use when they decide about a site whose terms forbid bots ("keep it on", "switch it off"). Use when they ask how the Wingman is doing, or want its desk or its setup questions again.
 ---
 
 ## What this is
@@ -86,6 +86,11 @@ fails), not theirs.
 - **Another site or app** ("add <site> to my Wingman"): that is programming work; follow the recipe
   `wingman-add-site` (it starts with the site's terms). Which sites it knows: `godspeed-wingman site
   list`; switching one off: `godspeed-wingman site off <id>`.
+- **A site whose terms forbid automated use** is the person's call, never yours. Say once what the
+  terms say and the risk (the site may suspend or close their account), then do what they choose.
+  When the Wingman paused a site because its terms now forbid it and they say keep it on:
+  `godspeed-wingman site use <id> --accept-terms-risk` (it records their choice with the day); to
+  stop: `godspeed-wingman site off <id>`.
 - **How is it going?** `godspeed-wingman status`, told in two or three plain sentences.
 - **The desk** (when the Wingman runs on their own computer): `godspeed-wingman desk` opens the
   Wingman's desk in their browser, with the open question and its picture, the reply ideas, "who

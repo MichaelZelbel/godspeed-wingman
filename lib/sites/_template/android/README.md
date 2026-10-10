@@ -12,7 +12,8 @@ Use this only for a service that has no website. A website is simpler and steadi
 - The Android emulator on this computer: `godspeed-wingman android setup` (a few gigabytes, and
   hardware virtualisation switched on). See the Wingman's docs/android.md.
 - The app installed in the emulator from the Play Store, and you logged in once.
-- The terms: many app makers forbid automated use of their apps. Read them first (below).
+- The terms: many app makers forbid automated use of their apps. Read them first (below), so you
+  know what they say before you decide.
 
 ## The files
 
@@ -36,7 +37,9 @@ Use this only for a service that has no website. A website is simpler and steadi
    godspeed-wingman site terms __ID__ --verdict silent --url https://... --quote "..." --note "..."
    ```
 
-   **Forbidden means stop:** the Wingman will not work there.
+   **Forbidden is your decision:** the app may suspend or close your account if it notices a
+   helper. Go on only if you want that; the Wingman then switches it on only with
+   `godspeed-wingman site use __ID__ --accept-terms-risk`, which records your choice with the date.
 2. **Look at the screens.** Open each screen in the emulator (the cards, an open profile, the
    messages, one conversation) and run `godspeed-wingman android dump` to see what is on it: text,
    description and resource id of every node.
@@ -46,8 +49,9 @@ Use this only for a service that has no website. A website is simpler and steadi
 5. **Check it on the real app, read only:** `godspeed-wingman site check __ID__`. It reads the card
    in front and one profile and takes one picture. It refuses taps on anything marked like, pass or
    send, sideways swipes and typing.
-6. **Switch it on:** `godspeed-wingman site use __ID__`. It starts in practice: every decision
-   waits for your answer until you agree with 9 of its last 10.
+6. **Switch it on:** `godspeed-wingman site use __ID__` (with `--accept-terms-risk` when its terms
+   forbid automated use and you chose to go ahead). It starts in practice: every decision waits for
+   your answer until you agree with 9 of its last 10.
 
 ## Honest limits
 

@@ -46,10 +46,14 @@ A site is one folder: built in (`lib/sites/<id>/`) or the person's own
   - `silent`: nothing in them is against it;
   - `forbidden`: they forbid bots, automation, scripts or AI use.
 
-  **The loader refuses a site whose verdict is missing or `forbidden`** and says why in plain words.
-  `checked_on` is the day the terms were read; more than 180 days ago, `check` reminds the person to
-  read them again (a reminder, never a refusal). `quotes` holds the sentences the verdict rests on,
-  word for word.
+  The verdict is a record of what the terms say, for the person to decide on. **The loader refuses
+  a site whose verdict is missing**, and **uses a site whose verdict is `forbidden` only when the
+  person chose it**: `godspeed-wingman site use <id> --accept-terms-risk` writes
+  `"terms_risk_accepted": { "<id>": "YYYY-MM-DD" }` into `settings.json`, and `site off <id>` takes
+  it back. Without that choice the loader says, in plain words, what the terms say and how to go
+  ahead. `checked_on` is the day the terms were read; more than 180 days ago, `check` reminds the
+  person to read them again (a reminder, never a refusal). `quotes` holds the sentences the verdict
+  rests on, word for word. The built-in sites are only ones whose verdict is `allowed` or `silent`.
 - `can`: what the adapter offers. `queue`, `like` and `pass` are required in practice; `inbox`
   means `conversations()`, `send` means `send()`, `picture` means `open()` and `picture()`, `skip`
   means `skip()`, `liked-you` means `likedYou()`.
@@ -143,7 +147,8 @@ before `site terms` records what its terms say. `site check <id>` checks it: off
 the terms, the methods against `can`, and the folder's own `*.test.mjs`; then, live, the login,
 the queue, one profile, one picture and the conversations, holding only a copy of the adapter
 whose `like`, `pass`, `skip` and `send` throw, in a page (or emulator) that refuses changes
-(`lib/sites/guard.mjs`). `site use` and `site off` change `sites` in the settings.
+(`lib/sites/guard.mjs`). `site use` and `site off` change `sites` in the settings, and
+`terms_risk_accepted` for a site whose terms forbid automated use.
 
 Such an adapter is code the worker runs. On Linux and macOS the loader refuses it when any of its
 files, or any folder above them, can be changed by another account than the worker's own (or

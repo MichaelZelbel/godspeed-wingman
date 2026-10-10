@@ -62,7 +62,8 @@ It needs Godspeed Mission Control first. If you do not have it yet, start with
   is off unless you switch it on in the setup or with `"notebook_collection": true` in the
   settings. That list is not deleted after the days you chose; it stays until you delete it. See
   [privacy](docs/privacy.md).
-- Never works on a site whose terms forbid bots or automated use (see [Sites](#sites)).
+- Never works on a site whose terms forbid bots or automated use, unless you chose that after your
+  mission control told you what those terms say (see [Sites](#sites)).
 
 ## Add it
 
@@ -144,19 +145,27 @@ round any time, "review" to go through what it decided on its own. More:
 
 ## Sites
 
-**Flirtual** is built in. Its terms (checked 10 October 2026) say nothing against bots or AI, and
-the Wingman behaves like a careful person: one account, a person's pace, no messages you did not
-choose.
+**Flirtual** is built in, and it is the default for a reason: its terms (checked 10 October 2026)
+say nothing against bots or AI. The Wingman behaves like a careful person there: one account, a
+person's pace, no messages you did not choose.
 
 **Want another site?** Tell your mission control: "Add <the site's name> to my Wingman."
 Its coding helper follows the recipe that ships with the Wingman:
 
 1. It reads the site's current terms first and quotes what they say about bots, automation and AI.
-   **If the terms forbid it, it stops and tells you.** Many big dating apps forbid it; the Wingman
-   does not ship them, and it will not build them for you.
-2. If the terms allow it, it builds a small adapter for that site in your own mission control
-   folder, checks it without liking or passing anyone, and switches it on. A new site starts in
-   practice, even when another site already runs on its own.
+   **If the terms forbid it, it tells you so plainly**, with the risk: the site may suspend or close
+   your account, and some sites notice automated use. Then you decide. Many big dating apps forbid
+   it.
+2. If you go ahead, it builds a small adapter for that site in your own mission control folder,
+   checks it without liking or passing anyone, and switches it on. A site whose terms forbid
+   automated use is switched on only by your own choice, recorded with the date
+   (`godspeed-wingman site use <id> --accept-terms-risk`). A new site starts in practice, even when
+   another site already runs on its own.
+
+**What this repository ships is narrower.** It ships, and accepts, adapters only for sites whose
+terms do not forbid automated or AI use. That is the author's choice about what to hand out with
+the book and with Godspeed, not a limit on you: your own mission control can build an adapter for
+any site you use, in your own folder, once it has told you what that site's rules say.
 
 Details: [docs/adding-a-site.md](docs/adding-a-site.md).
 
@@ -223,7 +232,7 @@ chapters that matter most for the Wingman:
 
 ## Contributing
 
-New site adapters are welcome for services whose terms allow them. Read
+New site adapters are welcome for services whose terms do not forbid automated or AI use. Read
 [CONTRIBUTING.md](CONTRIBUTING.md) first; it says how to run the tests and what a site needs.
 Security problems go through [SECURITY.md](SECURITY.md), never an open issue.
 

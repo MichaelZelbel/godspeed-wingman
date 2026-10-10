@@ -29,8 +29,8 @@ Anything that breaks one of the promises the Wingman makes, for example:
 - a way for `settings.json` (which the assistant can edit) to run a program or send profiles to
   an address;
 - reaching the desk from another computer or another web page, or without its key;
-- a site adapter that runs while its terms verdict is missing or `forbidden`, or a `site check`
-  that changes something on a site;
+- a site adapter that runs while its terms verdict is missing, or `forbidden` without the
+  person's recorded choice, or a `site check` that changes something on a site;
 - data about other people ending up in git, in the mission control's memory, in a notification,
   or kept past the retention when it should not be;
 - the installers running something other than the Wingman's own release.

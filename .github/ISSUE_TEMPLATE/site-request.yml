@@ -5,12 +5,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        The Wingman only works on services whose terms allow a helper like it. Before anything is
-        built, the terms are read and the sentences about bots, automation and AI are quoted. If they
-        forbid it, the answer is no, and that is final. Many big dating apps forbid it.
+        This repository ships adapters only for services whose terms do not forbid a helper like the
+        Wingman. Before anything is built here, the terms are read and the sentences about bots,
+        automation and AI are quoted. If they forbid it, it does not ship here; that is the author's
+        choice about what this repository hands out. Many big dating apps forbid it.
 
-        You can also ask your own mission control: "Add <the site's name> to my Wingman." It follows
-        the same steps in your own folder.
+        You can still ask your own mission control: "Add <the site's name> to my Wingman." It reads
+        the terms, tells you what they say and the risk to your account, and builds it in your own
+        folder if you decide to go ahead.
   - type: input
     id: site
     attributes:

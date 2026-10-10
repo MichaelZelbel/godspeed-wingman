@@ -94,7 +94,9 @@ From then on follow the recipe the installer put in their mission control, `skil
 - Never put the people the Wingman sees into the person's notes, memory or git.
 - Never install it a second time somewhere else to make a command work. The command runs where the
   worker runs (their computer, or their server).
-- Never weaken a terms check or build a site whose terms forbid bots or automated use.
+- Never weaken a terms check, and never skip telling the person what a site's terms say. A site
+  whose terms forbid bots or automated use is built only when the person, told what they say and
+  the risk, decides to go ahead (the recipe `wingman-add-site`); never refuse it for them.
 
 ## Taking it out
 

@@ -15,16 +15,23 @@ handles other people's dating profiles, so a few rules matter more here than els
 
 ## New site adapters
 
-New sites are welcome, **only for services whose terms allow them**. Before any code:
+New sites are welcome here **only for services whose terms do not forbid automated or AI use**.
+That is the author's choice about what this repository hands out with the book and with Godspeed.
+It is not a limit on anyone's own Wingman: a person's own mission control can build an adapter for
+any site they use, in their own folder, after telling them what that site's terms say. Such
+adapters stay in that person's folder and do not come here.
+
+Before any code:
 
 1. Read the service's current terms of service, community guidelines, acceptable use policy and
    any developer or API policy.
 2. Search them for bot, automated, automation, script, scrape, crawler, robot, AI, artificial
    intelligence, third-party software, manual, on behalf.
 3. Copy every sentence that speaks to it, word for word, with the address of the page.
-4. Decide the verdict: `allowed` (they explicitly permit automated or AI help), `silent` (nothing
-   speaks to it) or `forbidden` (any sentence prohibits bots, scripts, automated access or
-   third-party tools). Unsure between silent and forbidden means forbidden.
+4. Record the verdict: `allowed` (they explicitly permit automated or AI help), `silent` (nothing
+   speaks to it) or `forbidden` (a sentence prohibits bots, scripts, automated access or
+   third-party tools). When a sentence could be read either way, quote it and say so in the pull
+   request; an unclear case does not ship here.
 
 A pull request for a site records all of that in its `site.json` (`terms.checked_on`, `urls`,
 `verdict`, `quotes`, `note`). A pull request for a site whose terms forbid automated use is closed,
