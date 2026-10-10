@@ -58,7 +58,9 @@ test("the answers become plain lines in the page", () => {
   const a = cleanAnswers({ sites: ["flirtual"], ...ANSWER_SETS.everything }, { options });
   const text = renderPreferences("looking-for-a-partner", a, { options, starters });
   assert.match(text, /- I am a nonbinary person in my forties, and I am looking for women and nonbinary people, aged 30 to 50\./, "more specific words win over the chips");
-  assert.match(text, /They live in Germany, Austria, Switzerland, so we can be online/, "named places win");
+  assert.match(text, /^- They live in Germany, Austria, Switzerland\.$/m, "named places win");
+  // Anywhere means distance matters less, so the line gives no reason about evenings online.
+  assert.match(renderPreferences("looking-for-a-partner", cleanAnswers({ sites: ["flirtual"], where: "anywhere" }, { options }), { options, starters }), /^- They live anywhere; distance matters less than fit\.$/m);
   assert.match(text, /- Someone who shares at least one of my interests: building worlds, horror films\./);
   assert.match(text, /- Someone who laughs at their own jokes\.|- someone who laughs at their own jokes\./);
   assert.match(text, /- Plays the piano\./, "an own line keeps its words, written as one list line");

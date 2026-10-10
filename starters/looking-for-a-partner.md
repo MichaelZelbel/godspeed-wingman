@@ -14,7 +14,7 @@ I can change it whenever I want: in the file itself, or by telling my mission co
 - I am {me}, and I am looking for {looking_for}, aged {age_range}.
 - Someone who wants a relationship, not only something casual. "Looking for something real" or
   "partner" in their profile is a good sign.
-- They live in {where}, so we can be online at the same time on most evenings.
+- They live in {where}.
 {green_flags}
 - Someone who writes a real bio. A few honest sentences say more than a list of games.
 
