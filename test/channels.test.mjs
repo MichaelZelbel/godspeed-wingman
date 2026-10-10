@@ -62,7 +62,10 @@ test("the desk keeps each message in its inbox in the private folder, with the p
   assert.equal(m.picture, "C:/x.jpg");
   assert.equal(m.at, "2026-10-03T10:00:00.000Z");
   assert.match(m.id, /^\d+-[0-9a-f]{6}$/);
-  assert.deepEqual(desk.ready({ paths, settings: { desk_port: 47860 } }), { ok: true, why: "messages wait on the desk page (http://127.0.0.1:47860/)" });
+  assert.deepEqual(await desk.ready({ paths, settings: { desk_port: 47860 }, probe: async () => true }), { ok: true, why: "messages wait on the desk page (http://127.0.0.1:47860/)" });
+  const off = await desk.ready({ paths, settings: { desk_port: 47860 }, probe: async () => false });
+  assert.equal(off.ok, true, "the message is kept either way");
+  assert.match(off.why, /not served right now.*godspeed-wingman desk/);
 });
 
 test("Telegram's token and chat come from a Hermes .env; the home channel first, else the one allowed user", () => {

@@ -6,7 +6,7 @@
   "private": false,
   "type": "module",
   "bin": { "godspeed-wingman": "bin/godspeed-wingman.mjs" },
-  "files": ["bin", "lib", "skill", "hermes", "README.md", "LICENSE"],
+  "files": ["bin", "lib", "skill", "hermes", "starters", "README.md", "LICENSE"],
   "engines": { "node": ">=22" },
   "scripts": { "test": "node --test \"test/*.test.mjs\"" },
   "keywords": ["godspeed-mission-control", "dating", "ai-assistant", "hermes", "flirtual"],

@@ -82,6 +82,10 @@ fails), not theirs.
   that line in the file instead of adding a second one that contradicts it, then show it again.
 - **Watch list:** `godspeed-wingman watch add "<name>"`, `watch remove "<name>"`, `watch list`.
 - **How is it going?** `godspeed-wingman status`, told in two or three plain sentences.
+- **The desk** (when the Wingman runs on their own computer): `godspeed-wingman desk` opens the
+  Wingman's desk in their browser, with the open question and its picture, the reply ideas, "who
+  was that?", their preferences and the status. `godspeed-wingman desk --setup` opens the setup
+  questions again. Starting their first practice round: `godspeed-wingman train`.
 - **Something broken?** `godspeed-wingman check` shows what fails. A lost login on a dating site is
   the only thing that needs the person (they log in again in the Wingman's browser); everything
   else is yours to repair.
