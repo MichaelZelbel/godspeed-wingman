@@ -6,7 +6,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { ask, claudeArgs, codexArgs, codexPrompt, laneOf, CODEX_OFF } from "../lib/core/model.mjs";
-import { resolveShim, findProgram } from "../lib/core/exe.mjs";
+import { resolveShim, findProgram, codexProgram, codexPlaces } from "../lib/core/exe.mjs";
 import { modelLine } from "../lib/commands/check.mjs";
 
 const temp = (p) => fs.mkdtempSync(path.join(os.tmpdir(), p));
@@ -132,6 +132,37 @@ test("check says whether the chosen model can be reached", () => {
   assert.equal(modelLine({ lane: "openai", name: "m" }, {}).ok, false);
   assert.match(modelLine({ lane: "openai", name: "m" }, {}).fix, /no key in OPENAI_API_KEY; put it in the Wingman's worker\.env/);
   assert.equal(modelLine({ lane: "openai", name: "m" }, { OPENAI_API_KEY: "k" }).ok, true);
-  assert.equal(modelLine({ lane: "codex" }, { PATH: "" }).ok, false);
-  assert.match(modelLine({ lane: "codex" }, { PATH: "" }).fix, /GODSPEED_WINGMAN_CODEX/);
+  // An empty home: no program where its installer would put it, and nothing on the PATH.
+  const home = temp("wingman-empty-home-");
+  assert.equal(modelLine({ lane: "codex" }, { PATH: "" }, { home }).ok, false);
+  assert.match(modelLine({ lane: "codex" }, { PATH: "" }, { home }).fix, /GODSPEED_WINGMAN_CODEX/);
+});
+
+test("Codex is found where OpenAI's installer puts it, also when it is not on the PATH yet", () => {
+  assert.deepEqual(codexPlaces({ env: {}, platform: "win32", home: String.raw`C:\Users\sam` }), [
+    String.raw`C:\Users\sam\AppData\Local\Programs\OpenAI\Codex\bin\codex.exe`,
+    String.raw`C:\Users\sam\.codex\packages\standalone\current\bin\codex.exe`,
+    String.raw`C:\Users\sam\.codex\packages\standalone\current\codex.exe`,
+    String.raw`C:\Users\sam\AppData\Roaming\npm\codex.cmd`,
+  ]);
+  assert.equal(codexPlaces({ env: { LOCALAPPDATA: String.raw`D:\Local`, CODEX_INSTALL_DIR: String.raw`D:\Tools\codex` }, platform: "win32", home: String.raw`C:\Users\sam` })[0], String.raw`D:\Tools\codex\codex.exe`, "the installer's own folder setting first");
+  assert.deepEqual(codexPlaces({ env: {}, platform: "linux", home: "/home/sam" }), ["/home/sam/.local/bin/codex", "/home/sam/.codex/packages/standalone/current/bin/codex", "/home/sam/.codex/packages/standalone/current/codex"]);
+  assert.equal(codexPlaces({ env: { CODEX_HOME: "/opt/codex-home" }, platform: "darwin", home: "/Users/sam" })[1], "/opt/codex-home/packages/standalone/current/bin/codex");
+
+  // On this machine: a fresh install in a home of its own, with nothing on the PATH.
+  const home = temp("wingman-codex-home-");
+  const win = process.platform === "win32";
+  const env = win ? { LOCALAPPDATA: path.join(home, "AppData", "Local"), APPDATA: path.join(home, "AppData", "Roaming"), PATH: "" } : { PATH: "" };
+  assert.equal(codexProgram({ env, home }), null, "nothing installed yet");
+  const installed = win ? path.join(env.LOCALAPPDATA, "Programs", "OpenAI", "Codex", "bin", "codex.exe") : path.join(home, ".local", "bin", "codex");
+  fs.mkdirSync(path.dirname(installed), { recursive: true });
+  fs.writeFileSync(installed, "", { mode: 0o755 });
+  assert.deepEqual(codexProgram({ env, home }), { exe: installed, args: [] }, "found without the PATH");
+  const onPath = temp("wingman-codex-path-");
+  const other = path.join(onPath, win ? "codex.exe" : "codex");
+  fs.writeFileSync(other, "", { mode: 0o755 });
+  assert.equal(codexProgram({ env: { ...env, PATH: onPath }, home }).exe, other, "the PATH still comes first");
+  const chosen = path.join(onPath, win ? "chosen.exe" : "chosen");
+  fs.writeFileSync(chosen, "", { mode: 0o755 });
+  assert.equal(codexProgram({ env: { ...env, PATH: onPath, GODSPEED_WINGMAN_CODEX: chosen }, home }).exe, chosen, "and the program you name before both");
 });
