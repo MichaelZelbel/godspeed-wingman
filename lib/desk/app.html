@@ -309,6 +309,7 @@ dialog .quote { margin: 14px 0 20px; padding: 14px; border-radius: 12px; backgro
   .wiz-body { padding: 26px 16px 20px; }
   .wiz-foot .inner { padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
   .answer-buttons.three { grid-template-columns: 1fr; }
+  .keys { display: none; }
   .who-form { flex-direction: column; }
 }
 </style>
@@ -574,6 +575,8 @@ async function answer(decision) {
   const reason = reasonBox ? reasonBox.value.trim() : "";
   const exception = !!$("#oneoff")?.checked;
   for (const b of document.querySelectorAll("[data-answer]")) b.disabled = true;
+  const keys = $(".keys");
+  if (keys) keys.textContent = "Telling the Wingman.";
   const r = await api("/api/answer", { decision, reason, exception, about: w.id });
   say(r.text || (r.ok ? "Noted." : "That did not work."));
   if (r.ok) { delete S.drafts[`reason:${w.id}`]; await refreshNow(); }
