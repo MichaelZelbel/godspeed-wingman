@@ -767,7 +767,7 @@ async function prefsPage(main) {
     say(r.text);
   };
   main.replaceChildren(h("div", { class: "page" },
-    h("div", { class: "page-head" }, h("div", {}, h("h1", { text: "Preferences" }), h("p", { text: "What I read before every like or pass, together with your practice answers. Plain sentences work best." }))),
+    h("div", { class: "page-head" }, h("div", {}, h("h1", { text: "Preferences" }), h("p", { text: "What I go by, with your practice answers, whenever I like or pass. Plain sentences work best." }))),
     h("div", { class: "prefs-grid" },
       h("section", { class: "panel stack" },
         h("div", { class: "field" }, h("label", { for: "prefs", text: "Who fits, who does not, how to judge, how you write" }), prefs),

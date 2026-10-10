@@ -43,7 +43,7 @@
   "deal_breakers": {
     "question": "What is a clear no? Tick what fits; add your own.",
     "choices": [
-      { "id": "drinking", "label": "Heavy drinking", "line": "- A heavy drinker, or someone who is always in drinking worlds or at parties." },
+      { "id": "drinking", "label": "Heavy drinking", "line": "- Someone whose evenings seem to be mostly about drinking and parties." },
       { "id": "smoking", "label": "Smoking", "line": "- A smoker." },
       { "id": "mute", "label": "Never speaks", "line": "- Someone who never uses their voice (a mute player). Text-only gets old fast.", "sites": ["flirtual"] },
       { "id": "jealous", "label": "Possessive or jealous", "line": "- Someone who sounds possessive or very jealous. A small red flag nearby, a big one far away." },
@@ -51,13 +51,13 @@
       { "id": "far", "label": "Too far away", "line": "- Someone so far away that we would never be online at the same time." },
       { "id": "drama", "label": "Drama", "line": "- A profile full of complaints about exes or about other people." },
       { "id": "thin", "label": "Empty profile", "line": "- A profile with nothing in it but pictures." },
-      { "id": "pretend", "label": "Not who they say", "line": "- Someone whose profile does not match the gender or age they ticked. Weigh it; do not decide on one detail." }
+      { "id": "pretend", "label": "Not who they say", "line": "- Someone whose profile does not match the gender or age they ticked. Count it as one hint among others, never as the whole story." }
     ]
   },
   "tone": {
     "question": "How do your messages sound?",
     "choices": [
-      { "id": "playful", "label": "Warm and playful", "line": "Short, warm and playful, a little teasing, confident without being pushy. Simple words." },
+      { "id": "playful", "label": "Warm and playful", "line": "Warm and playful, with a light tease. Short sentences, plain words, never pushy." },
       { "id": "calm", "label": "Calm and sincere", "line": "Calm and sincere. Friendly questions, no pressure, no pickup lines." },
       { "id": "witty", "label": "Witty and dry", "line": "Witty, with dry humour. Short lines, a clever callback to something in their profile." },
       { "id": "direct", "label": "Short and direct", "line": "Short and direct. One line, one question, no small talk." }

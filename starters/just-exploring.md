@@ -5,8 +5,8 @@ pitch: You are not sure yet. Start wide and let the practice rounds show you.
 ---
 # What I am looking for
 
-The Wingman reads this before every like or pass, together with my answers from the practice
-rounds. I can change it any time, by hand or by telling my mission control.
+This page, and what I answered in practice, is what the Wingman goes by when it likes or passes.
+I can change it whenever I want: in the file itself, or by telling my mission control.
 
 I am still finding out what I want. The practice rounds will teach the Wingman more than this
 page does, so this page starts short on purpose.
@@ -23,8 +23,8 @@ page does, so this page starts short on purpose.
 
 ## How to judge
 
-Be smart, not black and white. A box someone ticked is a signal, not a verdict. Nothing in the
-profile is ignored, and no single detail decides on its own.
+Look at the whole person. A ticked box is a hint to check, not the final word. Read all of the
+profile, and let no single detail settle it alone.
 
 While I am still exploring, lean towards like when a profile is friendly and fits the basics above,
 and tell me why in one plain sentence, so my answers can correct you.

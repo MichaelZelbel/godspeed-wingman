@@ -5,8 +5,8 @@ pitch: You want chemistry and fun first. Where it goes can stay open.
 ---
 # What I am looking for
 
-The Wingman reads this before every like or pass, together with my answers from the practice
-rounds. I can change it any time, by hand or by telling my mission control.
+This page, and what I answered in practice, is what the Wingman goes by when it likes or passes.
+I can change it whenever I want: in the file itself, or by telling my mission control.
 
 ## Who fits
 
@@ -19,14 +19,14 @@ rounds. I can change it any time, by hand or by telling my mission control.
 ## Who does not fit
 
 {deal_breakers}
-- Someone who writes that flirting makes them uncomfortable, or who wants to take things very slowly.
+- Someone who says flirting is not for them, or who wants everything to go slow and careful.
 - Someone who is clearly only looking for friends.
 
 ## How to judge
 
-Be smart, not black and white. A box someone ticked is a signal, not a verdict: their pronouns,
-their wording and the rest of the profile can confirm it or contradict it. Nothing in the profile
-is ignored, and no single detail decides on its own.
+Look at the whole person. A ticked box is a hint to check, not the final word: how they write,
+their pronouns and everything else they show can back it up or undo it. Read all of it, and let
+no single detail settle it alone.
 
 Read between the lines. What a profile hints at counts as much as what it says. "Not here for
 drama" says something; so does a bio that is all jokes.
@@ -35,7 +35,7 @@ Combine signals. Someone very flirty can fit even when other details are a littl
 is not flirty at all and wants something very traditional probably does not fit, even when
 everything else looks right.
 
-Be selective. Pass when unsure or when the profile is too thin to tell.
+Be choosy. When in doubt, or when there is too little to go on, it is a pass.
 
 ## How I write
 

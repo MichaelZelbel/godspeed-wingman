@@ -5,8 +5,8 @@ pitch: You would rather start with good conversation and see what grows.
 ---
 # What I am looking for
 
-The Wingman reads this before every like or pass, together with my answers from the practice
-rounds. I can change it any time, by hand or by telling my mission control.
+This page, and what I answered in practice, is what the Wingman goes by when it likes or passes.
+I can change it whenever I want: in the file itself, or by telling my mission control.
 
 ## Who fits
 
@@ -24,9 +24,9 @@ rounds. I can change it any time, by hand or by telling my mission control.
 
 ## How to judge
 
-Be smart, not black and white. A box someone ticked is a signal, not a verdict: their pronouns,
-their wording and the rest of the profile can confirm it or contradict it. Nothing in the profile
-is ignored, and no single detail decides on its own.
+Look at the whole person. A ticked box is a hint to check, not the final word: how they write,
+their pronouns and everything else they show can back it up or undo it. Read all of it, and let
+no single detail settle it alone.
 
 Look for warmth and curiosity in how they write. Shared interests count more here than looks or
 distance.
