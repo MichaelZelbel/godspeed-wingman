@@ -2,6 +2,7 @@
 id: flirty-and-playful
 title: Flirty and playful
 pitch: You want chemistry and fun first. Where it goes can stay open.
+covers: only_friends
 ---
 # What I am looking for
 

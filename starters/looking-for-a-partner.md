@@ -2,6 +2,7 @@
 id: looking-for-a-partner
 title: Looking for a partner
 pitch: You want someone to build something with. Fewer likes, more meaning.
+covers: only_friends
 ---
 # What I am looking for
 
@@ -20,8 +21,8 @@ I can change it whenever I want: in the file itself, or by telling my mission co
 ## Who does not fit
 
 {deal_breakers}
-- Someone who says they only want friends, or who is not looking for {looking_for}. They sometimes
-  show up anyway because they did not filter.
+- Someone who says they only want friends, or who is clearly not looking for someone like me. They
+  sometimes show up anyway because they did not filter.
 - Someone who sounds like they are in a relationship already and not open to more.
 
 ## How to judge

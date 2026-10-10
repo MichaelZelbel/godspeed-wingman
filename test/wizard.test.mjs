@@ -78,7 +78,9 @@ test("the terminal wizard on a server: same questions, the files written, one we
   assert.match(prefs, /Someone flirty and playful/, "the flirty starter");
   assert.match(prefs, /They live anywhere; distance matters less than fit\./);
   assert.match(prefs, /- Someone who plays VRChat\.\n- Someone whose bio makes me smile; a sense of humour like mine\.\n- Someone who shares at least one of my interests: building worlds\.\n- Kind to animals\.\n- Laughs a lot\./);
-  assert.match(prefs, /- A smoker\.\n- Someone who writes that they only want friends\./);
+  // "Only wants friends" is ticked, but the flirty starter says it already: one line, not two.
+  assert.match(prefs, /## Who does not fit\n\n- A smoker\.\n- Someone who says flirting is not for them, or who wants everything to go slow and careful\.\n- Someone who is clearly only looking for friends\.\n/);
+  assert.doesNotMatch(prefs, /Someone who writes that they only want friends/);
   assert.match(prefs, /^Witty, with dry humour\./m);
   assert.doesNotMatch(prefs, /\{[a-z_]+\}/);
   const set = JSON.parse(fs.readFileSync(settingsFile(mc), "utf8"));

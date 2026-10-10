@@ -36,7 +36,7 @@ test("the four starters are there, each with the sections the judge reads and a 
     for (const h of ["## Who fits", "## Who does not fit", "## How to judge", "## How I write", "## Added later"]) assert.ok(s.body.includes(h), `${s.id}: ${h}`);
     assert.doesNotMatch(s.body, /^---/m, "the front matter is not part of the page");
   }
-  assert.deepEqual(parseStarter("---\nid: x\ntitle: X\npitch: p\n---\n# Body\n"), { id: "x", title: "X", pitch: "p", body: "# Body\n" });
+  assert.deepEqual(parseStarter("---\nid: x\ntitle: X\npitch: p\n---\n# Body\n"), { id: "x", title: "X", pitch: "p", covers: [], body: "# Body\n" });
 });
 
 test("every starter renders with no {placeholder} left, for every answer set", () => {
@@ -244,4 +244,30 @@ test("the welcome is sent once, retried until a channel takes it, never twice", 
   assert.equal(h.told.length, 1, "sent once, ever");
   const done = fs.readdirSync(h.w.paths.requestsDone).map((f) => JSON.parse(fs.readFileSync(path.join(h.w.paths.requestsDone, f), "utf8")));
   assert.match(done.at(-1).result.text, /sent already/);
+});
+
+test("looking for anyone: the partner starter never says 'not looking for anyone who fits'", () => {
+  for (const looking_for of [["anyone"], ["women"], ["men", "nonbinary"], []]) {
+    const text = renderPreferences("looking-for-a-partner", cleanAnswers({ sites: ["flirtual"], looking_for }, { options }), { options, starters });
+    assert.match(text, /^- Someone who says they only want friends, or who is clearly not looking for someone like me\. They\n  sometimes show up anyway because they did not filter\.$/m, looking_for.join());
+    assert.doesNotMatch(text, /not looking for (anyone|women|men|nonbinary)/, looking_for.join());
+  }
+});
+
+test("a deal-breaker the starter already says is not added a second time", () => {
+  const a = cleanAnswers({ sites: ["flirtual"], deal_breakers: ["smoking", "only_friends"] }, { options });
+  const partner = renderPreferences("looking-for-a-partner", a, { options, starters });
+  assert.doesNotMatch(partner, /Someone who writes that they only want friends/);
+  assert.match(partner, /## Who does not fit\n\n- A smoker\.\n- Someone who says they only want friends, or/, "the other ticks still land");
+  const flirty = renderPreferences("flirty-and-playful", a, { options, starters });
+  assert.doesNotMatch(flirty, /Someone who writes that they only want friends/);
+  assert.match(flirty, /- Someone who is clearly only looking for friends\./);
+  for (const id of ["friends-first", "just-exploring"]) {
+    assert.match(renderPreferences(id, a, { options, starters }), /- A smoker\.\n- Someone who writes that they only want friends\./, `${id} does not say it, so the tick adds it`);
+  }
+  assert.deepEqual(starters.find((s) => s.id === "looking-for-a-partner").covers, ["only_friends"]);
+  assert.deepEqual(starters.find((s) => s.id === "friends-first").covers, []);
+  const known = new Set(options.deal_breakers.choices.map((c) => c.id));
+  for (const s of starters) for (const id of s.covers) assert.ok(known.has(id), `${s.id} covers a deal-breaker that exists: ${id}`);
+  assert.deepEqual(parseStarter("---\nid: x\ncovers: a, b\n---\nbody").covers, ["a", "b"]);
 });
