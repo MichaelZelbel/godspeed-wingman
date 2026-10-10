@@ -1,0 +1,9 @@
+{
+  "id": "__ID__",
+  "name": "__NAME__",
+  "kind": "android",
+  "android": { "package": "__PACKAGE__" },
+  "about": "__NAME__, a dating app",
+  "can": ["queue", "like", "pass", "inbox", "send", "picture"],
+  "options": {}
+}

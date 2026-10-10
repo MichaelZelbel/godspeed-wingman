@@ -81,6 +81,9 @@ fails), not theirs.
   control; the person may edit that file by hand too. **A correction** of one they gave: change
   that line in the file instead of adding a second one that contradicts it, then show it again.
 - **Watch list:** `godspeed-wingman watch add "<name>"`, `watch remove "<name>"`, `watch list`.
+- **Another site or app** ("add <site> to my Wingman"): that is programming work; follow the recipe
+  `wingman-add-site` (it starts with the site's terms). Which sites it knows: `godspeed-wingman site
+  list`; switching one off: `godspeed-wingman site off <id>`.
 - **How is it going?** `godspeed-wingman status`, told in two or three plain sentences.
 - **The desk** (when the Wingman runs on their own computer): `godspeed-wingman desk` opens the
   Wingman's desk in their browser, with the open question and its picture, the reply ideas, "who

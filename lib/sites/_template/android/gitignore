@@ -1,0 +1,7 @@
+# Anything real stays out of git: screen dumps of the app, pictures, notes about people.
+private/
+*.xml
+*.png
+*.jpg
+*.jpeg
+*.webp
