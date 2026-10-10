@@ -1,0 +1,7 @@
+# Anything real stays out of git: recordings of the site's answers, pictures, notes about people.
+private/
+*.har
+*.png
+*.jpg
+*.jpeg
+*.webp

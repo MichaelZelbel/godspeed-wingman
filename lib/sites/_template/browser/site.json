@@ -1,0 +1,11 @@
+{
+  "id": "__ID__",
+  "name": "__NAME__",
+  "kind": "browser",
+  "home": "__HOME__",
+  "login_url": "__HOME__",
+  "about": "__NAME__, a dating site",
+  "can": ["queue", "like", "pass", "skip", "inbox", "send", "picture"],
+  "post_reads": [],
+  "options": {}
+}
