@@ -1,0 +1,33 @@
+name: test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    name: ${{ matrix.os }}, Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Tests
+        run: node --test "test/*.test.mjs"
+      - name: The installers parse
+        if: runner.os != 'Windows'
+        run: bash -n install.sh
+      - name: The installers parse (Windows PowerShell 5.1 and PowerShell 7)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $code = Get-Content -Raw install.ps1
+          [scriptblock]::Create($code) | Out-Null
+          powershell -NoProfile -Command "[scriptblock]::Create((Get-Content -Raw install.ps1)) | Out-Null; 'parsed in Windows PowerShell ' + `$PSVersionTable.PSVersion"

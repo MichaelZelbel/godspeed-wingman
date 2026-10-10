@@ -1061,7 +1061,7 @@ const STEP_BODY = {
     const browserSites = chosen.filter((s) => s.kind === "browser");
     const parts = [];
     if (a.browser === "bridge" || !S.ob.detect.desktop) {
-      parts.push(field("bridge", "The address of the browser bridge", textInput("bridge", "bridge", { placeholder: "http://192.168.1.20:3010" }), "This machine has no screen, so the Wingman uses a Chrome Agent Bridge on a computer that has one. You log in there."));
+      parts.push(field("bridge", "The address of the browser bridge", textInput("bridge", "bridge", { placeholder: "http://192.168.1.20:3007" }), "This machine has no screen, so the Wingman uses a Chrome Agent Bridge on a computer that has one. You log in there."));
       if (!S.ob.detect.desktop && a.browser !== "bridge") { a.browser = "bridge"; saveWiz(); }
     }
     if (!browserSites.length) parts.push(h("p", { class: "muted", text: "None of your sites needs a browser login here." }));

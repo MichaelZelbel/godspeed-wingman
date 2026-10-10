@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Godspeed Mission Control
+    url: https://github.com/MichaelZelbel/godspeed-mission-control
+    about: The Wingman is an add-on for it. Questions about the mission control itself go there.
+  - name: Install Godspeed Mission Control
+    url: https://godspeedmissioncontrol.com/install
+    about: Start here if you do not have a mission control yet.
+  - name: The book Teach It Once
+    url: https://leanpub.com/teachitonce
+    about: The manual for Godspeed Mission Control, with chapters on setup, servers and privacy.
+  - name: A security problem
+    url: https://github.com/MichaelZelbel/godspeed-wingman/security/advisories/new
+    about: Report it privately, never in an open issue.
