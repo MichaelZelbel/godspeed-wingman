@@ -79,6 +79,8 @@ test("the key becomes an HttpOnly, SameSite=Strict cookie and leaves the address
     const r = await req(port, { path: `/?t=${secret}` });
     assert.equal(r.status, 303);
     assert.equal(r.headers.location, "/", "the key leaves the address bar");
+    const odd = await req(port, { path: `/.//evil.example/?t=${secret}` });
+    assert.equal(odd.headers.location, "/", "never a path taken from the request");
     const c = r.headers["set-cookie"][0];
     assert.match(c, new RegExp(`^${cookieName(port)}=${secret};`));
     assert.match(c, /HttpOnly/);
