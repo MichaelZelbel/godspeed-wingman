@@ -34,10 +34,10 @@ clock. You train it on your phone, in the Telegram chat you already use with you
 - A server with Godspeed Mission Control and Hermes, with Telegram set up for Hermes.
 - Node.js 22 or newer on the server. Hermes brings one (`~/.hermes/tools/node-*`); the installer
   finds it.
-- A computer at home with the Chrome Agent Bridge, reachable from the server over a private
-  network such as Tailscale or WireGuard. Never expose the bridge to the internet: whoever reaches
-  it controls that browser. Give the Wingman a Chrome profile of its own on the bridge (the bridge's
-  multi-agent setup), apart from the profiles your other agents use.
+- A computer at home with the Chrome Agent Bridge, 0.6.0 or newer, reachable from the server over
+  a private network such as Tailscale or WireGuard. Never expose the bridge to the internet:
+  whoever reaches it controls that browser. Give the Wingman a Chrome profile of its own on the
+  bridge (the bridge's multi-agent setup), apart from the profiles your other agents use.
 - The home computer has to be on at session time.
 
 ## Install
@@ -98,8 +98,17 @@ GODSPEED_WINGMAN_BRIDGE_TOKEN=<the same secret>
 ```
 
 Log into the dating site once in the bridge's Chrome window on the home computer. Then
-`godspeed-wingman check` on the server says whether the bridge answers and whether the login is
-there.
+`godspeed-wingman check` on the server says whether the bridge answers, which version it runs,
+and whether the login is there.
+
+**The bridge must be 0.6.0 or newer.** When a browser tab crashes, an older bridge keeps handing
+out that dead tab: every page fails while the bridge's health check still says ok, and the
+Wingman cannot like or pass anyone until the bridge is restarted. 0.6.0 opens a fresh tab
+instead. `godspeed-wingman check` reads the bridge's version and fails below 0.6.0.
+
+**After you update the bridge, restart every bridge instance on that computer,** not only the one
+the Wingman uses. Each instance runs the code it started with, so one you did not restart still
+runs the old version. The logins stay, because they live in the Chrome profile.
 
 ## The desk on a server
 

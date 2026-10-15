@@ -198,7 +198,9 @@ godspeed-wingman help              godspeed-wingman uninstall
   switch it on, and when it is on, it stays until you delete it.
 - **Its browser** is its own browser profile, so it never touches your everyday logins. On a server
   it uses a browser on a computer at home, through the
-  [Chrome Agent Bridge](https://github.com/MichaelZelbel/chrome-agent-bridge).
+  [Chrome Agent Bridge](https://github.com/MichaelZelbel/chrome-agent-bridge), 0.6.0 or newer.
+  After an update of the bridge, restart every bridge instance on that computer
+  ([docs/server.md](docs/server.md#the-bridge)).
 
 More: [docs/privacy.md](docs/privacy.md), [docs/this-computer.md](docs/this-computer.md),
 [docs/server.md](docs/server.md), [docs/architecture.md](docs/architecture.md),

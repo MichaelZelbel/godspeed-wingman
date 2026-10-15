@@ -18,8 +18,9 @@ run the installer and open the questions; they answer.
   Godspeed Mission Control and point them to https://godspeedmissioncontrol.com/install.
 - Find where the Wingman should run. On the computer they use every day (Windows, macOS, a Linux
   desktop) it runs there. When their mission control runs on a server with Telegram, it runs on the
-  server, and it needs a computer at home with the Chrome Agent Bridge for the browser
-  (`docs/server.md`). If that is unclear, ask them which one, in one short question.
+  server, and it needs a computer at home with the Chrome Agent Bridge, 0.6.0 or newer, for the
+  browser (`docs/server.md`). After an update of the bridge, every bridge instance on that computer
+  must be restarted: each one runs the code it started with. If that is unclear, ask them which one, in one short question.
 - Already installed? `godspeed-wingman version` answers. Running the installer again is the update.
 
 ## 2. Find the system
