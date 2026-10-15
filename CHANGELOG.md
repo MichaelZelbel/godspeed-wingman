@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.5.4 (2026-10-16)
+
+A session that errors stop no longer ends in silence, and `check` no longer calls a broken
+browser a lost login.
+
+- **What happened:** a Wingman whose browser came through the Chrome Agent Bridge lost a whole
+  day. The bridge's browser tab had crashed, and bridges before 0.6.0 keep handing out a crashed
+  tab: every page answered "Page crashed" while the bridge's own health check said ok. The daily
+  session ended on "five errors in a row" with nothing liked or passed, nobody was told, and the
+  check would have said "log in once", which was not the problem.
+- **One more try, then a message:** the first time on a day that five errors in a row end a
+  session, the Wingman starts one fresh session about an hour later, inside the time the first one
+  had left, and not while it is paused or a question waits. A crashed tab or a short outage of the
+  site is often gone by then. When that one stops too, or the day has no time left for it, you
+  are told once that day: that today's session stopped, why in a few plain words, when the last
+  like or pass was, and to ask your assistant to check the Wingman. A lost login keeps its own
+  message, as before.
+- **Status and your assistant see it:** `godspeed-wingman status`, the block your assistant reads
+  before each message, and the desk say in one short line that a session stopped and whether the
+  Wingman tries again, without anyone's name.
+- **`check` names the real failure:** only the site's own "logged out" gives the hint to log in.
+  Any other error (a crashed tab, the bridge answering with an error, a timeout, the site's own
+  server error) fails as what it is, "not a login problem", with the first line of the error.
+- **Bridge users:** the Wingman needs the Chrome Agent Bridge 0.6.0 or newer. `check` reads the
+  bridge's version and fails when it is older or does not say. After you update the bridge,
+  restart every bridge instance on that computer: each one runs the code it started with.
+  docs/server.md says how.
+
 ## 0.5.3 (2026-10-11)
 
 You decide about a site whose terms forbid bots. The Wingman tells you what they say and no

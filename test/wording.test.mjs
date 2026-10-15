@@ -72,15 +72,15 @@ test("every Flirtual-style id in the repository is one of Flirtual's public word
   assert.deepEqual(bad, []);
 });
 
-test("the package says what it is: godspeed-wingman 0.5.3, public, MIT, Node 22, no dependencies", () => {
+test("the package says what it is: godspeed-wingman 0.5.4, public, MIT, Node 22, no dependencies", () => {
   const pkg = JSON.parse(text(path.join(ROOT, "package.json")));
   assert.equal(pkg.name, "godspeed-wingman");
-  assert.equal(pkg.version, "0.5.3");
+  assert.equal(pkg.version, "0.5.4");
   assert.equal(pkg.private, false);
   assert.equal(pkg.license, "MIT");
   assert.equal(pkg.engines.node, ">=22");
   assert.equal(pkg.dependencies, undefined, "zero runtime dependencies");
   assert.equal(pkg.repository.url, "git+https://github.com/MichaelZelbel/godspeed-wingman.git");
   assert.deepEqual(pkg.bin, { "godspeed-wingman": "bin/godspeed-wingman.mjs" });
-  assert.match(text(path.join(ROOT, "hermes", "plugin", "godspeed-wingman", "plugin.yaml")), /^version: "0\.5\.3"$/m);
+  assert.match(text(path.join(ROOT, "hermes", "plugin", "godspeed-wingman", "plugin.yaml")), /^version: "0\.5\.4"$/m);
 });

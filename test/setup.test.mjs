@@ -158,7 +158,7 @@ test("setup and uninstall in a stand-in home: the program, the command, the file
   // The installed command answers.
   const launcher = process.platform === "win32" ? launchers(p)[1].file : launchers(p)[0].file;
   const v = spawnSync(launcher, ["version"], { encoding: "utf8", shell: process.platform === "win32" });
-  assert.equal(v.stdout.trim(), "0.5.3", v.stderr);
+  assert.equal(v.stdout.trim(), "0.5.4", v.stderr);
 
   // A second run keeps the person's choices and changes only what is asked.
   fs.appendFileSync(path.join(mc, "routines", "wingman", "preferences.md"), "\nMy own words.\n");
