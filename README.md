@@ -211,6 +211,9 @@ More: [docs/privacy.md](docs/privacy.md), [docs/this-computer.md](docs/this-comp
 - Your computer has to be on at session time when the Wingman runs on it. On a server it runs
   around the clock.
 - A lost login stops everything and tells you once a day. Only you can log in again.
+- When errors stop a session (a crashed browser tab, a site that is down), the Wingman tries once
+  more about an hour later. If that stops too, it tells you once that day, and your assistant
+  finds the cause with `godspeed-wingman check`.
 - Sites change. When a site changes its pages, the adapter may need a repair; `godspeed-wingman
   check` says so plainly.
 - Without a paid plan some sites limit likes per day; the session simply ends there.

@@ -96,6 +96,14 @@ No. It uses its own browser profile, with only the dating site's login in it.
 Sites log people out now and then. The Wingman stops on that site and tells you once a day. Log in
 again in the Wingman's browser (`godspeed-wingman site login <site>`, or the desk's Status page).
 
+## Today's session stopped on errors.
+
+When errors stop a session (a crashed browser tab, a site that is down for a while), the Wingman
+tries once more about an hour later, because most of these are gone by then. If that one stops
+too, or the day has no time left for it, it tells you once that day: when it stopped, what went
+wrong in a few words, and that your assistant should check it. `godspeed-wingman check` names what
+failed, and says plainly when it is not a login problem.
+
 ## Something else broke.
 
 `godspeed-wingman check` goes through every part and says what to do. Or tell your mission
