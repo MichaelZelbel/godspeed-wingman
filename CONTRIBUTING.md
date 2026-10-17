@@ -85,6 +85,10 @@ For everything a person reads (messages, the desk, docs, the recipes):
 - One change per pull request, with a plain description of what and why.
 - The tests pass, and new behaviour has a test.
 - The pull request template has a short checklist; please go through it.
+- If a user would notice your change, say which page of the
+  [user guide](https://godspeedmissioncontrol.com/guide) may need a change.
+  `node .github/guide-check.mjs` lists the pages your change touches; a maintainer updates the
+  guide.
 
 By contributing you agree that your contribution is licensed under the MIT License of this
 repository, and you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).

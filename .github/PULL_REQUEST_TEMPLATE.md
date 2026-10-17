@@ -9,6 +9,9 @@
 - [ ] Tests, examples and screenshots use invented people only; nothing from a real profile.
 - [ ] Text a person reads is plain English, with no em dashes or en dashes.
 - [ ] Like, pass and send still run exactly once.
+- [ ] If a user would notice this change, the description names the page of the
+      [user guide](https://godspeedmissioncontrol.com/guide) that may need a change
+      (`node .github/guide-check.mjs` lists the pages it touches).
 
 ## For a new site only
 
