@@ -206,32 +206,13 @@ test("the terminal wizard on a new install: the installer's blank page is not of
   assert.equal(fs.readFileSync(prefsFile, "utf8"), own, "kept, byte for byte");
 });
 
-test("the terminal wizard without Claude Code or Codex: how to get Codex, and Enter looks again", async () => {
-  const none = LANES.map((l) => ({ ...l, found: false, where: l.lane === "openai" ? l.where : "" }));
-  const withCodex = none.map((l) => (l.lane === "codex" ? { ...l, found: true, where: "/home/sam/.local/bin/codex", name: "" } : l));
-  let looks = 0;
-  const detect = async () => ({ ...(await detected({ telegram: { found: false, file: "" } })()), lanes: looks++ === 0 ? none : looks === 2 ? none : withCodex });
+test("the terminal wizard keeps the host connection without a second model login", async () => {
   const { mc, state } = tempMc({ onboarded: false });
-  // sites, keep my page, daily, time zone, retention, talk, bridge, [Enter: look again, still none], [Enter: look again, Codex], model, name, test, watch, save
-  const io = scripted(["", "k", "", "", "", "1", "", "", "", "", "", "n", "", "y"]);
-  const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect } });
+  const io = scripted(["", "k", "", "", "", "1", "", "", "n", "", "y"]);
+  const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: detected({ telegram: { found: false, file: "" }, lanes: [{ lane: "godspeed", label: "Use Godspeed connection", found: true, where: "existing connection", name: "" }] }) } });
   assert.equal(r.done, true, io.text());
-  const text = io.text();
-  assert.match(text, /Neither Codex nor Claude Code is on this computer yet\. To think with your ChatGPT account \(any plan works; the free one has a small allowance\), install Codex, OpenAI's assistant program: open a terminal, paste the line below, then type codex login and choose Sign in with ChatGPT\. Then press Enter to look again\./);
-  assert.match(text, /\n {4}curl -fsSL https:\/\/chatgpt\.com\/codex\/install\.sh \| sh\n/, "the line for this system");
-  assert.match(text, /Not found yet\.[\s\S]*Found: Codex\./, "looked twice: nothing, then Codex");
-  assert.equal(looks, 3, "the first look and two more");
-  assert.match(text, /Codex: found \(\/home\/sam\/\.local\/bin\/codex\)/);
-  assert.match(text, /Model \[2\]/, "Claude Code is missing, so Codex is the choice Enter keeps");
-  assert.deepEqual(r.answers.model, { lane: "codex", name: "" });
-
-  // "n" goes on without them; the help is shown once and nothing is looked for again.
-  looks = 0;
-  const io2 = scripted(["", "k", "", "", "", "1", "", "n", "", "", "n", "", "y"]);
-  const r2 = await terminalWizard({ mcDir: mc, stateDir: state, input: io2.input, output: io2.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: async () => { looks++; return { ...(await detected({ telegram: { found: false, file: "" } })()), lanes: none }; } } });
-  assert.equal(r2.done, true, io2.text());
-  assert.equal(looks, 1);
-  assert.equal(io2.text().match(/Neither Codex nor Claude Code/g).length, 1);
+  assert.deepEqual(r.answers.model, { lane: "godspeed", name: "" });
+  assert.doesNotMatch(io.text(), /codex login|install Codex|model's name/);
 });
 
 test("the terminal wizard with Claude Code or Codex found says nothing about installing", async () => {

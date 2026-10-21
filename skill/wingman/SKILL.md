@@ -100,7 +100,10 @@ fails), not theirs.
   Starting their first practice round: `godspeed-wingman train`.
 - **Something broken?** `godspeed-wingman check` shows what fails. A lost login on a dating site is
   the only thing that needs the person (they log in again in the Wingman's browser); everything
-  else is yours to repair. "Not a login problem" in the check means exactly that: never send them
+  else is yours to repair. New installs use Godspeed's shared model connection, with no separate
+  subscription or copied key. A model failure pauses immediately and warns once, retrying failed
+  delivery while paused. Repair the host connection; never switch providers or start Claude as a
+  fallback without the owner's choice. "Not a login problem" in the check means exactly that: never send them
   to log in for it.
 - **A SESSION STOPPED line in the block:** errors stopped a session. A line that says the Wingman
   tries once more needs nothing. Otherwise the person was told; when they bring it up, or ask why

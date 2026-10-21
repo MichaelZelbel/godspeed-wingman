@@ -17,7 +17,7 @@ lib/core/                    everything that does not depend on a site:
                                archive     the kept profiles, the retention, the disk guard
                                requests    the queue between the assistant and the worker
                                context     the block the assistant sees before each message
-                               model       the model lanes (claude, codex, openai)
+                               model       Godspeed connection; explicit standalone lanes
                                settings, paths, store, text, collection, notebook, sync
 lib/sites/                   the site registry and the adapter contract (contract.md)
 lib/sites/flirtual/          the first site adapter
@@ -43,7 +43,7 @@ install.ps1, install.sh      the one-line installers
 ```
  you  <-- desk, notifications, Telegram -->  the worker  <-- driver -->  the dating site
   |                                           ^    |
-  | "agree", "send 2"                         |    +--> the model (judge, reply ideas)
+  | "agree", "send 2"                         |    +--> Godspeed model connection (judge, reply ideas)
   v                                           |
  your assistant  -- godspeed-wingman ... -->  requests/ (one small file per request)
   ^
@@ -58,6 +58,19 @@ install.ps1, install.sh      the one-line installers
   done when it is back.
 - **The desk** sends what you do through the same requests, so the worker stays the only one that
   acts.
+
+## Shared model contract
+
+The default `model.lane` is `godspeed`. The add-on runs the host-owned `godspeed-model
+--workspace <mission control>` command without a shell, or the stable local launcher
+`<mission control>/.godspeed/model.mjs` through Node when the command is not on the worker's PATH.
+`GODSPEED_MODEL_COMMAND` is a trusted deployment override, never a setting in the shared JSON.
+
+The request on stdin is `{system, prompt, timeout_ms}`; stdout is `{text, provider, model}`.
+The host resolves its current provider, model, credentials and usage policy on every call.
+The add-on cannot override that choice or access tools, conversation history or provider keys.
+`--check` describes configuration without inference. Nonzero exit or invalid output fails closed.
+Explicit existing `claude`, `codex` and `openai` settings remain separate connections.
 
 ## A daily session
 

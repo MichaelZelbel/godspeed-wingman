@@ -284,6 +284,7 @@ test("the wizard on a new install: the installer's blank page is no page of one'
 
 test("the model question on the desk: how to get Codex when neither program is found, and Look again finds it", async () => {
   const lanes = (codex) => [
+    { lane: "godspeed", label: "Use Godspeed connection", found: codex, where: "Godspeed", name: "" },
     { lane: "claude", label: "Claude Code", found: false, where: "", name: "sonnet" },
     { lane: "codex", label: "Codex", found: codex, where: codex ? "C:/x/codex.exe" : "", name: "" },
     { lane: "openai", label: "An OpenAI-compatible service", found: false, where: "no key in OPENAI_API_KEY", name: "" },
@@ -293,8 +294,8 @@ test("the model question on the desk: how to get Codex when neither program is f
   await withDesk(async ({ port, secret }) => {
     const cookie = await login(port, secret);
     const ob = (await req(port, { path: "/api/onboarding", headers: { cookie } })).json;
-    assert.match(ob.detect.model_help.text, /^Neither Codex nor Claude Code is on this computer yet\..*Then press Look again\.$/);
-    assert.equal(ob.detect.model_help.line, 'powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"', "the line for the system the desk runs on");
+    assert.match(ob.detect.model_help.text, /Update Godspeed/);
+    assert.equal(ob.detect.model_help.line, "", "no new model installer");
     let d = (await req(port, { path: "/api/onboarding/detect", headers: { cookie } })).json;
     assert.equal(d.ok, true);
     assert.ok(d.detect.model_help, "still nothing found");

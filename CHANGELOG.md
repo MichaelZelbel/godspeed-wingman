@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 (2026-10-21)
+
+New installs use Godspeed's existing AI connection, with no separate model subscription or login.
+Godspeed keeps its credentials and applies its chosen provider, model and usage rules to each
+isolated request. Existing explicit separate connections are preserved.
+
+AI failures now pause immediately and send one warning, retrying failed delivery while paused.
+A failed read, invalid judgment or refused skip can no longer turn into an unwanted pass.
+Status names the last host provider and model, and check reports unresolved AI failures.
+
 ## 0.5.4 (2026-10-16)
 
 A session that errors stop no longer ends in silence, and `check` no longer calls a broken

@@ -44,7 +44,7 @@ async function next(d) {
   return where(d);
 }
 
-test("the desk's wizard: a new install starts from the starters; a page of one's own is offered to keep; Codex is explained and found", { skip, timeout: 120000 }, async () => {
+test("the desk's wizard: a new install starts from the starters; a page of one's own is offered to keep; Godspeed connection is explained and found", { skip, timeout: 120000 }, async () => {
   const { mc, state } = tempMc({ onboarded: false });
   const prefs = path.join(mc, "routines", "wingman", "preferences.md");
   fs.writeFileSync(prefs, PREFERENCES_TEMPLATE);
@@ -53,6 +53,7 @@ test("the desk's wizard: a new install starts from the starters; a page of one's
     desktop: true, platform: process.platform,
     sites: [{ id: "flirtual", name: "Flirtual", builtin: true, kind: "browser", ok: true, why: "", login_url: "https://flirtu.al/login", about: "" }],
     lanes: [
+      { lane: "godspeed", label: "Use Godspeed connection", found: codex, where: codex ? "existing Godspeed connection" : "", name: "" },
       { lane: "claude", label: "Claude Code", found: false, where: "", name: "sonnet" },
       { lane: "codex", label: "Codex", found: codex, where: codex ? "the place its installer chose" : "", name: "" },
       { lane: "openai", label: "An OpenAI-compatible service", found: false, where: "no key in OPENAI_API_KEY", name: "" },
@@ -79,17 +80,15 @@ test("the desk's wizard: a new install starts from the starters; a page of one's
     assert.equal(w.step, "Step 4 of 12");
 
     // On to the model question: nothing found, so it says how to get Codex.
-    for (let i = 0; i < 12 && w.title !== "Who does the thinking?"; i++) w = await next(d);
-    assert.equal(w.title, "Who does the thinking?");
-    assert.match(w.text, /Neither Codex nor Claude Code is on this computer yet\. To think with your ChatGPT account \(any plan works; the free one has a small allowance\)/);
-    assert.match(w.text, /Then press Look again\./);
-    assert.equal(await d.evaluate(`document.querySelector("#codex-install").textContent`), process.platform === "win32" ? CODEX_INSTALL.win32 : CODEX_INSTALL.other);
-    assert.equal(await d.evaluate(`document.querySelector("#model-help code").textContent`), "codex login");
+    for (let i = 0; i < 12 && w.title !== "Your existing AI connection"; i++) w = await next(d);
+    assert.equal(w.title, "Your existing AI connection");
+    assert.match(w.text, /uses Godspeed's existing AI connection/);
+    assert.equal(await d.evaluate(`document.querySelector("#codex-install")`), null, "no new subscription or CLI install is requested");
     codex = true;
     await d.evaluate(`document.querySelector("#look-again").click()`, { attempts: 1 });
-    await until(d, `return !document.querySelector("#model-help") && document.querySelector("#wiz-title")?.textContent === "Who does the thinking?"`, "the help to go once Codex is there");
-    assert.equal(await d.evaluate(`document.querySelector('input[name=lane][value=codex]').checked`), true, "Claude Code is missing, so Codex is chosen");
-    assert.match((await where(d)).text, /Found: the place its installer chose/);
+    await until(d, `return !document.querySelector("#model-help") && document.querySelector("#wiz-title")?.textContent === "Your existing AI connection"`, "the help to go once Codex is there");
+    assert.equal(await d.evaluate(`document.querySelector('input[name=lane][value=godspeed]').checked`), true, "Godspeed remains the default");
+    assert.match((await where(d)).text, /Found: existing Godspeed connection/);
 
     // A page with one real line: the wizard offers to keep it, and the three starter steps go.
     fs.writeFileSync(prefs, PREFERENCES_TEMPLATE.replace("## Who fits\n", "## Who fits\n\n- Someone kind.\n"));

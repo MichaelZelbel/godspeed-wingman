@@ -35,9 +35,9 @@ that day.
 
 ## What does it cost?
 
-The Wingman is free (MIT). It uses the model your mission control already has: Claude Code,
-Codex, or an OpenAI-compatible model with your own key. Each profile takes about one call, and so does each
-set of reply ideas.
+The Wingman is free (MIT). It inherits Godspeed's AI connection and uses that connection's
+allowance or API billing. It needs no separate subscription or login. Each profile takes about
+one request, and so does each set of reply ideas.
 
 ## Who is it for? Does it assume I am looking for a certain kind of person?
 
@@ -96,7 +96,14 @@ No. It uses its own browser profile, with only the dating site's login in it.
 Sites log people out now and then. The Wingman stops on that site and tells you once a day. Log in
 again in the Wingman's browser (`godspeed-wingman site login <site>`, or the desk's Status page).
 
-## Today's session stopped on errors.
+## The AI connection failed.
+
+The Wingman pauses immediately and warns you. It retries a warning that was not delivered, even
+while paused. It never skips, likes or passes a profile because the AI failed. Ask Godspeed to
+repair and test its model connection before resuming. `godspeed-wingman check` reports an
+unresolved AI failure, and `status` shows the provider and model of the last successful host answer.
+
+## Today's session stopped on other errors.
 
 When errors stop a session (a crashed browser tab, a site that is down for a while), the Wingman
 tries once more about an hour later, because most of these are gone by then. If that one stops

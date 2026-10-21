@@ -841,7 +841,7 @@ const STEPS = [
   { id: "when", title: "When should I look?", lead: "Once a day, at a person's pace: a random pause between profiles, never a burst." },
   { id: "talk", title: "Where should I talk to you?", lead: "Questions and matches reach you here. Pick as many as you like." },
   { id: "login", title: "Log in once", lead: "I use a browser of my own, separate from yours, so I never touch your everyday logins. You log in there once and it stays logged in." },
-  { id: "model", title: "Who does the thinking?", lead: "A language model reads each profile next to your preferences and your answers. Pick the one this computer has." },
+  { id: "model", title: "Your existing AI connection", lead: "The Wingman uses the connection you already chose in Godspeed. It needs no separate subscription or login." },
   { id: "look", title: "A last look", lead: "This is what I read before every like or pass. Change anything you like.", wide: true },
   { id: "done", title: "You are set up", lead: "Now we practise, so I learn your taste." },
 ];
@@ -1105,9 +1105,8 @@ const STEP_BODY = {
       btn.disabled = false;
       if (!r.ok || !r.detect) { say(r.text || "That did not work."); return; }
       S.ob.detect = r.detect;
-      const chosen = r.detect.lanes.find((l) => l.lane === a.model.lane);
       const found = r.detect.lanes.find((l) => l.found && l.lane !== "openai");
-      if (found && !chosen?.found) a.model = { lane: found.lane, name: found.name };
+      // A missing host connection is a setup problem, never permission to switch to a CLI.
       saveWiz();
       drawStep();
       say(found ? `Found: ${found.label}.` : "Not found yet. When the install has finished and you have signed in, press Look again.");
@@ -1119,16 +1118,16 @@ const STEP_BODY = {
     const [before, after] = help ? help.text.split("codex login") : ["", ""];
     const helpPanel = help ? h("div", { class: "note warn stack", id: "model-help" },
       h("p", {}, before, after !== undefined ? h("code", { text: "codex login" }) : null, after || ""),
-      h("pre", { class: "lines", id: "codex-install", text: help.line }),
+      help.line ? h("pre", { class: "lines", id: "codex-install", text: help.line }) : null,
       h("div", { class: "row" },
-        h("button", { class: "btn small", type: "button", on: { click: copyLine } }, "Copy the line"),
+        help.line ? h("button", { class: "btn small", type: "button", on: { click: copyLine } }, "Copy the line") : null,
         h("button", { class: "btn primary small", type: "button", id: "look-again", on: { click: lookAgain } }, "Look again"))) : null;
     return h("div", { class: "stack-l" },
       helpPanel,
       h("div", { class: "picks", role: "radiogroup", "aria-label": "The model" }, lanes.map((l) => h("label", { class: "pick" },
-        h("input", { type: "radio", name: "lane", value: l.lane, checked: a.model.lane === l.lane, on: { change: () => { a.model = { lane: l.lane, name: l.name }; nameBox.value = l.name; saveWiz(); } } }),
+        h("input", { type: "radio", name: "lane", value: l.lane, checked: a.model.lane === l.lane, on: { change: () => { a.model = { lane: l.lane, name: l.name }; saveWiz(); drawStep(); } } }),
         h("span", { class: "pick-body" }, h("strong", { text: l.label }), h("span", { class: "hint", text: l.found ? `Found: ${l.where}` : l.lane === "openai" ? `Not set up: ${l.where}. Put the key in the Wingman's private worker.env.` : "Not found on this computer." }))))),
-      field("model-name", "The model's name", nameBox, "Claude Code uses sonnet unless you name another one."),
+      ...(a.model.lane === "godspeed" ? [h("p", { class: "hint", text: "Godspeed chooses the model and keeps its credentials. Provider and usage changes made there apply here too." })] : [field("model-name", "The model's name", nameBox, "A separate connection uses its own provider's authentication and billing rules.")]),
       h("div", { class: "stack" },
         h("button", { class: "btn", type: "button", on: { click: async (e) => { e.target.disabled = true; showResult("model-result", { ok: true, text: "Asking. This makes one small call and can take half a minute." }); showResult("model-result", await api("/api/model/test", a.model)); e.target.disabled = false; } } }, "Test it"),
         resultLine("model-result")),

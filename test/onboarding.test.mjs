@@ -108,7 +108,7 @@ test("the answers are checked: unknown ids, odd numbers, long words", () => {
   assert.equal(a.retention_days, 42);
   assert.deepEqual(a.talk, ["telegram"]);
   assert.equal(a.bridge, "http://10.0.0.5:3010");
-  assert.deepEqual(a.model, { lane: "claude", name: "sonnet" });
+  assert.deepEqual(a.model, { lane: "godspeed", name: "" });
   assert.equal(a.me.length, 120);
   assert.deepEqual(a.watch, ["Robin", "Lena"]);
   assert.equal(fills(a, { options }).age_range, "25 to 60");
@@ -274,16 +274,9 @@ test("a deal-breaker the starter already says is not added a second time", () =>
   assert.deepEqual(parseStarter("---\nid: x\ncovers: a, b\n---\nbody").covers, ["a", "b"]);
 });
 
-test("the model question when neither Claude Code nor Codex is here: how to get Codex, for this system", () => {
-  const lanes = (claude, codex, openai = false) => [{ lane: "claude", found: claude }, { lane: "codex", found: codex }, { lane: "openai", found: openai }];
-  assert.equal(modelHelp({ lanes: lanes(true, false), platform: "win32" }), null, "Claude Code is enough");
-  assert.equal(modelHelp({ lanes: lanes(false, true), platform: "linux" }), null, "Codex is enough");
-  const win = modelHelp({ lanes: lanes(false, false), platform: "win32" });
-  assert.equal(win.line, 'powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"');
-  assert.match(win.text, /^Neither Codex nor Claude Code is on this computer yet\. To think with your ChatGPT account \(any plan works; the free one has a small allowance\), install Codex, OpenAI's assistant program: open a terminal, paste the line below, then type codex login and choose Sign in with ChatGPT\. Then press Look again\.$/);
-  for (const platform of ["darwin", "linux"]) assert.equal(modelHelp({ lanes: lanes(false, false), platform }).line, "curl -fsSL https://chatgpt.com/codex/install.sh | sh");
-  assert.ok(modelHelp({ lanes: lanes(false, false, true), platform: "linux" }), "a key for an OpenAI-compatible service does not hide it");
-  assert.match(modelHelp({ lanes: lanes(false, false), platform: "linux", terminal: true }).text, /Then press Enter to look again\.$/);
-  assert.equal(CODEX_INSTALL.win32, win.line);
-  assert.doesNotMatch(win.text, /[\u2013\u2014]/, "no dashes");
+test("model setup uses the host connection and asks for no new provider login", () => {
+  const missing = modelHelp({ lanes: [{ lane: "godspeed", found: false }] });
+  assert.match(missing.text, /Update Godspeed/);
+  assert.equal(missing.line, "");
+  assert.equal(modelHelp({ lanes: [{ lane: "godspeed", found: true }] }), null);
 });

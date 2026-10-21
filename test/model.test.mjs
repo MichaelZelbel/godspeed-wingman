@@ -84,7 +84,7 @@ test("npm's .cmd launchers are read, so no shell starts a model", () => {
 test("the lane: the settings choose claude, codex or openai; only the environment chooses a test program", () => {
   assert.equal(laneOf({ lane: "codex" }, {}), "codex");
   assert.equal(laneOf({ lane: "openai" }, {}), "openai");
-  assert.equal(laneOf({ lane: "anything" }, {}), "claude");
+  assert.equal(laneOf({ lane: "anything" }, {}), "godspeed");
   assert.equal(laneOf({ lane: "codex" }, { GODSPEED_WINGMAN_MODEL_CMD: "/x.mjs" }), "command");
 });
 

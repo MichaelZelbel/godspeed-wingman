@@ -10,11 +10,9 @@ This page takes you from nothing to your first practice round. It takes about te
   [*Teach It Once*](https://leanpub.com/teachitonce).
 - **Node.js 22 or newer.** Godspeed brings one, and so does Hermes; the installer finds it. If it
   finds none, it says so and stops.
-- **A model.** The Wingman reads every profile with a language model: Claude Code, Codex, or any
-  OpenAI-compatible model. Your mission control most likely has one of them already. If it thinks
-  with ChatGPT through Hermes, the Wingman cannot use that directly: install Codex and sign in with
-  your ChatGPT account (any plan works; the free one has a small allowance). The setup shows the
-  one line that installs it when it finds neither Claude Code nor Codex.
+- **Godspeed's AI connection**, already configured in Godspeed. The Wingman inherits its provider,
+  model and usage rules, without another subscription, login or copy of your key. If setup cannot
+  find the shared model command, update Godspeed first.
 - **On a computer with a screen:** Chrome or Edge (Chromium works too). The Wingman runs its own
   copy with its own profile, apart from your everyday browser.
 - **On a server:** see [server.md](server.md). The browser then sits on a computer at home.
@@ -122,9 +120,9 @@ unless you press one of the test buttons.
    Buttons send a test.
 9. **Log in once.** "Open the Wingman's browser" opens the site's login page in the Wingman's own
    browser. Log in there; it stays logged in. "Check my login" tells you it worked.
-10. **Who does the thinking.** The model lanes this computer has, with a "Test it" button that
-    makes one small call. When neither Claude Code nor Codex is there, it shows the one line that
-    installs Codex; "Look again" finds it once it is installed, without starting over.
+10. **Your existing AI connection.** Keep **Use Godspeed's existing AI connection** and press
+    **Test it** to make one small request. You can explicitly choose a separate connection, which
+    follows that provider's own authentication and billing rules.
 11. **A last look.** Your preferences page as the Wingman will read it, to change as you like, and
     names to watch.
 12. **Done.** "Start my first practice round" starts ten profiles.

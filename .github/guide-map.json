@@ -6,6 +6,6 @@
   "pages": {
     "add-ons": ["README.md", "docs/faq.md", "docs/privacy.md"],
     "external-services": ["docs/privacy.md"],
-    "wingman": ["README.md", "docs/getting-started.md", "docs/privacy.md", "lib/desk/app.html"]
+    "wingman": ["README.md", "docs/getting-started.md", "docs/privacy.md", "lib/core/godspeed-model.mjs", "lib/core/model.mjs", "lib/core/settings.mjs", "lib/desk/app.html"]
   }
 }

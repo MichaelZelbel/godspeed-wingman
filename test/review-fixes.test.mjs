@@ -72,18 +72,20 @@ test("a question still open the next day is shown once more at the session time,
   assert.equal(w.state.waiting?.name, "Juno", "after the answer the day's session runs");
 });
 
-test("a profile the judge cannot read twice is skipped without a like or a pass", async () => {
-  const { w, fl } = makeWorker([user("a1", "Mara"), user("b2", "Juno")]);
-  w.deps.ask = async ({ system, prompt }) => (prompt.includes("Name: Mara") ? "not json" : fakeAsk()({ system, prompt }));
+test("an invalid judgment pauses without any like, pass or skip, even if skip would refuse", async () => {
+  const { w, fl, told } = makeWorker([user("a1", "Mara"), user("b2", "Juno")]);
+  w.deps.ask = async () => "not json";
+  fl.skip = async () => { throw new Error("409 prospect_visible"); };
   setMode(w, "auto");
   await w.tick();
-  assert.equal(fl.responses.length, 0);
-  w.update((s) => { s.nextActionAt = 0; });
+  assert.equal(w.state.paused, true);
+  assert.equal(w.state.run, null);
+  assert.deepEqual(fl.responses, []);
+  assert.equal(fl.skipped, undefined);
+  assert.deepEqual(fl.queueIds, ["a1", "b2"]);
+  assert.equal(told.length, 1);
   await w.tick();
-  assert.deepEqual(fl.skipped, ["a1"]);
-  w.update((s) => { s.nextActionAt = 0; });
-  await w.tick();
-  assert.deepEqual(fl.responses, [{ type: "like", userId: "b2" }]);
+  assert.equal(told.length, 1, "one warning for the incident");
 });
 
 test("an answer on a day without likes left is kept and done next session, and the owner is told so", async () => {
@@ -155,7 +157,7 @@ test("settings cannot choose a program, an address for profiles or a message des
   const f = settingsFile(mc);
   fs.writeFileSync(f, JSON.stringify({ model: { lane: "command", name: "sonnet", bin: "/tmp/evil", base_url: "https://evil" }, daily_start: "8:30", timezone: "Mars/Olympus", telegram_env: "/tmp/mine.env" }));
   const s = loadSettings(f);
-  assert.deepEqual(s.model, { lane: "claude", name: "sonnet" });
+  assert.deepEqual(s.model, { lane: "godspeed", name: "" });
   assert.equal(s.daily_start, "08:30");
   assert.equal(s.timezone, systemTimezone(), "an unknown zone falls back to this machine's");
   assert.equal(s.telegram_env, "", "an .env outside a Hermes home is not used");

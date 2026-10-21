@@ -105,12 +105,25 @@ The wizard walks you through it, one page at a time:
    when your assistant has a Telegram bot. Your mission control's chat sees every open question
    too, once the setup has connected it.
 9. **Log in.** The Wingman opens its own browser; you log into the site once.
-10. **Who does the thinking.** The model this computer has: Claude Code, Codex, or any
-    OpenAI-compatible model.
+10. **Your existing AI connection.** The Wingman uses the model connection you chose in Godspeed.
+    No separate subscription or login is needed.
 11. **A last look.** Your preferences page as the Wingman will read it, and names to watch.
 12. **First practice round.** Ten profiles. You agree or disagree, and say why.
 
 <p align="center"><img src="docs/assets/desk-wizard.png" alt="The setup wizard on the Wingman's desk: four starters to pick from, with the preferences page each one would start" width="820"></p>
+
+## One AI connection
+
+New installs use Godspeed's configured AI connection. Godspeed keeps the credentials and chooses
+its provider, model and usage rules. The Wingman sends one isolated request with your preferences
+and the profile text; it cannot give the model tools or access to your conversations.
+
+Update Godspeed first if the setup says its shared model command is missing. The Wingman never
+silently switches to an installed Claude Code or Codex program. Existing explicit separate model
+choices remain unchanged; choose **Use Godspeed's existing AI connection** in setup to inherit it.
+Provider subscriptions and API billing follow that provider's rules; sharing the connection does
+not add an allowance. An AI failure pauses the Wingman and warns you, without skipping, liking or
+passing a profile because of the error.
 
 ## Training
 

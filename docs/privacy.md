@@ -63,11 +63,13 @@ first, never the last seven days and never the profiles themselves.
 
 ## What leaves your computer
 
-- **To the model you chose:** each profile's text (never the pictures), your preferences page and
-  your recent answers, to decide; for reply ideas, the profile, their message and your "How I
-  write". Claude Code sends it to Anthropic, Codex to OpenAI, the OpenAI-compatible lane to the
-  address you set. The Wingman runs Claude Code and Codex from an empty folder with their tools
-  switched off, so the model can only answer.
+- **Through Godspeed's configured AI connection:** each profile's text (never the pictures), your
+  preferences page and a few practice answers. For reply ideas: the profile, the last message and
+  your writing preferences. Godspeed sends them to its configured provider, which can also be a
+  local model. The request has no tools or chat history. The Wingman does not copy Godspeed's
+  credentials. If you explicitly chose a separate Claude Code, Codex or OpenAI-compatible
+  connection, that choice and its provider's rules apply instead.
+
 - **To Telegram, if you chose it:** the Wingman's messages to you, with names, the reason, the
   picture of the profile and the reply ideas. They stay in your Telegram chat.
 - **To the dating site:** what a person does there, at a person's pace: opening profiles, likes,

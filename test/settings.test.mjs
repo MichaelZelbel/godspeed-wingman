@@ -22,7 +22,7 @@ test("the defaults: the local browser and the desk on a desktop, the bridge and 
   assert.equal(d.desk_port, 47860);
   assert.equal(d.timezone, systemTimezone(), "this machine's time zone, not a fixed one");
   assert.equal(d.telegram_env, "");
-  assert.deepEqual(d.model, { lane: "claude", name: "sonnet" });
+  assert.deepEqual(d.model, { lane: "godspeed", name: "" });
   const s = defaults(server);
   assert.equal(s.browser, "bridge");
   assert.deepEqual(s.talk, ["telegram"]);
@@ -49,12 +49,12 @@ test("the model: a lane from the list and a plain name; the file never chooses a
   assert.deepEqual(norm({ model: { lane: "codex" } }, desktop).model, { lane: "codex", name: "" }, "codex's own default model");
   assert.deepEqual(norm({ model: { lane: "codex", name: "gpt-5.5" } }, desktop).model, { lane: "codex", name: "gpt-5.5" });
   assert.deepEqual(norm({ model: { lane: "openai", name: "openai/gpt-5.5-mini" } }, desktop).model, { lane: "openai", name: "openai/gpt-5.5-mini" });
-  assert.deepEqual(norm({ model: { name: "opus" } }, desktop).model, { lane: "claude", name: "opus" });
-  assert.deepEqual(norm({ model: { lane: "hermes" } }, desktop).model, { lane: "claude", name: "sonnet" }, "no hermes lane: it cannot be made tool-free");
-  assert.deepEqual(norm({ model: { lane: "command", name: "x" } }, desktop).model.lane, "claude", "only the environment chooses a test program");
-  assert.equal(norm({ model: { name: "-p" } }, desktop).model.name, "sonnet", "a name that looks like an option is not taken");
-  assert.equal(norm({ model: { name: "a b" } }, desktop).model.name, "sonnet");
-  assert.equal(norm({ model: "codex" }, desktop).model.lane, "claude", "not an object: the default");
+  assert.deepEqual(norm({ model: { name: "opus" } }, desktop).model, { lane: "godspeed", name: "" });
+  assert.deepEqual(norm({ model: { lane: "hermes" } }, desktop).model, { lane: "godspeed", name: "" }, "unknown lanes inherit the host connection");
+  assert.deepEqual(norm({ model: { lane: "command", name: "x" } }, desktop).model.lane, "godspeed", "only the environment chooses a test program");
+  assert.equal(norm({ model: { name: "-p" } }, desktop).model.name, "", "a name that looks like an option is not taken");
+  assert.equal(norm({ model: { name: "a b" } }, desktop).model.name, "");
+  assert.equal(norm({ model: "codex" }, desktop).model.lane, "godspeed", "not an object: the default");
 });
 
 test("browser, bridge, talk, sites and the desk port are checked", () => {
