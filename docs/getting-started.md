@@ -93,7 +93,9 @@ The options you are most likely to need:
 
 In this order: `--godspeed`, the environment (`GODSPEED_WINGMAN_DIR`, `GODSPEED_ROOT`,
 `GODSPEED_DIR`), the folder Godspeed wrote into `~/.godspeed/device.env`, the folder you run it in
-(or one above it), then `~/godspeed-v2` and `~/godspeed`. A folder counts when it holds `AGENTS.md`.
+(or one above it), then `~/godspeed-v2` and `~/godspeed`. A native folder counts when it holds `AGENTS.md`. A Docker server installation also qualifies
+with its server-written model proxy descriptor, compose file and shared command; the default
+server root is `/opt/godspeed-mission-control`. The notebook workspace stays inside Godspeed.
 
 ## The setup questions
 

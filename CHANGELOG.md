@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.1 (2026-10-21)
+
+The shared AI connection is also found on Docker server installations through Godspeed's local
+model proxy. It needs the server installer's exact marker and keeps existing native workspaces
+as the first choice. The personal notebook workspace stays inside Godspeed.
+
+Model output now preserves Unicode characters split across process output chunks and stops
+if a model command returns more than 1 MiB.
+
 ## 0.6.0 (2026-10-21)
 
 New installs use Godspeed's existing AI connection, with no separate model subscription or login.

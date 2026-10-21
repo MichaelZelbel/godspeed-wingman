@@ -7,6 +7,8 @@ import { defaults, normalizeSettings } from "../lib/core/settings.mjs";
 import { godspeedModelProgram } from "../lib/core/godspeed-model.mjs";
 import { detect, modelHelp } from "../lib/onboarding/index.mjs";
 import { makeWorker, user, setMode, tempMc } from "./helpers.mjs";
+import { findMissionControl, isDockerModelHost } from "../lib/core/paths.mjs";
+import os from "node:os";
 
 function host(mc, body) {
   const file = path.join(mc, ".godspeed", "model.mjs");
@@ -15,6 +17,31 @@ function host(mc, body) {
   return file;
 }
 const noPrograms = { PATH: "", Path: "" };
+
+test("a Docker server model host is discovered only from its exact installer marker; native workspaces keep priority", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-docker-host-"));
+  const empty = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-empty-user-"));
+  const opts = { cwd: empty, userHome: empty, env: {}, platform: "linux", serverDir: dir };
+  host(dir, "console.log(JSON.stringify({text:'ready',provider:'configured-host',model:'chosen-model'}));");
+  fs.writeFileSync(path.join(dir, "compose.yaml"), "services:\n  godspeed:\n    image: fixture\n");
+  assert.equal(findMissionControl(opts), null, "a compose file and script alone do not fake a personal workspace");
+  const markerFile = path.join(dir, ".godspeed", "model-host.json");
+  const marker = { format: 1, kind: "godspeed-docker", service: "godspeed", workspace: "/opt/data/full-candidate/workspace" };
+  for (const bad of [{ ...marker, service: "another-service" }, { ...marker, workspace: "/etc" }, { ...marker, command: "anything" }]) {
+    fs.writeFileSync(markerFile, JSON.stringify(bad));
+    assert.equal(isDockerModelHost(dir), false);
+    assert.equal(findMissionControl(opts), null);
+  }
+  fs.writeFileSync(markerFile, JSON.stringify(marker));
+  assert.equal(isDockerModelHost(dir), true);
+  assert.equal(findMissionControl(opts), dir);
+  assert.equal(findMissionControl({ ...opts, arg: dir }), dir);
+  assert.equal(findMissionControl({ ...opts, platform: "win32" }), null, "no automatic Linux server fallback on another OS");
+  const { mc } = tempMc();
+  assert.equal(findMissionControl({ ...opts, cwd: mc }), mc, "the native workspace was not replaced by an unrelated server install");
+  assert.equal(await ask({ system: "s", prompt: "p" }, {}, { mcDir: dir, env: noPrograms }), "ready");
+  assert.equal(fs.existsSync(path.join(dir, "AGENTS.md")), false);
+});
 
 test("new installs inherit Godspeed; explicit standalone choices survive and cannot override its model", () => {
   assert.deepEqual(defaults().model, { lane: "godspeed", name: "" });
@@ -57,6 +84,21 @@ test("missing, broken and malformed host connections fail without launching anot
   await assert.rejects(ask({ system: "s", prompt: "p" }, {}, { mcDir: mc, env: noPrograms }), /unreadable model answer/);
   host(mc, "console.log(JSON.stringify({text:'answer',provider:'local'}));");
   await assert.rejects(ask({ system: "s", prompt: "p" }, {}, { mcDir: mc, env: noPrograms }), /no complete model answer/);
+});
+
+test("shared model JSON survives a UTF-8 character split across real child stdout chunks", async () => {
+  const { mc } = tempMc();
+  host(mc, `const bytes=Buffer.from(JSON.stringify({text:'Grüße 👩‍🚀',provider:'local',model:'chosen'}));
+    const split=bytes.indexOf(0xc3)+1;
+    process.stdout.write(bytes.subarray(0,split));
+    setTimeout(()=>process.stdout.write(bytes.subarray(split)),30);`);
+  assert.equal(await ask({ system: "s", prompt: "p" }, {}, { mcDir: mc, env: noPrograms }), "Grüße 👩‍🚀");
+});
+
+test("oversized child output fails closed instead of accumulating without a bound", async () => {
+  const { mc } = tempMc();
+  host(mc, "process.stdout.write('x'.repeat(1024*1024+1));");
+  await assert.rejects(ask({ system: "s", prompt: "p" }, {}, { mcDir: mc, env: noPrograms }), /too much output/);
 });
 
 test("AI quota failure pauses before actions and retries one undelivered warning while paused", async () => {

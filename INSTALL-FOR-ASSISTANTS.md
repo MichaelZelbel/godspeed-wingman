@@ -13,7 +13,10 @@ run the installer and open the questions; they answer.
 
 ## 1. Check that it fits
 
-- Godspeed Mission Control has to be installed: a mission control folder that holds `AGENTS.md`.
+- Godspeed Mission Control has to be installed: a native mission control folder that holds
+  `AGENTS.md`, or the Docker server root with its exact installer-written
+  `.godspeed/model-host.json`, `compose.yaml` and `.godspeed/model.mjs` proxy. Never create
+  `AGENTS.md` to make a Docker host root look like the personal notebook workspace.
   Note its path. If there is none, tell them in one sentence that the Wingman is an add-on for
   Godspeed Mission Control and point them to https://godspeedmissioncontrol.com/install.
 - Find where the Wingman should run. On the computer they use every day (Windows, macOS, a Linux

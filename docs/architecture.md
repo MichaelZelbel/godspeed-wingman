@@ -72,6 +72,14 @@ The add-on cannot override that choice or access tools, conversation history or 
 `--check` describes configuration without inference. Nonzero exit or invalid output fails closed.
 Explicit existing `claude`, `codex` and `openai` settings remain separate connections.
 
+For the Docker server installer, the fixed local proxy lives in the host installation root,
+`/opt/godspeed-mission-control` by default. That root qualifies only with `compose.yaml`, the
+proxy and the exact `.godspeed/model-host.json` descriptor written by the server installer.
+The host proxy calls the fixed Godspeed service and inner workspace; it accepts no container
+name, command or alternate inner workspace from the add-on. Native mission control roots
+keep their normal precedence. This shares inference only; it does not move the personal
+workspace or automatically wire host add-on plugins into a container.
+
 ## A daily session
 
 1. At `daily_start` in your time zone (once per day; later the same day if the computer was off),
