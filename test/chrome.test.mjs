@@ -95,6 +95,23 @@ test("the local driver opens a page, runs a script, and pictures an element far 
   }
 });
 
+test("a browser whose control port never answers is stopped again, so nothing is left running", { skip, timeout: 60000 }, async () => {
+  const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-chrome-"));
+  // A folder where the browser writes the file that names its port: it starts, the port is never found.
+  fs.mkdirSync(path.join(profileDir, "DevToolsActivePort"));
+  const d = new ChromeDriver({ profileDir, headless: true, keepOpen: false, startMs: 3000 });
+  try {
+    await assert.rejects(d.health(), /control port never answered/);
+    assert.ok(d.child, "a browser was started");
+    await d.close();
+    assert.ok(d.child.exitCode !== null || d.child.signalCode !== null, "and stopped again: a browser left running keeps this process from ever ending");
+  } finally {
+    // So that a regression fails here instead of hanging the whole test run.
+    try { if (d.child && d.child.exitCode === null && d.child.signalCode === null) d.child.kill(); } catch { /* gone */ }
+    fs.rmSync(profileDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+  }
+});
+
 test("the settings choose the driver: the local browser by default, the bridge with its address", () => {
   const paths = { browser: path.join(os.tmpdir(), "wingman-x", "browser") };
   const local = createDriver({ browser: "local", browser_headless: false }, { paths });

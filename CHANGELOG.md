@@ -11,6 +11,9 @@ If you installed the Wingman on Linux before, update it as usual by running the 
 again: that writes the corrected file and starts the service. Your settings stay as they are.
 Windows and macOS were not affected.
 
+When the Wingman's own browser starts but never answers, the Wingman now closes it again. Before,
+it stayed open where nobody could steer it, and the next start only handed over to it.
+
 ## 0.6.2 (2026-10-22)
 
 The notebook list of likes and passes has a new column, Reason: why each profile was liked or
