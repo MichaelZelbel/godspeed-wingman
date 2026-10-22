@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.3 (2026-10-22)
+
+On Linux, the Wingman's background service starts again. The service file that setup writes put
+the Wingman's folder in quotes on its `WorkingDirectory=` line. systemd does not accept quotes
+there: it calls the path "not absolute", marks the whole service as broken and never starts it.
+The line now holds the plain path, and a folder name with spaces works as it is.
+
+If you installed the Wingman on Linux before, update it as usual by running the install line
+again: that writes the corrected file and starts the service. Your settings stay as they are.
+Windows and macOS were not affected.
+
 ## 0.6.2 (2026-10-22)
 
 The notebook list of likes and passes has a new column, Reason: why each profile was liked or
