@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.2 (2026-10-22)
+
+The notebook list of likes and passes has a new column, Reason: why each profile was liked or
+passed, in one short sentence.
+
+- **What it says:** when the Wingman decided, the reason it gave, the same kind you see in
+  practice. When you decided and said why, your own words. When you agreed with the Wingman
+  without saying why, the Wingman's reason. Otherwise it stays empty.
+- **Your list keeps everything else:** a list made by an older Wingman gets the column added right
+  after "Decided by". Your comment, the columns you added, their names and their order stay as they
+  are, and a column you deleted does not come back. If you already made a column called Reason
+  yourself, it stays yours: the Wingman never writes in it.
+- **Likes and passes from before:** they get a reason too, as long as the Wingman still keeps its
+  record of them (six weeks unless you chose otherwise).
+
 ## 0.6.1 (2026-10-21)
 
 The shared AI connection is also found on Docker server installations through Godspeed's local

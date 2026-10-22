@@ -78,8 +78,9 @@ first, never the last seven days and never the profiles themselves.
   there.
 - **To your Godspeed notebook, only if you switch it on:** one list, "Wingman: likes and passes",
   one item per profile liked or passed (date, name, age, gender, place, site, liked or passed, by
-  whom, the profile's address, a Discord name, a link to the picture, and a column for your own
-  comment). It is off unless you tick it in the setup questions (they offer it only when the
+  whom, the reason in one short sentence, the profile's address, a Discord name, a link to the
+  picture, and a column for your own comment). The reason is the Wingman's, or your own words when
+  you said why. It is off unless you tick it in the setup questions (they offer it only when the
   notebook answers on this computer) or set `"notebook_collection": true` in the settings. The list
   is hidden from every assistant, so none of them can turn a stranger into a fact or a suggestion.
   The Wingman never deletes items from it, so it is not deleted with the retention: delete items
