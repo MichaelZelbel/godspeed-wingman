@@ -83,6 +83,13 @@ test("the macOS LaunchAgent and the systemd units", () => {
   assert.doesNotMatch(root, /^User=/m, "as root when the mission control belongs to root");
   assert.match(root, /^Environment="HOME=\/root"$/m);
   assert.match(systemdUnit({ ...p, mcDir: "/x/100%" }), /"\/x\/100%%"/, "systemd's % is doubled");
+  // systemd takes WorkingDirectory= as the bare path: quotes are a fatal unit error ("path is not
+  // absolute") and the service never starts. It does not unescape there either, so a space stays a
+  // space (\x20 would be looked for as those four characters); only its % specifiers are doubled.
+  const workdir = (unit) => unit.split("\n").filter((l) => l.startsWith("WorkingDirectory="));
+  assert.deepEqual(workdir(user), ["WorkingDirectory=/home/sam/.godspeed/wingman"]);
+  assert.deepEqual(workdir(sys), ["WorkingDirectory=/home/sam/.godspeed/wingman"]);
+  assert.deepEqual(workdir(systemdUnit({ ...p, stateDir: "/srv/my docs/100%" }, { system: true })), ["WorkingDirectory=/srv/my docs/100%%"]);
   assert.equal(serviceFile({ service: "systemd-user", home: "/home/sam" }), path.join("/home/sam", ".config", "systemd", "user", "godspeed-wingman.service"));
   assert.equal(serviceFile({ service: "launch-agent", home: "/Users/sam" }), path.join("/Users/sam", "Library", "LaunchAgents", "com.godspeed.wingman.plist"));
 });
@@ -158,7 +165,7 @@ test("setup and uninstall in a stand-in home: the program, the command, the file
   // The installed command answers.
   const launcher = process.platform === "win32" ? launchers(p)[1].file : launchers(p)[0].file;
   const v = spawnSync(launcher, ["version"], { encoding: "utf8", shell: process.platform === "win32" });
-  assert.equal(v.stdout.trim(), "0.6.2", v.stderr);
+  assert.equal(v.stdout.trim(), "0.6.3", v.stderr);
 
   // A second run keeps the person's choices and changes only what is asked.
   fs.appendFileSync(path.join(mc, "routines", "wingman", "preferences.md"), "\nMy own words.\n");
