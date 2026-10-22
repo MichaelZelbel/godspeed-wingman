@@ -81,6 +81,14 @@ export class FakeNotebook {
   async collection(id) { this.check(); const c = this.collections.get(id); return c ? structuredClone(c) : null; }
   async collectionsBy(app) { this.check(); return [...this.collections.values()].filter((c) => c.source_app === app).map((c) => structuredClone(c)); }
   async createCollection(values) { this.check(); this.calls.push(["createCollection", values]); const c = { ...structuredClone(values), id: `coll-${++this.seq}`, slug: "wingman-likes-and-passes" }; this.collections.set(c.id, c); return this.stamp(c); }
+  async updateCollection(id, values, hash) {
+    this.check();
+    this.calls.push(["updateCollection", id, values, hash]);
+    const c = this.collections.get(id);
+    if (hash && c._hash !== hash) { const e = new Error("notebook answered 409: This record changed."); e.status = 409; e.code = "CONFLICT"; throw e; }
+    Object.assign(c, structuredClone(values));
+    return this.stamp(c);
+  }
   async items(cid) { this.check(); return [...this.itemsById.values()].filter((i) => i.collection_id === cid).map((i) => structuredClone(i)); }
   async insertItem(values) { this.check(); this.calls.push(["insertItem", values]); const i = { ...structuredClone(values), id: `item-${++this.seq}` }; this.itemsById.set(i.id, i); return this.stamp(i); }
   async updateItem(id, data, hash) {
