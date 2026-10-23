@@ -26,8 +26,11 @@ never in git, because git never forgets, and these people did not ask to be reme
 
 What is in it:
 
-- `archive/<day>/<site>.<id>/`: every profile the Wingman opened, as the site sent it, as the
-  Wingman read it, the page as the browser showed it, and a picture of it.
+- `archive/<day>/<site>.<id>/`: every profile the Wingman opened (from your queue, your matches
+  and everyone you have a conversation with), as the site sent it, as the Wingman read it, the page
+  as the browser showed it, and a picture of it.
+- `collection-items.json`: when the notebook list is on, which item in it holds whom, so "who was
+  that?" can link to it.
 - `screenshots/<day>/`: the same pictures, named by day and name, to look back.
 - `examples.jsonl`: your practice and review answers, each with the profile text the judge read.
 - `decisions.jsonl`: every like, pass, stop and question.
@@ -80,10 +83,11 @@ first, never the last seven days and never the profiles themselves.
   one item per profile liked or passed (date, name, age, gender, place, site, liked or passed, by
   whom, the reason in one short sentence, the profile's address, a Discord name, a link to the
   picture, and a column for your own comment). The reason is the Wingman's, or your own words when
-  you said why. Someone you matched with or who wrote to you gets an item too, also when you liked
-  them yourself in the site's app: liked, "you, on" that site. It is off unless you tick it in the
-  setup questions (they offer it only when the notebook answers on this computer) or set
-  `"notebook_collection": true` in the settings. The list is hidden from every assistant, so none
+  you said why. Everyone you matched with or have a conversation with gets an item too, also when
+  you liked them yourself in the site's app or wrote first: liked, "you, on" that site. When the
+  site no longer has their profile, the item holds only what the list of conversations shows. It
+  is off unless you tick it in the setup questions (they offer it only when the notebook answers
+  on this computer) or set `"notebook_collection": true` in the settings. The list is hidden from every assistant, so none
   of them can turn a stranger into a fact or a suggestion; "who was that?" tells them whether
   someone is in it, with a link to their item.
   The Wingman never deletes items from it, so it is not deleted with the retention: delete items

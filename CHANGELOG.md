@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.6.5 (2026-10-23)
+
+Everyone you have a conversation with now gets an item in the notebook list, also someone you
+wrote to first.
+
+- **What was missing:** 0.6.4 added matches to the list, but only the ones the Wingman had opened.
+  It opened a profile only when someone needed an answer from you: a new match nobody had written
+  in, or a message from them. Someone you wrote to first in the site's app was never opened, so
+  they had no item, and "who was that?" did not know them.
+- **Now:** at each check of your matches and messages, the Wingman lines up to three people from
+  your conversations it has not kept yet, and opens their profiles one at a time while no session
+  runs, with the same pause it takes between two profiles in a session. A longer list spreads over
+  the next checks. It does this quietly: no reply ideas, no message to you, and when they write to
+  you later, you get reply ideas as always. They then get the item "liked, you, on" that site.
+- **A profile that is gone:** when the site no longer has their profile (a deleted account), the
+  item holds only what the list of conversations shows: the name, if the site gives one there, and
+  the link to the profile. Its reason says the profile could not be opened. Nothing is guessed.
+- **For site adapters:** `profile(id)` reports a profile the site no longer has with `gone: true`
+  (or `status: 404`) on its `SiteError`.
+
 ## 0.6.4 (2026-10-23)
 
 The notebook list "Wingman: likes and passes" now holds everyone you matched with, and "who was
