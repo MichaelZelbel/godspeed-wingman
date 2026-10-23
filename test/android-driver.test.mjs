@@ -119,7 +119,9 @@ test("apps: start one, ask whether one is installed, and which one is in front",
 
 test("waitFor reads the screen again until the node is there, and says what it waited for", async () => {
   const f = fakeAdb({ screens: [BLANK, BLANK, CARD] });
-  const n = await driverOn(f).waitFor({ id: "card_name" }, { timeoutMs: 5000, everyMs: 10 });
+  // Every read of the screen starts the pretend adb, a Node program, more than once. On a fresh
+  // GitHub Windows machine whose disk is still busy, three reads took 8.4 s, so 5 s was too short.
+  const n = await driverOn(f).waitFor({ id: "card_name" }, { timeoutMs: 60000, everyMs: 10 });
   assert.equal(n.text, "Mara, 27");
   const g = fakeAdb({ screens: [BLANK] });
   await assert.rejects(driverOn(g).waitFor({ text: "Juno" }, { timeoutMs: 50, everyMs: 10 }), /waited 0 s for text "Juno" on the screen/);
