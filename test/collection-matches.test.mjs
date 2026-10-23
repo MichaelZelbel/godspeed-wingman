@@ -14,7 +14,7 @@ import { makeWorker, user, settingsFile } from "./helpers.mjs";
 import * as archive from "../lib/core/archive.mjs";
 import * as collection from "../lib/core/collection.mjs";
 import { Notebook } from "../lib/core/notebook.mjs";
-import { appendJsonl } from "../lib/core/store.mjs";
+import { appendJsonl, readJsonl } from "../lib/core/store.mjs";
 import { normalize } from "../lib/sites/flirtual/profile.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -219,6 +219,102 @@ test("the notebook's own link, asked the way an assistant asks it", async () => 
   await assert.rejects(away.address());
   const shut = new Notebook({ base: "http://127.0.0.1:1", fetchImpl: async () => ({ ok: false, status: 401, json: async () => ({ error: "Authentication required" }) }) });
   await assert.rejects(shut.address());
+});
+
+// ---- conversation partners nobody opened yet -----------------------------------------------------
+
+// Every profile the fake site was asked for, in order.
+function counting(fl) {
+  const asked = [];
+  const real = fl.user.bind(fl);
+  fl.user = async (id) => { asked.push(id); return real(id); };
+  return asked;
+}
+// The ids kept from one source ("message", "match", ...), in the order kept.
+const keptFrom = (h, source) => readJsonl(h.w.paths.archiveIndex).filter((e) => e.source === source).map((e) => e.id);
+
+test("someone the owner wrote to first is kept and listed quietly, and still gets reply ideas when they write", async () => {
+  const h = listWorker([user("a1", "Mara"), user("b2", "Juno")], { at: "2026-10-03T10:00:00Z" });
+  h.fl.queueIds = [];
+  const asked = counting(h.fl);
+  // Juno was liked by the Wingman, so Juno is in the list already and is not opened again.
+  appendJsonl(h.w.paths.decisions, { at: "2026-10-02T19:00:00Z", site: "flirtual", id: "b2", name: "Juno", action: "like", by: "wingman", reason: "Same timezone as you.", match: true });
+  h.fl.convs = [
+    { id: "c1", user_id: "a1", kind: "love", created_at: "2026-10-02T20:00:00Z", last_message: { id: "m1", content: "Hi Mara!", sender_id: "me123" } },
+    { id: "c2", user_id: "b2", kind: "love", created_at: "2026-10-02T19:00:00Z", last_message: { id: "m2", content: "Hi Juno!", sender_id: "me123" } },
+  ];
+  await h.w.tick();
+  assert.deepEqual(asked, ["a1"], "only the partner without an item is opened");
+  assert.deepEqual(keptFrom(h, "message"), ["a1"]);
+  assert.equal(h.told.length, 0, "the owner is not told");
+  assert.deepEqual(h.w.state.sites.flirtual.reported || {}, {}, "the conversation is not marked as answered");
+  assert.equal(Object.keys(JSON.parse(fs.readFileSync(h.w.paths.replies, "utf8") || "{}") || {}).length, 0, "no reply ideas");
+  await later(h);
+  const mara = byName(h.nb).Mara;
+  assert.equal(mara.data.decided_by, "you, on Flirtual");
+  assert.equal(mara.data.reason, "You matched with them on Flirtual.");
+  assert.equal(mara.data.seen, "2026-10-02");
+  assert.equal(byName(h.nb).Juno.data.decided_by, "the Wingman");
+  // Kept once: the next check does not open Mara again.
+  h.w.update((s) => { s.lastInboxAt = 0; });
+  h.advance(1000);
+  await h.w.tick();
+  assert.deepEqual(asked, ["a1"]);
+  // Mara writes back: reply ideas as always.
+  h.fl.convs[0].last_message = { id: "m3", content: "Hey you!", sender_id: "a1" };
+  h.w.update((s) => { s.lastInboxAt = 0; });
+  h.advance(1000);
+  await h.w.tick();
+  assert.equal(h.told.length, 1);
+  assert.match(h.told[0].text, /Mara, \d+ wrote: "Hey you!"/);
+});
+
+test("a backlog of partners spreads out: three at most per check, a person's pace between two", async () => {
+  const people = ["Mara", "Juno", "Sam", "Kiri", "Robin"].map((n, i) => user(`p${i + 1}`, n));
+  const h = listWorker(people, { at: "2026-10-03T10:00:00Z" });
+  h.fl.queueIds = [];
+  const asked = counting(h.fl);
+  h.fl.convs = people.map((p, i) => ({ id: `c${i + 1}`, user_id: p.id, last_message: { id: `m${i + 1}`, content: "Hi!", sender_id: "me123" } }));
+  await h.w.tick();
+  assert.equal(asked.length, 1, "the first one right after the check");
+  h.advance(30000);
+  await h.w.tick();
+  assert.equal(asked.length, 1, "not a second one half a minute later");
+  for (let i = 0; i < 4; i++) { h.advance(181000); await h.w.tick(); }
+  assert.equal(asked.length, 3, "three at most from one check");
+  // The next check (30 minutes after the first) lines up the other two.
+  h.setNow("2026-10-03T10:31:00Z");
+  await h.w.tick();
+  for (let i = 0; i < 3; i++) { h.advance(181000); await h.w.tick(); }
+  assert.deepEqual([...asked].sort(), ["p1", "p2", "p3", "p4", "p5"]);
+  assert.equal(h.told.length, 0);
+});
+
+test("a partner whose profile cannot be opened any more gets an item from the conversation list alone", async () => {
+  const h = listWorker([], { at: "2026-10-03T10:00:00Z" });
+  const asked = counting(h.fl);
+  // Flirtual answers 404 for an account that is gone; its conversation list gives no name.
+  h.fl.convs = [{ id: "c9", user_id: "u_test_099", kind: "love", created_at: "2026-10-01T18:00:00Z", last_message: { id: "m9", content: "Hi!", sender_id: "me123" } }];
+  await h.w.tick();
+  await later(h);
+  const items = h.nb.list();
+  assert.equal(items.length, 1);
+  assert.equal(items[0].source_id, "flirtual:u_test_099");
+  assert.deepEqual({ ...items[0].data }, {
+    seen: "2026-10-01", name: "(no name)", site: "Flirtual", profile: "https://flirtu.al/u_test_099", decision: "liked",
+    decided_by: "you, on Flirtual", reason: "You matched with them on Flirtual. Their profile could not be opened.",
+  }, "nothing guessed: no age, gender, place or Discord");
+  // Not asked for again at the next check.
+  h.w.update((s) => { s.lastInboxAt = 0; });
+  h.advance(1000);
+  await h.w.tick();
+  assert.deepEqual(asked, ["u_test_099"]);
+  assert.equal(h.told.length, 0);
+  // After the retention that line goes too, though no folder of that day is deleted with it.
+  h.fl.convs = [];
+  h.setNow("2026-11-20T10:00:00Z");
+  await h.w.tick();
+  assert.deepEqual(readJsonl(h.w.paths.archiveIndex), []);
 });
 
 test("the recipe tells the assistant the list exists, that its notebook tools cannot list it, and that who knows", () => {

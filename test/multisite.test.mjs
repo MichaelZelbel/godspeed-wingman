@@ -150,6 +150,19 @@ test("matches on two sites are two items in the notebook list, each with its sit
   assert.equal(items["kindmeet:x1"].profile, "https://kindmeet.example/u/x1");
 });
 
+test("a partner on a second site whose profile is gone keeps the name the conversation list gives", async () => {
+  const h = twoSites([], [], { at: "2026-10-03T10:00:00Z", settings: { notebook_collection: true } });
+  h.km.queueIds = [];
+  h.km.profile = async (id) => { throw new SiteError(`Kind Meet has no profile ${id}`, { site: "kindmeet", status: 404 }); };
+  h.km.convs = [{ id: "kc7", with: { id: "k7", name: "Kiri" }, matchedAt: "2026-10-02T09:00:00Z", messages: [{ id: "km7", fromMe: true, text: "Hello!", at: "2026-10-02T10:00:00Z" }] }];
+  await h.w.tick();
+  h.advance(61000);
+  await h.w.tick();
+  const items = h.nb.list();
+  assert.deepEqual(items.map((i) => [i.source_id, i.data.name, i.data.site, i.data.profile, i.data.seen]), [["kindmeet:k7", "Kiri", "Kind Meet", "https://kindmeet.example/u/k7", "2026-10-02"]]);
+  assert.equal(h.told.length, 0);
+});
+
 test("a lost login on one site stops only that site, and says which", async () => {
   const h = twoSites([user("a1", "Mara")], [{ id: "k1", name: "Kiri" }], { at: "2026-10-03T10:00:00Z" });
   setMode(h.w, "auto", "flirtual");

@@ -99,7 +99,7 @@ used only when the settings name it.
 |---|---|---|
 | `session()` | `{ loggedIn, me: { id, name } \| null }` | never throws for a lost login, says `loggedIn: false` |
 | `queue()` | `{ next: [profileId...], limits: { likes, browses, resetAt } \| null, done }` | `done` true: no more profiles today. `next` empty and `done` false: the site is still preparing, ask again soon |
-| `profile(id)` | a profile (below) | reading only; may be repeated |
+| `profile(id)` | a profile (below) | reading only; may be repeated. A profile the site no longer has (a deleted account): a `SiteError` with `gone: true` (or `status: 404`) |
 | `open(profile)` | nothing | brings the profile's page on screen |
 | `picture(profile?)` | `{ data: Buffer, ext, capture, meta }` | `capture` is `element`, `full` or `viewport`; `meta` says how it was taken: `{ kind, ready, shown, pictures, morePending, loggedIn }` |
 | `html()` (optional) | the page as text | kept compressed with the profile |
