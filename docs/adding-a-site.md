@@ -93,7 +93,9 @@ take a picture).
 - `profile(id)`: one person's profile, in the Wingman's shape (name, age, bio, details, pictures).
 - `open(profile)` and `picture()`: the profile on screen, and a picture of it to keep.
 - `like(id)`, `pass(id)`, `skip(id)`: one each, exactly once, never retried.
-- `conversations()`: matches and messages, so the Wingman knows who wrote last.
+- `conversations()`: matches and messages, so the Wingman knows who wrote last. When the site says
+  when a match was made, or that it is a friend-type match, pass that on too (`matchedAt`,
+  `friend`): the notebook list shows it.
 - `send(conversation, text)`: one message you chose, exactly once.
 
 The rules every adapter keeps: reading never changes anything; a change happens once; the Wingman

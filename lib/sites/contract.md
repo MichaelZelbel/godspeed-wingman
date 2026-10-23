@@ -105,7 +105,7 @@ used only when the settings name it.
 | `html()` (optional) | the page as text | kept compressed with the profile |
 | `like(id)`, `pass(id)` | `{ match, limitReached, why? }` | **runs exactly once, never retried**. `limitReached` true: nothing was done because the site allows no more today (`why`: `likes` or `profiles`) |
 | `skip(id)` (optional) | anything | takes a profile out of today's queue without a like or a pass |
-| `conversations()` | `[{ id, with: { id, name }, messages: [{ id, fromMe, text, at, system }] }]` | messages oldest first; the last one decides whether the owner needs to answer |
+| `conversations()` | `[{ id, with: { id, name }, messages: [{ id, fromMe, text, at, system }], matchedAt?, friend? }]` | messages oldest first; the last one decides whether the owner needs to answer. Optional: `matchedAt`, when the match was made; `friend: true` for a friend-type match, on a site that has them. The notebook list shows both |
 | `send(conversationId, text)` | anything | **exactly once** |
 | `likedYou()` (optional) | `[profileId...]` | people who liked the owner, kept in the archive so `who` finds them |
 | `digest(profile)` (optional) | text | what the judge reads; the core has a plain default |

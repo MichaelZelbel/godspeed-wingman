@@ -99,6 +99,9 @@ export class FakeNotebook {
     i.data = structuredClone(data);
     return this.stamp(i);
   }
+  // Where the person opens the notebook, as its get_notebook_link answers: `web` is the address
+  // without the page (null: the notebook does not know one). Not counted in `calls`: it writes nothing.
+  async address() { this.check(); return this.web === undefined ? "http://127.0.0.1:47831" : this.web; }
   // What the person does on their screen: their comment, saved like the notebook saves it.
   comment(itemId, text) { const i = this.itemsById.get(itemId); i.data = { ...i.data, comment: text }; this.stamp(i); }
   list() { return [...this.itemsById.values()]; }

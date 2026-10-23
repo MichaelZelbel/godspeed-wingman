@@ -131,6 +131,25 @@ test("the inbox covers every site, and a reply goes back to the site it came fro
   assert.deepEqual(h.w.state.sites.kindmeet.reported, { kc1: "km1" });
 });
 
+test("matches on two sites are two items in the notebook list, each with its site", async () => {
+  const h = twoSites([user("x1", "Mara")], [{ id: "x1", name: "Kiri" }], { at: "2026-10-03T10:00:00Z", settings: { notebook_collection: true } });
+  h.fl.queueIds = [];
+  h.km.queueIds = [];
+  h.fl.convs = [{ id: "c1", user_id: "x1", last_message: null }];
+  // A site with friend matches says so with `friend`, and when the match was made with `matchedAt`.
+  h.km.convs = [{ id: "kc1", with: { id: "x1", name: "Kiri" }, friend: true, matchedAt: "2026-10-01T20:00:00Z", messages: [] }];
+  await h.w.tick();
+  h.advance(61000);
+  await h.w.tick();
+  const items = Object.fromEntries(h.nb.list().map((i) => [i.source_id, i.data]));
+  assert.deepEqual(Object.keys(items).sort(), ["flirtual:x1", "kindmeet:x1"]);
+  assert.equal(items["flirtual:x1"].decided_by, "you, on Flirtual");
+  assert.equal(items["kindmeet:x1"].decided_by, "you, on Kind Meet, as friends");
+  assert.equal(items["kindmeet:x1"].site, "Kind Meet");
+  assert.equal(items["kindmeet:x1"].seen, "2026-10-01");
+  assert.equal(items["kindmeet:x1"].profile, "https://kindmeet.example/u/x1");
+});
+
 test("a lost login on one site stops only that site, and says which", async () => {
   const h = twoSites([user("a1", "Mara")], [{ id: "k1", name: "Kiri" }], { at: "2026-10-03T10:00:00Z" });
   setMode(h.w, "auto", "flirtual");
