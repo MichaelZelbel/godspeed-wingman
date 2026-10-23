@@ -7,7 +7,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { readOnlyAdapter, readOnlyBrowser, pageGuard, ReadOnlyError, actionWord, offlineDriver, REFUSED_SCRIPT, CHANGES } from "../lib/sites/guard.mjs";
-import { ChromeDriver, findBrowser } from "../lib/drivers/chrome.mjs";
+import { ChromeDriver, findBrowser, START_MS } from "../lib/drivers/chrome.mjs";
 import { fakePage } from "./fixtures/fake-page.mjs";
 
 test("the check's copy of an adapter cannot like, pass, skip or send; reading works as before", async () => {
@@ -77,7 +77,8 @@ test("labels that mark a button that changes something", () => {
 });
 
 const exe = findBrowser();
-test("in a real browser, the guarded page refuses a change and lets a read through", { skip: exe ? false : "no Chrome or Edge on this machine" }, async () => {
+// The first start on a fresh machine may take up to START_MS (two minutes).
+test("in a real browser, the guarded page refuses a change and lets a read through", { skip: exe ? false : "no Chrome or Edge on this machine", timeout: START_MS + 60000 }, async () => {
   const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-guard-"));
   const raw = new ChromeDriver({ profileDir, headless: true, keepOpen: false });
   try {

@@ -6,8 +6,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import http from "node:http";
 import zlib from "node:zlib";
-import { ChromeDriver, findBrowser } from "../lib/drivers/chrome.mjs";
+import { ChromeDriver, findBrowser, waitForPort, START_MS } from "../lib/drivers/chrome.mjs";
 import { createDriver } from "../lib/drivers/index.mjs";
 import { Bridge } from "../lib/drivers/bridge.mjs";
 import { imageSize } from "../lib/core/image.mjs";
@@ -51,7 +52,8 @@ const PAGE = `<!doctype html><html><head><title>wingman test</title></head><body
 <div id="far" data-mask style="width:320px;height:240px;background:rgb(200,30,40)">far below the window</div>
 <div style="height:600px"></div></body></html>`;
 
-test("the local driver opens a page, runs a script, and pictures an element far below the window", { skip, timeout: 90000 }, async () => {
+// The first start on a fresh machine may take up to START_MS (two minutes); the work after it a few seconds.
+test("the local driver opens a page, runs a script, and pictures an element far below the window", { skip, timeout: START_MS + 60000 }, async () => {
   const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-chrome-"));
   const d = new ChromeDriver({ profileDir, headless: true, keepOpen: false });
   let second = null;
@@ -109,6 +111,65 @@ test("a browser whose control port never answers is stopped again, so nothing is
     // So that a regression fails here instead of hanging the whole test run.
     try { if (d.child && d.child.exitCode === null && d.child.signalCode === null) d.child.kill(); } catch { /* gone */ }
     fs.rmSync(profileDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+  }
+});
+
+// A stand-in for a browser's control port, and the file a browser writes to name it.
+async function fakePort() {
+  const server = http.createServer((req, res) => { res.setHeader("content-type", "application/json"); res.end(JSON.stringify({ Browser: "Fake/1.0" })); });
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  return { port: server.address().port, close: () => new Promise((r) => server.close(r)) };
+}
+const writePortFile = (dir, port) => fs.writeFileSync(path.join(dir, "DevToolsActivePort"), `${port}\n/devtools/browser/fake`);
+
+test("a browser that is slow to open its control port is waited for, and the log says it is still starting", async () => {
+  // Measured on fresh GitHub Windows machines: a first start answered after 5.6 to 47 s, and a
+  // 20 s wait cut 6 of 20 off. The wait is two minutes.
+  assert.ok(START_MS >= 120000, `the start time is ${START_MS} ms`);
+  assert.equal(new ChromeDriver({ profileDir: "x" }).startMs, START_MS);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-wait-"));
+  const fake = await fakePort();
+  try {
+    const logs = [];
+    setTimeout(() => writePortFile(dir, fake.port), 900);
+    const t0 = Date.now();
+    assert.equal(await waitForPort({ profileDir: dir, ended: () => false, startMs: 10000, slowMs: 300, log: (l) => logs.push(l) }), fake.port);
+    assert.ok(Date.now() - t0 >= 800, "it waited for the file");
+    assert.equal(logs.length, 1, logs.join("\n"));
+    assert.match(logs[0], /^the browser is still starting after \d+ s; the first start after the computer started can take a minute or two, so the Wingman waits up to 10 s$/);
+  } finally {
+    await fake.close();
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("waiting for the control port ends at once when the browser ends, and after the start time when nothing answers", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-wait-"));
+  try {
+    let t0 = Date.now();
+    assert.equal(await waitForPort({ profileDir: dir, ended: () => true, startMs: 60000 }), null);
+    assert.ok(Date.now() - t0 < 2000, "a browser that closed is not waited for");
+    t0 = Date.now();
+    assert.equal(await waitForPort({ profileDir: dir, ended: () => false, startMs: 600, slowMs: 60000 }), null);
+    assert.ok(Date.now() - t0 >= 550 && Date.now() - t0 < 3000, `gave up after ${Date.now() - t0} ms`);
+    // A port named in the file that does not answer is not taken.
+    writePortFile(dir, 9);
+    assert.equal(await waitForPort({ profileDir: dir, ended: () => false, startMs: 300, alive: async () => false }), null);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a browser program that cannot be started is reported at once, not after the start time", async () => {
+  const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "wingman-chrome-"));
+  const d = new ChromeDriver({ profileDir, exe: path.join(profileDir, "no-such-browser.exe"), keepOpen: false });
+  try {
+    const t0 = Date.now();
+    await assert.rejects(d.health(), /the browser did not start: .*ENOENT/);
+    assert.ok(Date.now() - t0 < 5000, `took ${Date.now() - t0} ms`);
+  } finally {
+    await d.close();
+    fs.rmSync(profileDir, { recursive: true, force: true });
   }
 });
 
