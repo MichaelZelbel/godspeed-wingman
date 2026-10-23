@@ -221,6 +221,13 @@ test("the notebook's own link, asked the way an assistant asks it", async () => 
   await assert.rejects(shut.address());
 });
 
+test("the recipe tells the assistant the list exists, that its notebook tools cannot list it, and that who knows", () => {
+  const skill = fs.readFileSync(path.join(HERE, "..", "skill", "wingman", "SKILL.md"), "utf8").replace(/\s+/g, " ");
+  assert.match(skill, /holds every like, pass and match/);
+  assert.match(skill, /your notebook tools cannot list it: finding nothing there never means it is missing/);
+  assert.match(skill, /`godspeed-wingman who "<name>"` says whether someone is in it, with the link to their item/);
+});
+
 test("the item link is the notebook's own route for one item", () => {
   assert.equal(collection.itemLink("https://notebook.example", "wingman-likes-and-passes", "1f2e-3d"), "https://notebook.example/collections/wingman-likes-and-passes/1f2e-3d");
   assert.equal(collection.itemLink("https://notebook.example", "a b", "x/y"), "https://notebook.example/collections/a%20b/x%2Fy");

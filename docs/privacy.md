@@ -80,9 +80,12 @@ first, never the last seven days and never the profiles themselves.
   one item per profile liked or passed (date, name, age, gender, place, site, liked or passed, by
   whom, the reason in one short sentence, the profile's address, a Discord name, a link to the
   picture, and a column for your own comment). The reason is the Wingman's, or your own words when
-  you said why. It is off unless you tick it in the setup questions (they offer it only when the
-  notebook answers on this computer) or set `"notebook_collection": true` in the settings. The list
-  is hidden from every assistant, so none of them can turn a stranger into a fact or a suggestion.
+  you said why. Someone you matched with or who wrote to you gets an item too, also when you liked
+  them yourself in the site's app: liked, "you, on" that site. It is off unless you tick it in the
+  setup questions (they offer it only when the notebook answers on this computer) or set
+  `"notebook_collection": true` in the settings. The list is hidden from every assistant, so none
+  of them can turn a stranger into a fact or a suggestion; "who was that?" tells them whether
+  someone is in it, with a link to their item.
   The Wingman never deletes items from it, so it is not deleted with the retention: delete items
   yourself, or delete the whole list in the notebook (the Wingman then stops writing it).
   `"notebook_collection": false` switches it off again; that stops new items, and what the list

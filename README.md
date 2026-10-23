@@ -58,10 +58,11 @@ It needs Godspeed Mission Control first. If you do not have it yet, start with
 - Never writes to anyone outside the dating site.
 - Never posts anything about your dating anywhere.
 - Never puts the people it sees into your mission control's memory or into git. It can keep one
-  list in your Godspeed notebook, "Wingman: likes and passes", hidden from every assistant, but it
-  is off unless you switch it on in the setup or with `"notebook_collection": true` in the
-  settings. That list is not deleted after the days you chose; it stays until you delete it. See
-  [privacy](docs/privacy.md).
+  list in your Godspeed notebook, "Wingman: likes and passes", with every like, pass and match,
+  hidden from every assistant, but it is off unless you switch it on in the setup or with
+  `"notebook_collection": true` in the settings. That list is not deleted after the days you chose;
+  it stays until you delete it. "Who was that?" says whether someone is in it, with a link to their
+  item. See [privacy](docs/privacy.md).
 - Never works on a site whose terms forbid bots or automated use, unless you chose that after your
   mission control told you what those terms say (see [Sites](#sites)).
 

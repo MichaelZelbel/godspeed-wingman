@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.6.4 (2026-10-23)
+
+The notebook list "Wingman: likes and passes" now holds everyone you matched with, and "who was
+that?" says whether someone is in it, with a link to their item.
+
+- **Matches the Wingman did not decide:** before, the list held only the profiles the Wingman
+  liked or passed. Someone who reached you as a match or a conversation without that (because you
+  liked them yourself in the site's app) never got an item. Now they do: liked, decided by "you,
+  on" that site (a friend match says so), the date of the first match or message, and the usual
+  columns from their profile. If the Wingman later likes or passes them itself, its decision takes
+  over the item. Your comment stays as it is, and nothing is deleted.
+- **Matches from before:** the first update after you install this version adds the matches and
+  conversations the Wingman still keeps (42 days unless you chose otherwise).
+- **"Who was that?" knows the list:** your assistant cannot see the list, on purpose, so it could
+  not tell whether someone is in it. Now `godspeed-wingman who "<name>"` says for each person
+  whether they are in the list, with a link that opens their item in your notebook. On a
+  computer, the link opens only on that computer.
+- **For site adapters:** `conversations()` may say when a match was made (`matchedAt`) and
+  whether it is a friend-type match (`friend`).
+
 ## 0.6.3 (2026-10-22)
 
 On Linux, the Wingman's background service starts again. The service file that setup writes put

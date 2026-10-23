@@ -80,8 +80,10 @@ you chose otherwise) they are gone, except from the notebook list below if you s
 
 Not unless you switch it on. The list "Wingman: likes and passes" is off. You can tick it in the
 setup questions, which offer it only when your Godspeed notebook answers on this computer, or set
-`"notebook_collection": true` in `routines/wingman/settings.json`. The list is hidden from your
-assistants. It is not deleted after the retention: it stays until you delete it in the notebook.
+`"notebook_collection": true` in `routines/wingman/settings.json`. It holds every like, pass and
+match. The list is hidden from your assistants, so their notebook tools cannot list it; "who was
+<name>?" tells them whether someone is in it, with a link to their item. It is not deleted after
+the retention: it stays until you delete it in the notebook.
 
 ## Can other people see the desk?
 

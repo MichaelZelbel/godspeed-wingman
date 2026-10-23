@@ -135,8 +135,8 @@ test("the registry finds every command file, and a flag a command declares is kn
   assert.deepEqual(flags, { site: "flirtual", talk: "desk,telegram", "no-service": true, yes: true });
   const h = await cli(["help"]);
   assert.equal(h.code, 0);
-  assert.match(h.out, /godspeed-wingman 0\.6\.3/);
+  assert.match(h.out, /godspeed-wingman 0\.6\.4/);
   assert.doesNotMatch(h.out, /_sync/, "hidden commands stay hidden");
-  assert.equal((await cli(["version"])).out, "0.6.3");
+  assert.equal((await cli(["version"])).out, "0.6.4");
   assert.equal((await cli(["nonsense"])).code, 1);
 });
