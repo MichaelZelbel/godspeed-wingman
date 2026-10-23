@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.6 (2026-10-23)
+
+The Wingman's own browser no longer gives up while it is still starting. This happened mostly on
+Windows.
+
+- **What went wrong:** the first time the browser starts after your computer started, it reads its
+  whole program from the disk, about 300 MB for Chrome. On a slow or busy disk that can take longer
+  than the 20 seconds the Wingman waited. The Wingman then closed the browser in the middle of
+  starting and said "the browser started but its control port never answered". On fresh Windows
+  machines at GitHub, a first start took between 6 and 47 seconds, and 6 of 20 took longer than
+  20. The next start on the same machine took less than half a second.
+- **Now:** the Wingman waits up to two minutes for a browser it started, as long as that browser is
+  still running. After 20 seconds its log says the browser is still starting. A browser that closes
+  by itself, or a browser program that cannot be started at all, is reported at once.
+
 ## 0.6.5 (2026-10-23)
 
 Everyone you have a conversation with now gets an item in the notebook list, also someone you
