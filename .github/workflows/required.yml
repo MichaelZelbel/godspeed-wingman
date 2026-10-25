@@ -1,0 +1,61 @@
+name: required
+# The one check main requires: nothing reaches main except through a pull request whose
+# `required` check passed. That check name is what the main-branch rules name.
+#
+# The Wingman's tests already run on every pull request (test.yml: Windows, macOS and Linux with
+# Node 22 and 24; guide.yml), so job `suite` only proves the gate itself, and job `required`
+# waits for those checks and asks the two questions, each answered with one plain line, in
+# .github/workflows/required-gate.mjs (the same file as in MichaelZelbel/godspeed-mission-control,
+# where it is maintained): every other check on this commit passed, and on a pull request a
+# reviewer listed in the repository variable REQUIRED_REVIEWERS approved this commit.
+# Everything here only reads. The gate lives inside .github/workflows/ on purpose: only a key with
+# GitHub's `workflows` permission may change files there.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: read
+  actions: read
+  pull-requests: read
+  statuses: read
+jobs:
+  suite:
+    name: suite
+    if: github.event_name != 'pull_request_review'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: The gate proves itself
+        run: node .github/workflows/required-gate.mjs --self-test
+  required:
+    name: required
+    needs: suite
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Every other check on this commit passed, and a listed reviewer approved it
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REQUIRED_REVIEWERS: ${{ vars.REQUIRED_REVIEWERS }}
+        run: node .github/workflows/required-gate.mjs
