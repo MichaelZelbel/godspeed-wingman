@@ -180,12 +180,12 @@ test("the desk edits the person's own files: preferences, and the watch list by 
     assert.equal(r.json.ok, true);
     assert.equal(fs.readFileSync(path.join(mc, "routines", "wingman", "preferences.md"), "utf8"), "# Mine\n\n## Who fits\n\n- Someone kind.\n");
     assert.equal((await post(port, cookie, "/api/files", { preferences: "   " })).status, 400, "never an empty preferences page");
-    r = await post(port, cookie, "/api/files", { watchNames: ["Robin", "- Lena", "", "Robin"] });
-    assert.deepEqual(r.json.names, ["Robin", "Lena"]);
+    r = await post(port, cookie, "/api/files", { watchNames: ["Robin", "- Ilka", "", "Robin"] });
+    assert.deepEqual(r.json.names, ["Robin", "Ilka"]);
     const text = fs.readFileSync(path.join(mc, "routines", "wingman", "watch.md"), "utf8");
     assert.match(text, /^# Watch list/, "the explanation stays");
-    r = await post(port, cookie, "/api/files", { watchNames: ["Lena"] });
-    assert.deepEqual(r.json.names, ["Lena"], "a name taken off the list is gone");
+    r = await post(port, cookie, "/api/files", { watchNames: ["Ilka"] });
+    assert.deepEqual(r.json.names, ["Ilka"], "a name taken off the list is gone");
   });
   const dir = tempMc().mc;
   const file = path.join(dir, "watch.md");

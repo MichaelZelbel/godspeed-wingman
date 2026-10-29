@@ -76,7 +76,7 @@ test("ready means the card with the name, no grey bars, no picture still loading
 test("waitForProfile waits through the skeleton and the loading pictures, then lets it settle", async () => {
   const br = fakeDriver([SKELETON, SKELETON, LOADING, READY]);
   const waits = [];
-  const r = await waitForProfile(br, "Lena", { wait: async (ms) => waits.push(ms) });
+  const r = await waitForProfile(br, "Ilka", { wait: async (ms) => waits.push(ms) });
   assert.equal(r.ready, true);
   assert.equal(br.calls.filter((c) => c[0] === "probe").length, 4);
   assert.deepEqual(waits, [500, 500, 500, 800], "three looks half a second apart, then the settle");
@@ -85,22 +85,22 @@ test("waitForProfile waits through the skeleton and the loading pictures, then l
 
 test("waitForProfile gives up after its time and says what it saw", async () => {
   const br = fakeDriver([SKELETON]);
-  const r = await waitForProfile(br, "Lena", { wait: async () => {}, timeoutMs: 3000, everyMs: 500 });
+  const r = await waitForProfile(br, "Ilka", { wait: async () => {}, timeoutMs: 3000, everyMs: 500 });
   assert.equal(r.ready, false);
   assert.equal(r.shown, false);
   assert.equal(br.calls.filter((c) => c[0] === "probe").length, 6, "counted in looks, not by the clock");
-  const slow = await waitForProfile(fakeDriver([LOADING]), "Lena", { wait: async () => {}, timeoutMs: 1000 });
+  const slow = await waitForProfile(fakeDriver([LOADING]), "Ilka", { wait: async () => {}, timeoutMs: 1000 });
   assert.deepEqual([slow.ready, slow.shown], [false, true], "the card was there, a picture never arrived");
 });
 
 test("waitForProfile survives a page that does not answer", async () => {
   const br = { async evaluate() { throw new Error("bridge /eval answered 500"); } };
-  const r = await waitForProfile(br, "Lena", { wait: async () => {}, timeoutMs: 1000 });
+  const r = await waitForProfile(br, "Ilka", { wait: async () => {}, timeoutMs: 1000 });
   assert.equal(r.ready, false);
 });
 
 test("the page scripts are valid JavaScript, look for the name, and click nothing but the ...", () => {
-  for (const js of [probeScript("Lena \"the\" `cat`"), prepareScript(["1200fe98-f989", "x'y"]), stripPendingScript, cleanupScript]) {
+  for (const js of [probeScript("Ilka \"the\" `cat`"), prepareScript(["1200fe98-f989", "x'y"]), stripPendingScript, cleanupScript]) {
     assert.doesNotThrow(() => new Function(`return ${js};`), js.slice(0, 80));
   }
   assert.match(probeScript("Ｌena"), /"ｌena"/, "the name as written, in lower case");
@@ -130,14 +130,14 @@ test("a very long picture goes to Telegram as a file, a normal one as a photo", 
 // ---- a new profile ----------------------------------------------------------------------------------
 
 test("a new profile: waits for the page, opens the ..., takes the whole card as JPEG, notes how", async () => {
-  const h = makeWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
+  const h = makeWorker([user("u_test_001", "Ilka"), user("b2", "Juno")]);
   const br = fakeDriver([SKELETON, LOADING, READY]);
   h.w.deps.noBrowserPage = false;
   h.w.deps.driver = br;
   await h.w.tick();
   const w = h.w.state.waiting;
   const dir = path.join(h.w.paths.archive, w.dir);
-  const shot = "2026-10-03 Lena u_test_0.jpg";
+  const shot = "2026-10-03 Ilka u_test_0.jpg";
   assert.ok(fs.existsSync(path.join(dir, shot)), fs.readdirSync(dir).join(","));
   assert.ok(fs.existsSync(path.join(h.w.paths.screenshots, "2026-10-03", shot)), "and its copy in screenshots/");
   assert.equal(path.basename(h.told[0].picture), shot, "the practice question carries the whole picture");
@@ -156,35 +156,35 @@ test("a new profile: waits for the page, opens the ..., takes the whole card as 
 });
 
 test("a page that never finishes is still pictured, logged, and taken again later", async () => {
-  const h = makeWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
+  const h = makeWorker([user("u_test_001", "Ilka"), user("b2", "Juno")]);
   const br = fakeDriver([SKELETON]);
   h.w.deps.noBrowserPage = false;
   h.w.deps.driver = br;
   await h.w.tick();
   const dir = path.join(h.w.paths.archive, h.w.state.waiting.dir);
-  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Lena u_test_0.jpg")));
+  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Ilka u_test_0.jpg")));
   assert.deepEqual(br.calls.find((c) => c[0] === "capture")[1], { full: true, format: "jpeg", quality: 72 }, "no card: the whole page");
   assert.equal(br.calls.some((c) => c[0] === "prepare"), false, "nothing laid out on a page without the card");
   const meta = readJson(path.join(dir, "shot.json"));
   assert.equal(meta.ready, false);
   assert.equal(meta.unfinished.card, false);
-  assert.match(fs.readFileSync(h.w.paths.log, "utf8"), /the page of Lena had not finished loading after 25 s; picture taken anyway/);
+  assert.match(fs.readFileSync(h.w.paths.log, "utf8"), /the page of Ilka had not finished loading after 25 s; picture taken anyway/);
   assert.equal(archive.needingRetake(h.w.paths).length, 1);
 });
 
 test("an older bridge without whole-page pictures still gives the window, as PNG", async () => {
-  const h = makeWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
+  const h = makeWorker([user("u_test_001", "Ilka"), user("b2", "Juno")]);
   h.w.deps.noBrowserPage = false;
   h.w.deps.driver = fakeDriver([READY], { capture: false });
   await h.w.tick();
   const dir = path.join(h.w.paths.archive, h.w.state.waiting.dir);
-  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Lena u_test_0.png")));
+  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Ilka u_test_0.png")));
   assert.equal(readJson(path.join(dir, "shot.json")).kind, "viewport");
   assert.match(fs.readFileSync(h.w.paths.log, "utf8"), /only the window/);
 });
 
 test("a failed card picture falls back to the whole page", async () => {
-  const h = makeWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
+  const h = makeWorker([user("u_test_001", "Ilka"), user("b2", "Juno")]);
   const br = fakeDriver([READY]);
   const real = br.capture;
   br.capture = async (opts) => { if (opts.selector) { br.calls.push(["capture", opts]); throw new Error("bridge /screenshot answered 404"); } return real(opts); };
@@ -212,7 +212,7 @@ async function oldArchive(h, people) {
 
 const PEOPLE = () => [
   { id: "u_test_004", name: "robinbird25", decisions: [{ at: "2026-10-10T14:42:46Z", action: "pass", by: "wingman" }] },
-  { id: "u_test_001", name: "Lena", decisions: [{ at: "2026-10-10T14:50:00Z", action: "like", by: "wingman" }] },
+  { id: "u_test_001", name: "Ilka", decisions: [{ at: "2026-10-10T14:50:00Z", action: "like", by: "wingman" }] },
 ];
 
 test("old pictures are taken again one by one, read only, at a person's pace, under the same names", async () => {
@@ -230,7 +230,7 @@ test("old pictures are taken again one by one, read only, at a person's pace, un
   const dir = path.join(h.w.paths.archive, people[0].dir);
   const files = fs.readdirSync(dir).filter((f) => archive.SHOT.test(f));
   assert.deepEqual(files, ["2026-10-10 robinbird25 u_test_0.jpg"], "the .jpg replaces the .png under the same name scheme");
-  assert.deepEqual(fs.readdirSync(path.join(h.w.paths.screenshots, "2026-10-10")).sort(), ["2026-10-10 Lena u_test_0.png", "2026-10-10 robinbird25 u_test_0.jpg"]);
+  assert.deepEqual(fs.readdirSync(path.join(h.w.paths.screenshots, "2026-10-10")).sort(), ["2026-10-10 Ilka u_test_0.png", "2026-10-10 robinbird25 u_test_0.jpg"]);
   const meta = readJson(path.join(dir, "shot.json"));
   assert.deepEqual([meta.kind, meta.ready, meta.retakes, meta.retakenOf], ["element", true, 1, "an undescribed picture"]);
   assert.equal(archive.readPage(dir), "<html><body>their page</body></html>", "the page as it showed now");
@@ -260,10 +260,10 @@ test("old pictures are taken again one by one, read only, at a person's pace, un
   const rows = collection.rows(h.w.paths, { timezone: "UTC", screenshotsUrl: "https://srv.example/wingman" });
   assert.deepEqual(rows.map((r) => r.fields.screenshot), [
     "https://srv.example/wingman/2026-10-10/2026-10-10%20robinbird25%20u_test_0.jpg",
-    "https://srv.example/wingman/2026-10-10/2026-10-10%20Lena%20u_test_0.jpg",
+    "https://srv.example/wingman/2026-10-10/2026-10-10%20Ilka%20u_test_0.jpg",
   ]);
   // "who --photo" sends the new picture.
-  assert.equal(path.basename(archive.picturePath(h.w.paths, archive.search(h.w.paths, "Lena")[0])), "2026-10-10 Lena u_test_0.jpg");
+  assert.equal(path.basename(archive.picturePath(h.w.paths, archive.search(h.w.paths, "Ilka")[0])), "2026-10-10 Ilka u_test_0.jpg");
 });
 
 test("taking pictures again waits while a session runs and while paused", async () => {
@@ -332,11 +332,11 @@ test("an open question's picture follows when it is taken again", async () => {
   const people = PEOPLE().slice(1);
   await oldArchive(h, people);
   const dir = path.join(h.w.paths.archive, people[0].dir);
-  const old = path.join(dir, "2026-10-10 Lena u_test_0.png");
-  h.w.update((s) => { s.lastRunDay = "2026-10-10"; s.waiting = { kind: "review", site: "flirtual", id: people[0].id, name: "Lena", dir: people[0].dir, picture: old, message: "x", notifiedAt: "2026-10-10T15:00:00Z", askedAt: "2026-10-10T15:00:00Z" }; });
+  const old = path.join(dir, "2026-10-10 Ilka u_test_0.png");
+  h.w.update((s) => { s.lastRunDay = "2026-10-10"; s.waiting = { kind: "review", site: "flirtual", id: people[0].id, name: "Ilka", dir: people[0].dir, picture: old, message: "x", notifiedAt: "2026-10-10T15:00:00Z", askedAt: "2026-10-10T15:00:00Z" }; });
   h.w.deps.noBrowserPage = false;
   h.w.deps.driver = fakeDriver([READY]);
   await h.w.tick();
-  assert.equal(h.w.state.waiting.picture, path.join(dir, "2026-10-10 Lena u_test_0.jpg"));
+  assert.equal(h.w.state.waiting.picture, path.join(dir, "2026-10-10 Ilka u_test_0.jpg"));
   assert.equal(h.w.state.waiting.notifiedAt, "2026-10-10T15:00:00Z", "the question itself is untouched");
 });

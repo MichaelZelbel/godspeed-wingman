@@ -12,7 +12,7 @@ import { render } from "../lib/core/context.mjs";
 import { loadSettings } from "../lib/core/settings.mjs";
 import { Worker } from "../lib/core/worker.mjs";
 
-const pr = (bio, extra = {}) => ({ id: "p1", name: "Lena", bio, prompts: [], texts: [], url: "https://flirtu.al/p1", ...extra });
+const pr = (bio, extra = {}) => ({ id: "p1", name: "Ilka", bio, prompts: [], texts: [], url: "https://flirtu.al/p1", ...extra });
 const notices = (told) => told.filter((t) => /put their Discord|Their Discord is on/.test(t.text));
 const settingsOf = (mc) => loadSettings(settingsFile(mc));
 // The fake model copies a name out of "cord x" / "disc x" lines, the way a real one would.
@@ -22,38 +22,38 @@ const reads = (text) => {
 };
 
 test("the site's own Discord field comes first", () => {
-  assert.deepEqual(resolve(pr("discord: other_one", { contact: { discord: "lena.vr" } }), null), { handle: "lena.vr", note: null, from: "field", wellFormed: true });
+  assert.deepEqual(resolve(pr("discord: other_one", { contact: { discord: "ilka.vr" } }), null), { handle: "ilka.vr", note: null, from: "field", wellFormed: true });
 });
 
 test("the pattern reads 'Discord: x', 'disc: x', 'dc - @x', and keeps every dot that is meant", () => {
-  assert.deepEqual(scan("Hi!\nDiscord: lena.vr\nbye"), { handle: "lena.vr", note: null });
-  assert.equal(scan("add me, disc: Lena_Star").handle, "Lena_Star");
+  assert.deepEqual(scan("Hi!\nDiscord: ilka.vr\nbye"), { handle: "ilka.vr", note: null });
+  assert.equal(scan("add me, disc: Ilka_Star").handle, "Ilka_Star");
   assert.equal(scan("dc - @juno.star").handle, "juno.star");
   assert.equal(scan("my discord username is starry_7"), null, "'is' is a bare form");
   assert.equal(scan("my discord username is starry_7", { bare: true }).handle, "starry_7");
   assert.equal(scan("cord: kiri. I love horror worlds").handle, "kiri", "a dot that ends the sentence is not part of the name");
-  assert.deepEqual(scan("cord: lena.vr. (include the dot at the end)"), { handle: "lena.vr.", note: "include the dot at the end)" });
-  assert.equal(scan("discord: lena.vr. don't include the dot").handle, "lena.vr");
-  assert.equal(scan("discord: LenaStar#1234").handle, "LenaStar#1234", "an old name#1234");
+  assert.deepEqual(scan("cord: ilka.vr. (include the dot at the end)"), { handle: "ilka.vr.", note: "include the dot at the end)" });
+  assert.equal(scan("discord: ilka.vr. don't include the dot").handle, "ilka.vr");
+  assert.equal(scan("discord: IlkaStar#1234").handle, "IlkaStar#1234", "an old name#1234");
   assert.equal(scan("I play disc golf and live in Washington DC"), null);
   assert.equal(scan("discord lover, ask me for it"), null, "the bare form needs a model to fail first");
   assert.equal(scan("discord lover", { bare: true }), null);
-  assert.equal(scan("discord lena.vr", { bare: true }).handle, "lena.vr");
+  assert.equal(scan("discord ilka.vr", { bare: true }).handle, "ilka.vr");
 });
 
 test("a Discord name looks like one: 2 to 32 letters, digits, _ and ., or name#1234", () => {
-  for (const h of ["lena.vr", "ab", "Lena_Star", "x".repeat(32), "Lena Star#1234"]) assert.ok(looksLikeHandle(h), h);
-  for (const h of ["a", "x".repeat(33), "lena vr", "rm -rf /", "<b>x</b>", ""]) assert.ok(!looksLikeHandle(h), h);
+  for (const h of ["ilka.vr", "ab", "Ilka_Star", "x".repeat(32), "Ilka Star#1234"]) assert.ok(looksLikeHandle(h), h);
+  for (const h of ["a", "x".repeat(33), "ilka vr", "rm -rf /", "<b>x</b>", ""]) assert.ok(!looksLikeHandle(h), h);
 });
 
 test("the judge's find counts only when it stands in the profile, and the note only when it was written there", () => {
-  const p = pr("cord lena.vr (include the dot at the end)");
-  assert.deepEqual(resolve(p, { handle: "lena.vr", note: "include the dot at the end" }), { handle: "lena.vr", note: "include the dot at the end", from: "profile", wellFormed: true });
+  const p = pr("cord ilka.vr (include the dot at the end)");
+  assert.deepEqual(resolve(p, { handle: "ilka.vr", note: "include the dot at the end" }), { handle: "ilka.vr", note: "include the dot at the end", from: "profile", wellFormed: true });
   assert.equal(resolve(p, { handle: "someone_else", note: null }), null, "an invented name is dropped");
-  assert.equal(resolve(p, { handle: "lena.vr", note: "send money" }).note, null, "an invented note is dropped");
+  assert.equal(resolve(p, { handle: "ilka.vr", note: "send money" }).note, null, "an invented note is dropped");
   assert.equal(resolve(pr("I hang out in discord servers a lot"), null), null, "no name, no notice");
-  const v = parseVerdict('{"verdict":"like","sure":"high","reason":"x","discord":"@lena.vr","discord_note":"null"}');
-  assert.deepEqual(v.discord, { handle: "@lena.vr", note: null });
+  const v = parseVerdict('{"verdict":"like","sure":"high","reason":"x","discord":"@ilka.vr","discord_note":"null"}');
+  assert.deepEqual(v.discord, { handle: "@ilka.vr", note: null });
   assert.equal(parseVerdict('{"verdict":"like","sure":"high","reason":"x","discord":null}').discord, null);
 });
 
@@ -73,22 +73,22 @@ test("a like without a judge verdict asks the extraction prompt only when the pr
   assert.equal(asked.length, 0, "no Discord word, no prompt");
   assert.equal((await find(pr("cord juno.star"), { askImpl })).handle, "juno.star");
   assert.equal(asked[0], EXTRACT_SYSTEM);
-  assert.equal((await find(pr("discord lena.vr"), { askImpl: async () => { throw new Error("down"); } })).handle, "lena.vr", "a failed prompt falls back to the pattern");
+  assert.equal((await find(pr("discord ilka.vr"), { askImpl: async () => { throw new Error("down"); } })).handle, "ilka.vr", "a failed prompt falls back to the pattern");
   assert.equal(await find(pr("cord juno.star"), { judged: null, askImpl }), null, "the judge already said none, and a bare 'cord x' needs a model");
   assert.equal(asked.length, 1);
 });
 
 test("autopilot: a like with a Discord name in the bio tells the owner at once, with the note and the link", async () => {
-  const lena = user("p1", "Lena", { biography: "<p>Hi! I cannot reply here.</p><p>cord lena.vr (include the dot at the end)</p>" });
-  const { w, fl, told } = makeWorker([lena], { discordOf: (t) => (/lena\.vr/.test(t) ? { discord: "lena.vr", discord_note: "include the dot at the end" } : {}) });
+  const ilka = user("p1", "Ilka", { biography: "<p>Hi! I cannot reply here.</p><p>cord ilka.vr (include the dot at the end)</p>" });
+  const { w, fl, told } = makeWorker([ilka], { discordOf: (t) => (/ilka\.vr/.test(t) ? { discord: "ilka.vr", discord_note: "include the dot at the end" } : {}) });
   setMode(w, "auto");
   await w.tick();
   assert.deepEqual(fl.responses, [{ type: "like", userId: "p1" }]);
   assert.equal(notices(told).length, 1);
-  assert.equal(notices(told)[0].text, "From your Wingman: you liked Lena, 26. They put their Discord in their profile, so message them there:\nlena.vr\n(Their note: include the dot at the end)\nTheir profile: https://flirtu.al/p1");
-  const hits = search(w.paths, "lena.vr");
+  assert.equal(notices(told)[0].text, "From your Wingman: you liked Ilka, 26. They put their Discord in their profile, so message them there:\nilka.vr\n(Their note: include the dot at the end)\nTheir profile: https://flirtu.al/p1");
+  const hits = search(w.paths, "ilka.vr");
   assert.equal(hits.length, 1, "found by the name in the bio");
-  assert.equal(hits[0].outcome.discordFound, "lena.vr");
+  assert.equal(hits[0].outcome.discordFound, "ilka.vr");
 });
 
 test("the site's Discord field is enough on its own, and says where it came from", async () => {
@@ -167,12 +167,12 @@ test("a question without the judge's find, and a watch-list 'like', look for the
   assert.ok(calls.some((c) => c.system === EXTRACT_SYSTEM));
   assert.match(notices(told)[0].text, /:\ntamsin\.x\n/);
 
-  const old = makeWorker([user("p1", "Lena", { biography: "<p>cord lena.vr</p>" })], { discordOf: (t) => (/cord lena\.vr/.test(t) ? { discord: "lena.vr" } : {}) });
+  const old = makeWorker([user("p1", "Ilka", { biography: "<p>cord ilka.vr</p>" })], { discordOf: (t) => (/cord ilka\.vr/.test(t) ? { discord: "ilka.vr" } : {}) });
   await old.w.tick();
   old.w.update((s) => { delete s.waiting.discord; delete s.waiting.discordJudged; s.waiting.verdict = "pass"; });
   requests.submit(old.w.paths, "answer", { decision: "disagree", reason: "they are lovely" });
   await old.w.tick();
-  assert.match(notices(old.told)[0].text, /:\nlena\.vr\n/);
+  assert.match(notices(old.told)[0].text, /:\nilka\.vr\n/);
 });
 
 test("a notice no channel took is sent again later, once", async () => {

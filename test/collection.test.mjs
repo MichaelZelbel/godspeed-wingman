@@ -49,7 +49,7 @@ test("the retention is 42 days unless the settings say otherwise", () => {
 test("backfill: every decision already made becomes one item, in the order decided, with its first line", async () => {
   const h = listWorker([], { at: "2026-10-10T16:00:00Z", screenshotsUrl: "https://srv.example/wingman" });
   await keptBefore(h, [
-    { id: "u_test_001", name: "Lena", at: "2026-10-09T12:00:00Z", extra: { country: "de" }, decisions: [{ at: "2026-10-09T12:30:00Z", action: "asked", verdict: "like", reason: "You both build worlds in VRChat." }, { at: "2026-10-09T12:39:00Z", action: "like", by: "you", reason: "", judge: "like" }] },
+    { id: "u_test_001", name: "Ilka", at: "2026-10-09T12:00:00Z", extra: { country: "de" }, decisions: [{ at: "2026-10-09T12:30:00Z", action: "asked", verdict: "like", reason: "You both build worlds in VRChat." }, { at: "2026-10-09T12:39:00Z", action: "like", by: "you", reason: "", judge: "like" }] },
     { id: "u_test_002", name: "Odile", at: "2026-10-10T12:00:00Z", extra: { country: "fr" }, decisions: [{ at: "2026-10-10T12:42:00Z", action: "pass", by: "wingman", reason: "They want to meet in person soon." }] },
     { id: "u_test_003", name: "Asked Only", at: "2026-10-10T13:00:00Z", decisions: [{ at: "2026-10-10T13:00:00Z", action: "asked", verdict: "pass" }] },
   ]);
@@ -57,19 +57,19 @@ test("backfill: every decision already made becomes one item, in the order decid
   const items = h.nb.list();
   assert.equal(items.length, 2, "an open question is not a like or a pass yet");
   const inserts = h.nb.calls.filter((c) => c[0] === "insertItem").map((c) => c[1]);
-  assert.deepEqual(inserts.map((v) => v.data.name), ["Lena", "Odile"], "oldest first, so the newest is the newest item");
+  assert.deepEqual(inserts.map((v) => v.data.name), ["Ilka", "Odile"], "oldest first, so the newest is the newest item");
   assert.deepEqual(inserts.map((v) => v.created_at), ["2026-10-09T12:39:00Z", "2026-10-10T12:42:00Z"]);
-  const lena = byName(h.nb).Lena;
-  assert.deepEqual({ ...lena.data }, {
-    seen: "2026-10-09", name: "Lena", age: 26, gender: "Cis Woman", location: "Germany", site: "Flirtual", decision: "liked", decided_by: "you",
+  const ilka = byName(h.nb).Ilka;
+  assert.deepEqual({ ...ilka.data }, {
+    seen: "2026-10-09", name: "Ilka", age: 26, gender: "Cis Woman", location: "Germany", site: "Flirtual", decision: "liked", decided_by: "you",
     reason: "You both build worlds in VRChat.", profile: "https://flirtu.al/u_test_001", discord: "",
-    screenshot: "https://srv.example/wingman/2026-10-09/2026-10-09%20Lena%20u_test_0.png",
+    screenshot: "https://srv.example/wingman/2026-10-09/2026-10-09%20Ilka%20u_test_0.png",
   });
-  assert.equal(lena.source_id, "flirtual:u_test_001");
+  assert.equal(ilka.source_id, "flirtual:u_test_001");
   assert.equal(byName(h.nb).Odile.data.decided_by, "the Wingman");
   assert.equal(byName(h.nb).Odile.data.reason, "They want to meet in person soon.");
   assert.equal(byName(h.nb).Odile.data.location, "France");
-  assert.ok(!("comment" in lena.data), "the Wingman never writes the comment");
+  assert.ok(!("comment" in ilka.data), "the Wingman never writes the comment");
   // The collection itself: hidden from every assistant, a comment column, one link to the screenshots.
   const made = h.nb.calls.find((c) => c[0] === "createCollection")[1];
   assert.equal(made.name, "Wingman: likes and passes");
@@ -207,34 +207,34 @@ test("columns are left alone once the kept profile is gone; the notebook being a
 });
 
 test("screenshots are named by day and name, also the ones kept before, and the open question follows", async () => {
-  const h = listWorker([user("u_test_001", "Lena"), user("b2", "Juno")]);
+  const h = listWorker([user("u_test_001", "Ilka"), user("b2", "Juno")]);
   h.w.deps.noBrowserPage = false;
   h.w.deps.driver = { goto: async () => {}, evaluate: async () => [], screenshot: async () => Buffer.from("PNG"), content: async () => "<html></html>" };
   await h.w.tick();
   const w0 = h.w.state.waiting;
   const dir = path.join(h.w.paths.archive, w0.dir);
-  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Lena u_test_0.png")), fs.readdirSync(dir).join(","));
-  assert.equal(path.basename(h.told[0].picture), "2026-10-03 Lena u_test_0.png");
-  const link = path.join(h.w.paths.screenshots, "2026-10-03", "2026-10-03 Lena u_test_0.png");
+  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Ilka u_test_0.png")), fs.readdirSync(dir).join(","));
+  assert.equal(path.basename(h.told[0].picture), "2026-10-03 Ilka u_test_0.png");
+  const link = path.join(h.w.paths.screenshots, "2026-10-03", "2026-10-03 Ilka u_test_0.png");
   assert.equal(fs.readFileSync(link, "utf8"), "PNG");
   // As an older version kept it: page.png, and the open question pointing at it.
-  fs.renameSync(path.join(dir, "2026-10-03 Lena u_test_0.png"), path.join(dir, "page.png"));
+  fs.renameSync(path.join(dir, "2026-10-03 Ilka u_test_0.png"), path.join(dir, "page.png"));
   fs.rmSync(h.w.paths.screenshots, { recursive: true, force: true });
   h.w.update((s) => { s.waiting.picture = path.join(dir, "page.png"); });
   h.w.nameShots();
-  assert.deepEqual(fs.readdirSync(dir).filter((f) => f.endsWith(".png")), ["2026-10-03 Lena u_test_0.png"]);
+  assert.deepEqual(fs.readdirSync(dir).filter((f) => f.endsWith(".png")), ["2026-10-03 Ilka u_test_0.png"]);
   assert.ok(fs.existsSync(link));
-  assert.equal(h.w.state.waiting.picture, path.join(dir, "2026-10-03 Lena u_test_0.png"));
+  assert.equal(h.w.state.waiting.picture, path.join(dir, "2026-10-03 Ilka u_test_0.png"));
   assert.equal(h.w.state.waiting.id, w0.id);
   assert.equal(h.w.state.waiting.notifiedAt, w0.notifiedAt, "the question itself is untouched");
   // "who --photo" finds the renamed picture.
-  const hit = archive.search(h.w.paths, "Lena")[0];
-  assert.equal(path.basename(archive.picturePath(h.w.paths, hit)), "2026-10-03 Lena u_test_0.png");
+  const hit = archive.search(h.w.paths, "Ilka")[0];
+  assert.equal(path.basename(archive.picturePath(h.w.paths, hit)), "2026-10-03 Ilka u_test_0.png");
   // Running it again changes nothing.
   assert.deepEqual(archive.nameShots(h.w.paths), []);
   // An open question whose picture moved without it is still sent with the picture.
   h.w.update((s) => { s.waiting.picture = path.join(dir, "page.png"); });
-  assert.equal(path.basename(h.w.pictureOf(h.w.state.waiting)), "2026-10-03 Lena u_test_0.png");
+  assert.equal(path.basename(h.w.pictureOf(h.w.state.waiting)), "2026-10-03 Ilka u_test_0.png");
   // After the retention both names of the picture go.
   h.setNow("2026-11-20T10:00:00Z");
   await h.w.tick();
@@ -408,19 +408,19 @@ function oldCollection(nb, { extra = [{ key: "met", label: "Met in VR", type: "b
   const c = { ...collection.shape("", 42), field_schema: fields, id: "coll-old", slug: "wingman-likes-and-passes" };
   nb.collections.set(c.id, c);
   nb.stamp(c);
-  const it = { id: "item-old", collection_id: c.id, source_app: "godspeed-wingman", source_id: "flirtual:u_test_001", data: { name: "Lena", decision: "liked", decided_by: "you", comment: "Lovely voice", met: true } };
+  const it = { id: "item-old", collection_id: c.id, source_app: "godspeed-wingman", source_id: "flirtual:u_test_001", data: { name: "Ilka", decision: "liked", decided_by: "you", comment: "Lovely voice", met: true } };
   nb.itemsById.set(it.id, it);
   nb.stamp(it);
   return { fields: structuredClone(fields), item: it };
 }
-const lena = [{ id: "u_test_001", name: "Lena", at: "2026-10-09T12:00:00Z", decisions: [{ at: "2026-10-09T12:30:00Z", action: "asked", verdict: "like", reason: "You both build worlds in VRChat." }, { at: "2026-10-09T12:39:00Z", action: "like", by: "you", reason: "", judge: "like" }] }];
+const ilka = [{ id: "u_test_001", name: "Ilka", at: "2026-10-09T12:00:00Z", decisions: [{ at: "2026-10-09T12:30:00Z", action: "asked", verdict: "like", reason: "You both build worlds in VRChat." }, { at: "2026-10-09T12:39:00Z", action: "like", by: "you", reason: "", judge: "like" }] }];
 
 test("an older collection gets the Reason column after Decided by, and every other column stays as it is", async () => {
   const h = listWorker([], { at: "2026-10-10T16:00:00Z" });
   const { fields } = oldCollection(h.nb);
   // As 0.6.1 remembered it: the id, no columns.
   h.w.update((s) => { s.collection = { id: "coll-old", slug: "wingman-likes-and-passes", total: 1, removed: false, at: "2026-10-09T13:00:00Z" }; });
-  await keptBefore(h, lena);
+  await keptBefore(h, ilka);
   await h.w.tick();
   const ups = h.nb.calls.filter((c) => c[0] === "updateCollection");
   assert.equal(ups.length, 1);
@@ -434,7 +434,7 @@ test("an older collection gets the Reason column after Decided by, and every oth
   assert.equal(it.data.met, true);
   assert.deepEqual([...h.w.state.collection.columns].sort(), collection.FIELDS.map((f) => f.key).sort(), "it remembers the reason is its own now");
   // Done once: the next round has nothing to add.
-  appendJsonl(h.w.paths.decisions, { at: "2026-10-10T17:00:00Z", site: "flirtual", id: "u_test_001", name: "Lena", action: "pass", by: "you", reason: "she moved away" });
+  appendJsonl(h.w.paths.decisions, { at: "2026-10-10T17:00:00Z", site: "flirtual", id: "u_test_001", name: "Ilka", action: "pass", by: "you", reason: "she moved away" });
   h.w.collectionDirty = true;
   await later(h);
   assert.equal(h.nb.calls.filter((c) => c[0] === "updateCollection").length, 1);
@@ -446,14 +446,14 @@ test("a Reason column the person made themselves in an older collection stays th
   const h = listWorker([], { at: "2026-10-10T16:00:00Z" });
   const { fields } = oldCollection(h.nb, { extra: [{ key: "reason", label: "Reason", type: "longtext" }] });
   h.nb.itemsById.get("item-old").data.reason = "my own note";
-  await keptBefore(h, [...lena, { id: "u_test_002", name: "Odile", at: "2026-10-10T12:00:00Z", decisions: [{ at: "2026-10-10T12:42:00Z", action: "pass", by: "wingman", reason: "They want to meet in person soon." }] }]);
+  await keptBefore(h, [...ilka, { id: "u_test_002", name: "Odile", at: "2026-10-10T12:00:00Z", decisions: [{ at: "2026-10-10T12:42:00Z", action: "pass", by: "wingman", reason: "They want to meet in person soon." }] }]);
   await h.w.tick();
   assert.equal(h.nb.calls.filter((c) => c[0] === "updateCollection").length, 0);
   assert.deepEqual(h.nb.collections.get("coll-old").field_schema, fields);
   assert.equal(h.nb.itemsById.get("item-old").data.reason, "my own note");
   assert.ok(!("reason" in byName(h.nb).Odile.data), "not on a new item either");
   assert.ok(!h.w.state.collection.columns.includes("reason"));
-  appendJsonl(h.w.paths.decisions, { at: "2026-10-10T17:00:00Z", site: "flirtual", id: "u_test_001", name: "Lena", action: "pass", by: "wingman", reason: "Too far away." });
+  appendJsonl(h.w.paths.decisions, { at: "2026-10-10T17:00:00Z", site: "flirtual", id: "u_test_001", name: "Ilka", action: "pass", by: "wingman", reason: "Too far away." });
   h.w.collectionDirty = true;
   await later(h);
   assert.equal(h.nb.itemsById.get("item-old").data.decision, "passed");
@@ -463,7 +463,7 @@ test("a Reason column the person made themselves in an older collection stays th
 test("a column the person deleted is not put back, and a change they make to the columns at that moment is kept", async () => {
   const h = listWorker([], { at: "2026-10-10T16:00:00Z" });
   oldCollection(h.nb, { drop: ["discord", "decided_by"] });
-  await keptBefore(h, lena);
+  await keptBefore(h, ilka);
   // The person changes the columns between the Wingman's read and its write.
   const real = h.nb.updateCollection.bind(h.nb);
   let once = true;
@@ -487,7 +487,7 @@ test("a Wingman that forgot which columns are its own (moved to another computer
   const c = { ...collection.shape("", 42), field_schema: structuredClone(collection.FIELDS), id: "coll-new", slug: "wingman-likes-and-passes" };
   h.nb.collections.set(c.id, c);
   h.nb.stamp(c);
-  await keptBefore(h, lena);
+  await keptBefore(h, ilka);
   await h.w.tick();
   assert.equal(h.nb.calls.filter((x) => x[0] === "updateCollection").length, 0);
   assert.equal(h.nb.list()[0].data.reason, "You both build worlds in VRChat.");
