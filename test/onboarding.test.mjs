@@ -97,7 +97,7 @@ test("choices that belong to one site are hidden when that site is not chosen", 
 });
 
 test("the answers are checked: unknown ids, odd numbers, long words", () => {
-  const a = cleanAnswers({ sites: ["flirtual", "../x", "Bad Id"], looking_for: ["women", "robots"], age_range: [60, 25], where: "mars", tone: ["calm", "witty"], daily_start: "7:05", timezone: "Nowhere/City", retention_days: -3, talk: ["telegram", "pigeon"], browser: "bridge", bridge: "http://10.0.0.5:3010/", model: { lane: "hermes", name: "x;rm" }, me: "x".repeat(500), watch: "Robin\n- Lena\n\n" }, { options });
+  const a = cleanAnswers({ sites: ["flirtual", "../x", "Bad Id"], looking_for: ["women", "robots"], age_range: [60, 25], where: "mars", tone: ["calm", "witty"], daily_start: "7:05", timezone: "Nowhere/City", retention_days: -3, talk: ["telegram", "pigeon"], browser: "bridge", bridge: "http://10.0.0.5:3010/", model: { lane: "hermes", name: "x;rm" }, me: "x".repeat(500), watch: "Robin\n- Ilka\n\n" }, { options });
   assert.deepEqual(a.sites, ["flirtual"]);
   assert.deepEqual(a.looking_for, ["women"]);
   assert.deepEqual(a.age_range, [25, 60]);
@@ -110,7 +110,7 @@ test("the answers are checked: unknown ids, odd numbers, long words", () => {
   assert.equal(a.bridge, "http://10.0.0.5:3010");
   assert.deepEqual(a.model, { lane: "godspeed", name: "" });
   assert.equal(a.me.length, 120);
-  assert.deepEqual(a.watch, ["Robin", "Lena"]);
+  assert.deepEqual(a.watch, ["Robin", "Ilka"]);
   assert.equal(fills(a, { options }).age_range, "25 to 60");
 });
 
@@ -182,13 +182,13 @@ test("apply: a new install gets the starter page; an existing page is never repl
   const { mc, state } = tempMc();
   const rp = (f) => path.join(mc, "routines", "wingman", f);
   fs.rmSync(rp("preferences.md"));
-  const answers = { sites: ["flirtual"], me: "a person in my thirties", starter: "friends-first", watch: ["Robin", "Lena"], talk: ["desk"] };
+  const answers = { sites: ["flirtual"], me: "a person in my thirties", starter: "friends-first", watch: ["Robin", "Ilka"], talk: ["desk"] };
   let r = await apply({ mcDir: mc, stateDir: state, answers, sys: { env: {}, platform: "win32", root: false } });
   assert.equal(r.prefs, "written");
   const first = fs.readFileSync(rp("preferences.md"), "utf8");
   assert.match(first, /I am a person in my thirties/);
   assert.match(first, /long conversations, shared worlds/, "the friends-first starter");
-  assert.deepEqual(readWatch(rp("watch.md")), ["Robin", "Lena"]);
+  assert.deepEqual(readWatch(rp("watch.md")), ["Robin", "Ilka"]);
   const set = JSON.parse(fs.readFileSync(settingsFile(mc), "utf8"));
   assert.match(set.onboarded, /^\d{4}-\d{2}-\d{2}$/);
   assert.equal(set.sync, "off", "keys the wizard does not ask about stay");
@@ -208,7 +208,7 @@ test("apply: a new install gets the starter page; an existing page is never repl
   assert.equal(r.prefs, "replaced");
   assert.match(fs.readFileSync(rp("preferences.md"), "utf8"), /## Who fits/);
   assert.ok(path.resolve(r.backup).startsWith(path.resolve(state)), "the old page waits in the private folder, never in git");
-  assert.deepEqual(readWatch(rp("watch.md")), ["Robin", "Lena"], "names are added once");
+  assert.deepEqual(readWatch(rp("watch.md")), ["Robin", "Ilka"], "names are added once");
 });
 
 test("no daily session before the setup questions; a practice round asked for still runs", async () => {

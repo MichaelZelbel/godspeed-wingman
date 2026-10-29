@@ -19,7 +19,7 @@ import { stripPendingScript, cleanupScript } from "../lib/sites/flirtual/page.mj
 
 const GB = 1024 ** 3;
 const READY = { card: true, loggedIn: true, name: true, skeleton: 0, images: 2, pending: 0, broken: 0 };
-const LENA = "u_test_001";
+const ILKA = "u_test_001";
 const THEIR_PICTURES = { images: [{ external_id: "k1-aaaa" }, { external_id: "k2-bbbb" }] };
 
 function jpeg(size = 4000) {
@@ -71,14 +71,14 @@ function browsing(h, br, fetch = fetcher()) {
 // ---- no second copy of their pictures ------------------------------------------------------------
 
 test("a whole-profile picture: no separate copies of the pictures, nothing downloaded, the page compressed", async () => {
-  const h = makeWorker([user(LENA, "Lena", THEIR_PICTURES), user("b2", "Juno")]);
+  const h = makeWorker([user(ILKA, "Ilka", THEIR_PICTURES), user("b2", "Juno")]);
   const fetch = browsing(h, fakeDriver());
   await h.w.tick();
   const dir = path.join(h.w.paths.archive, h.w.state.waiting.dir);
   assert.deepEqual(avatars(dir), []);
   assert.deepEqual(fetch.urls, [], "the pictures are in the picture of the page already");
-  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Lena u_test_0.jpg")));
-  assert.equal(path.basename(h.told[0].picture), "2026-10-03 Lena u_test_0.jpg", "the practice question still carries the picture");
+  assert.ok(fs.existsSync(path.join(dir, "2026-10-03 Ilka u_test_0.jpg")));
+  assert.equal(path.basename(h.told[0].picture), "2026-10-03 Ilka u_test_0.jpg", "the practice question still carries the picture");
   assert.equal(readJson(path.join(dir, "shot.json")).morePending, 0);
   assert.ok(fs.existsSync(path.join(dir, archive.PAGE)));
   assert.equal(fs.existsSync(path.join(dir, "page.html")), false);
@@ -87,39 +87,39 @@ test("a whole-profile picture: no separate copies of the pictures, nothing downl
 });
 
 test("a page that could not be pictured keeps the first picture only, from the address the page uses", async () => {
-  const h = makeWorker([user(LENA, "Lena", THEIR_PICTURES), user("b2", "Juno")]);
+  const h = makeWorker([user(ILKA, "Ilka", THEIR_PICTURES), user("b2", "Juno")]);
   const fetch = browsing(h, fakeDriver({ gotoFails: true }));
   await h.w.tick();
   const dir = path.join(h.w.paths.archive, h.w.state.waiting.dir);
   assert.deepEqual(fetch.urls, ["https://content.flirtual.com/k1-aaaa/profile"]);
   assert.deepEqual(avatars(dir), ["avatar-1.jpg"]);
   assert.equal(path.basename(h.told[0].picture), "avatar-1.jpg", "the owner's message still shows them");
-  const entry = archive.search(h.w.paths, "Lena")[0];
+  const entry = archive.search(h.w.paths, "Ilka")[0];
   assert.equal(path.basename(archive.picturePath(h.w.paths, entry)), "avatar-1.jpg", "and so does who --photo");
 });
 
 test("a picture that may lack some pictures (laid-out ones still loading, or not laid out) keeps the first picture", async () => {
   for (const br of [fakeDriver({ pending: 1 }), fakeDriver({ prep: null })]) {
-    const h = makeWorker([user(LENA, "Lena", THEIR_PICTURES), user("b2", "Juno")]);
+    const h = makeWorker([user(ILKA, "Ilka", THEIR_PICTURES), user("b2", "Juno")]);
     const fetch = browsing(h, br);
     await h.w.tick();
     const dir = path.join(h.w.paths.archive, h.w.state.waiting.dir);
     assert.deepEqual(fetch.urls, ["https://content.flirtual.com/k1-aaaa/profile"]);
     assert.deepEqual(avatars(dir), ["avatar-1.jpg"]);
-    assert.equal(path.basename(h.told[0].picture), "2026-10-03 Lena u_test_0.jpg", "the picture of the page is still the one the owner sees");
+    assert.equal(path.basename(h.told[0].picture), "2026-10-03 Ilka u_test_0.jpg", "the picture of the page is still the one the owner sees");
   }
 });
 
 test("a picture that cannot be written leaves the profile, and the session goes on", async () => {
-  const h = makeWorker([user(LENA, "Lena"), user("b2", "Juno")]);
+  const h = makeWorker([user(ILKA, "Ilka"), user("b2", "Juno")]);
   browsing(h, fakeDriver());
   // A folder where the picture's file would go: writing it fails, as on a full disk.
-  const dir = archive.folderFor(h.w.paths, "2026-10-03", "flirtual", LENA);
-  fs.mkdirSync(path.join(dir, "2026-10-03 Lena u_test_0.jpg"), { recursive: true });
+  const dir = archive.folderFor(h.w.paths, "2026-10-03", "flirtual", ILKA);
+  fs.mkdirSync(path.join(dir, "2026-10-03 Ilka u_test_0.jpg"), { recursive: true });
   await h.w.tick();
-  assert.equal(h.w.state.waiting?.name, "Lena", "judged and asked about all the same");
+  assert.equal(h.w.state.waiting?.name, "Ilka", "judged and asked about all the same");
   assert.ok(readJson(path.join(dir, "profile.json")));
-  assert.match(fs.readFileSync(h.w.paths.log, "utf8"), /Lena: could not keep the picture of their page/);
+  assert.match(fs.readFileSync(h.w.paths.log, "utf8"), /Ilka: could not keep the picture of their page/);
   assert.equal(fs.readdirSync(dir).some((f) => f.endsWith(".tmp")), false, "no half-written file left");
 });
 
@@ -127,7 +127,7 @@ test("a picture that cannot be written leaves the profile, and the session goes 
 
 // A folder as an older version kept it: the picture, shot.json as given (none: undescribed), four
 // separate pictures, the page uncompressed.
-function keptBefore(h, { day = "2026-10-10", id = LENA, name = "Lena", shot, ext = "jpg" } = {}) {
+function keptBefore(h, { day = "2026-10-10", id = ILKA, name = "Ilka", shot, ext = "jpg" } = {}) {
   const profile = normalize(user(id, name, THEIR_PICTURES), new Date("2026-10-10T14:00:00Z"));
   delete profile.raw;
   const dir = archive.folderFor(h.w.paths, day, "flirtual", id);
@@ -174,7 +174,7 @@ test("taking a picture again downloads nothing, and the copies go once the new p
   h.w.update((s) => { s.lastRunDay = "2026-10-10"; s.slimmed = { at: "x" }; });
   const fetch = browsing(h, fakeDriver());
   await h.w.tick();
-  assert.deepEqual(fs.readdirSync(dir).filter((f) => archive.SHOT.test(f)), ["2026-10-10 Lena u_test_0.jpg"]);
+  assert.deepEqual(fs.readdirSync(dir).filter((f) => archive.SHOT.test(f)), ["2026-10-10 Ilka u_test_0.jpg"]);
   assert.deepEqual(fetch.urls, [], "no picture is downloaded");
   assert.deepEqual(avatars(dir), []);
   assert.deepEqual(h.w.deps.driver.calls.find((c) => c[0] === "capture")[1], { selector: "[data-mask]", pad: 16, format: "jpeg", quality: 72 });
@@ -217,15 +217,15 @@ async function keptDays(h) {
 const pictures = (dir) => fs.readdirSync(dir).filter(archive.isPicture);
 
 test("below the limit the oldest pictures go first, only as many as needed, never the profiles; the session goes on", async () => {
-  const h = makeWorker([user(LENA, "Lena"), user("b2", "Juno")], { at: "2026-10-10T18:31:00Z", screenshotsUrl: "https://srv.example/wingman", settings: { retention_days: 365 } });
+  const h = makeWorker([user(ILKA, "Ilka"), user("b2", "Juno")], { at: "2026-10-10T18:31:00Z", screenshotsUrl: "https://srv.example/wingman", settings: { retention_days: 365 } });
   const kept = await keptDays(h);
   h.w.update((s) => { s.slimmed = { at: "x" }; s.lastPruneDay = "2026-10-10"; });
   disk(h, 8 * GB - 1.5 * 1024 * 1024);
   browsing(h, fakeDriver());
   await h.w.tick();
 
-  assert.equal(h.w.state.waiting?.name, "Lena", "the session went on: judged and asked about");
-  assert.ok(fs.existsSync(path.join(h.w.paths.archive, h.w.state.waiting.dir, "2026-10-10 Lena u_test_0.jpg")), "and the picture is kept");
+  assert.equal(h.w.state.waiting?.name, "Ilka", "the session went on: judged and asked about");
+  assert.ok(fs.existsSync(path.join(h.w.paths.archive, h.w.state.waiting.dir, "2026-10-10 Ilka u_test_0.jpg")), "and the picture is kept");
   assert.deepEqual(pictures(kept.Ada), [], "the oldest went");
   assert.deepEqual(pictures(kept.Juno), [], "then the next oldest, enough for 1.5 MB");
   assert.equal(pictures(kept.Kiri).length, 1, "no more than needed");
@@ -247,7 +247,7 @@ test("below the limit the oldest pictures go first, only as many as needed, neve
 });
 
 test("the open question's pictures and the last seven days are never deleted; with nothing left it looks again in half an hour", async () => {
-  const h = makeWorker([user(LENA, "Lena"), user("b2", "Juno")], { at: "2026-10-10T18:31:00Z", settings: { retention_days: 365 } });
+  const h = makeWorker([user(ILKA, "Ilka"), user("b2", "Juno")], { at: "2026-10-10T18:31:00Z", settings: { retention_days: 365 } });
   const kept = await keptDays(h);
   h.w.update((s) => { s.slimmed = { at: "x" }; s.lastPruneDay = "2026-10-10"; s.waiting = { kind: "review", site: "flirtual", id: "A1aaaaaaaaaa", name: "Ada", dir: path.relative(h.w.paths.archive, kept.Ada).replace(/\\/g, "/"), message: "x", notifiedAt: "2026-10-10T18:00:00Z", askedAt: "2026-10-10T18:00:00Z" }; });
   h.w.deps.freeBytes = () => 1 * GB;

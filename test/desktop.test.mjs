@@ -48,13 +48,13 @@ test("the words are discreet: what waits, never who", () => {
     ["From your Wingman: new match with Kiri, 25 (SE). Three ways to open:\n1) hi", /new match/i, "matches"],
     ["From your Wingman: Robin, 30 (DE) wrote: \"hey\"\nThree replies:\n1) x", /new message/i, "matches"],
     ["From your Wingman: Flirtual logged me out, so I cannot pick", /logged the Wingman out/, "status"],
-    ["From your Wingman: still open from 2026-10-08, and today's session waits for it.\npractice. Lena", /earlier day/, "practice"],
+    ["From your Wingman: still open from 2026-10-08, and today's session waits for it.\npractice. Ilka", /earlier day/, "practice"],
   ];
   for (const [text, want, page] of cases) {
     const s = desktop.summary(text);
     assert.match(s.body, want, text);
     assert.equal(s.page, page, text);
-    for (const name of ["Mara", "Juno", "Sam", "Kiri", "Robin", "Lena", "teasing", "hey"]) assert.ok(!s.body.includes(name), `${name} stays off the screen`);
+    for (const name of ["Mara", "Juno", "Sam", "Kiri", "Robin", "Ilka", "teasing", "hey"]) assert.ok(!s.body.includes(name), `${name} stays off the screen`);
   }
 });
 

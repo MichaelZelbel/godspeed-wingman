@@ -118,11 +118,11 @@ test("an item from a like or pass whose records are gone is never turned into a 
   const c = { ...collection.shape("", 42), field_schema: structuredClone(collection.FIELDS), id: "coll-1", slug: "wingman-likes-and-passes" };
   h.nb.collections.set(c.id, c);
   h.nb.stamp(c);
-  const it = { id: "item-old", collection_id: c.id, source_app: "godspeed-wingman", source_id: "flirtual:u_test_021", data: { seen: "2026-08-20", name: "Lena", decision: "liked", decided_by: "the Wingman", reason: "You both build worlds.", comment: "mine" } };
+  const it = { id: "item-old", collection_id: c.id, source_app: "godspeed-wingman", source_id: "flirtual:u_test_021", data: { seen: "2026-08-20", name: "Ilka", decision: "liked", decided_by: "the Wingman", reason: "You both build worlds.", comment: "mine" } };
   h.nb.itemsById.set(it.id, it);
   h.nb.stamp(it);
   // The like is past the retention; the match came later and is still kept.
-  await keptBefore(h, [{ id: "u_test_021", name: "Lena", at: "2026-10-09T12:00:00Z", source: "match" }]);
+  await keptBefore(h, [{ id: "u_test_021", name: "Ilka", at: "2026-10-09T12:00:00Z", source: "match" }]);
   await h.w.tick();
   assert.equal(h.nb.calls.filter((x) => x[0] === "updateItem" || x[0] === "insertItem").length, 0);
   assert.deepEqual(h.nb.itemsById.get("item-old").data, it.data);

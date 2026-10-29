@@ -69,7 +69,7 @@ test("the terminal wizard on a server: same questions, the files written, one we
     "1",                       // claude
     "",                        // its default name
     "n",                       // no test call
-    "Robin, Lena",             // watch
+    "Robin, Ilka",             // watch
     "y",                       // save
   ]);
   const r = await terminalWizard({ mcDir: mc, stateDir: state, input: io.input, output: io.output, sys: { env: {}, platform: "linux", root: false }, deps: { detect: detected() }, now: new Date("2026-10-10T12:00:00Z") });
@@ -86,7 +86,7 @@ test("the terminal wizard on a server: same questions, the files written, one we
   assert.doesNotMatch(prefs, /\{[a-z_]+\}/);
   const set = JSON.parse(fs.readFileSync(settingsFile(mc), "utf8"));
   assert.deepEqual([set.daily_start, set.timezone, set.retention_days, set.talk, set.browser, set.bridge, set.model, set.onboarded], ["20:00", "Europe/Vienna", 30, ["telegram"], "bridge", "http://10.0.0.5:3010", { lane: "claude", name: "sonnet" }, "2026-10-10"]);
-  assert.deepEqual(readWatch(path.join(mc, "routines", "wingman", "watch.md")), ["Robin", "Lena"]);
+  assert.deepEqual(readWatch(path.join(mc, "routines", "wingman", "watch.md")), ["Robin", "Ilka"]);
   assert.equal(r.welcome, true);
   const queued = fs.readdirSync(statePaths(state).requests).filter((n) => n.endsWith(".json")).map((n) => JSON.parse(fs.readFileSync(path.join(statePaths(state).requests, n), "utf8")));
   assert.deepEqual(queued.map((q) => q.type), ["welcome"], "the worker sends the welcome, once");
